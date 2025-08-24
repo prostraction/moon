@@ -15,6 +15,8 @@ type Server struct {
 	JD           float64
 	L            float64
 	Illumination string
+	Test         string
+	Test2        string
 }
 
 func (s *Server) NewRouter() *fiber.App {
@@ -25,12 +27,13 @@ func (s *Server) NewRouter() *fiber.App {
 		StrictRouting: true,
 	})
 
-	app.Get("/getMoonPhase", s.getMoonPhase)
-	app.Get("/getMoonPhasePrecize", s.getMoonPhasePrecize)
+	app.Get("/v1.1/getMoonPhase", s.getMoonPhaseV1)
+	app.Get("/v1.2/getMoonPhase", s.getMoonPhaseV2)
+	app.Get("/v1.3/getMoonPhase", s.getMoonPhaseV3)
 	return app
 }
 
-func (s *Server) getMoonPhase(c *fiber.Ctx) error {
+func (s *Server) getMoonPhaseV1(c *fiber.Ctx) error {
 	D := c.Query("d", "default")
 	DInt, err := strconv.Atoi(D)
 	if err != nil {
@@ -57,7 +60,7 @@ func (s *Server) getMoonPhase(c *fiber.Ctx) error {
 	return c.JSON(s)
 }
 
-func (s *Server) getMoonPhasePrecize(c *fiber.Ctx) error {
+func (s *Server) getMoonPhaseV2(c *fiber.Ctx) error {
 	D := c.Query("d", "default")
 	DInt, err := strconv.Atoi(D)
 	if err != nil {
@@ -105,6 +108,36 @@ func (s *Server) getMoonPhasePrecize(c *fiber.Ctx) error {
 
 	s.L = L
 	s.JD = JD
+	//s.Illumination = strconv.Itoa((((LCalc + DInt + MInt) % 30) / 4) % 4)
+	return c.JSON(s)
+}
+
+func (s *Server) getMoonPhaseV3(c *fiber.Ctx) error {
+	D := c.Query("d", "default")
+	DInt, err := strconv.Atoi(D)
+	if err != nil {
+		return err
+	}
+
+	M := c.Query("m", "default")
+	MInt, err := strconv.Atoi(M)
+	if err != nil {
+		return err
+	}
+
+	Y := c.Query("y", "default")
+	yInt, err := strconv.Atoi(Y)
+	if err != nil {
+		return err
+	}
+
+	L := moon.CalcMoonNumber(yInt)
+	LCalc := ((L * 11) - 14) % 30
+
+	s.Days = strconv.Itoa((LCalc + DInt + MInt) % 30)
+
+	s.Test, s.Test2 = moon.Gen(yInt)
+
 	//s.Illumination = strconv.Itoa((((LCalc + DInt + MInt) % 30) / 4) % 4)
 	return c.JSON(s)
 }
