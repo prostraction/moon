@@ -17,6 +17,7 @@ type Server struct {
 	Illumination string
 	Test         string
 	Test2        string
+	Test3        []*moon.MoonTableElement
 }
 
 func (s *Server) NewRouter() *fiber.App {
@@ -136,7 +137,12 @@ func (s *Server) getMoonPhaseV3(c *fiber.Ctx) error {
 
 	s.Days = strconv.Itoa((LCalc + DInt + MInt) % 30)
 
-	s.Test, s.Test2 = moon.Gen(yInt)
+	///testingData := []*moon.MoonTableElement{}
+	s.Test, s.Test2, s.Test3 = moon.Gen(yInt)
+
+	//for i := range testingData {
+	//	s.Test3 += strconv.FormatFloat(testingData[i].T1, 'E', -1, 64)
+	//}
 
 	//s.Illumination = strconv.Itoa((((LCalc + DInt + MInt) % 30) / 4) % 4)
 	return c.JSON(s)

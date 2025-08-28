@@ -5,6 +5,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func CalcMoonNumber(yearGiven int) int {
@@ -75,6 +76,13 @@ func jyear(td float64) (int, int, int) {
 	return year, mm, day
 }
 
+type MoonTableElement struct {
+	TNew  time.Time
+	TFull time.Time
+	T1    float64
+	T2    float64
+}
+
 /*
 JHMS  --  Convert Julian time to hour, minutes, and seconds,
 
@@ -124,7 +132,9 @@ func sumser(trig func(float64) float64, D, M, F, T float64, argtab []float64, co
 	return sum
 }
 
-func Gen(year int) (string, string) {
+func Gen(year int) (string, string, []*MoonTableElement) {
+	moonTable := []*MoonTableElement{}
+
 	var /*v,*/ s string
 	var /*sk,*/ kr []float64
 	var l int
@@ -145,11 +155,6 @@ func Gen(year int) (string, string) {
 	const Itemlen = 36
 	const Pitemlen = 25
 
-	// Initialize output strings
-	//v = "              Perigee           " +
-	//	"                 Apogee\n" +
-	//	"---------------------------------" +
-	//	"   ---------------------------------\n"
 	s = ""
 
 	skVal := math.Floor((float64(year) - 1999.97) * 13.2555)
@@ -211,8 +216,6 @@ func Gen(year int) (string, string) {
 		skVal = dat[l]
 		kr = evt[l]
 
-		//datey, datem, dated := jyear(kr[0])
-		//hours, minutes, seconds := jhms(kr[0])
 		perigee = (skVal - math.Floor(skVal)) < 0.25
 		if !perigee && s == "" {
 			s = pad("", Itemlen, " ")
@@ -245,13 +248,14 @@ func Gen(year int) (string, string) {
 		perigeeApogeeTable += s + "\n"
 	}
 
-	// Generate Moon phase table
-	//v = "           New                      Full\n"
 	s = ""
 	var lastnew float64
 	//var lastfull float64
 	phaseTable := ""
 	for l = 0; l < minx; l++ {
+
+		elem := &MoonTableElement{}
+
 		mp := phaset[l]
 		var data string
 		if mp < 0 {
@@ -266,6 +270,9 @@ func Gen(year int) (string, string) {
 			} else {
 				data = " "
 			}
+			elem.T1 = mp
+			elem.T2 = lastnew
+			//
 			s += pad(data, 3, " ")
 			lastnew = mp
 		} else {
@@ -273,8 +280,20 @@ func Gen(year int) (string, string) {
 				s = pad(s, Pitemlen, " ")
 			}
 		}
+
+		elem.T1 = mp
+		elem.T2 = lastnew
+
 		datey, _, _ := jyear(mp)
+		elem.TNew = cuzcoDateTime(lastnew)
+		elem.TFull = cuzcoDateTime(mp)
+
 		s += "   " + strconv.Itoa(datey) + " " + cuzcoDate(mp)
+
+		if elem.T1 != elem.T2 {
+			moonTable = append(moonTable, elem)
+		}
+
 		if len(s) < Pitemlen {
 			s = pad(s, Pitemlen, " ")
 		} else {
@@ -286,7 +305,7 @@ func Gen(year int) (string, string) {
 		phaseTable += s + "\n"
 	}
 
-	return perigeeApogeeTable, phaseTable //, t1, t2
+	return perigeeApogeeTable, phaseTable, moonTable
 }
 
 func pad(str string, length int, padChar string) string {
@@ -503,6 +522,28 @@ func cuzcoDate(j float64) string {
 	return edate(j)
 }
 
+func cuzcoDateTime(j float64) time.Time {
+	datey, datem, dated := jyear(j)
+	//t.AddDate(datey, datem, dated)
+
+	j1 := j
+	j1 -= 5.0 / 24.0
+	j1 += (30.0 / (24 * 60 * 60))
+
+	timeh, timem, times := jhms(j1)
+
+	datem = datem - 1
+	if datem < 0 {
+		datem = 0
+	}
+	if datem > 11 {
+		datem = 11
+	}
+
+	t := time.Date(datey, monthsGo[datem], dated, timeh, timem, times, 0, time.UTC)
+	return t
+}
+
 func cuzcoNight(j float64) float64 {
 	j -= 5.0 / 24.0      // 5 timezones west of UTC
 	j -= 6.0 / 24.0      // anything up to 6am is considered previous night
@@ -519,6 +560,7 @@ func dcos(x float64) float64 {
 }
 
 var months = []string{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
+var monthsGo = []time.Month{time.January, time.February, time.March, time.April, time.May, time.June, time.July, time.August, time.September, time.October, time.November, time.December}
 
 var periarg = []float64{
 	/*  D,  M,  F   */
