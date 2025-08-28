@@ -132,8 +132,10 @@ func sumser(trig func(float64) float64, D, M, F, T float64, argtab []float64, co
 	return sum
 }
 
-func Gen(year int) (string, string, []*MoonTableElement) {
+func Gen(year int, month int, day int) (string, string, []*MoonTableElement, time.Duration) {
+	var moonDays time.Duration
 	moonTable := []*MoonTableElement{}
+	tGiven := time.Date(year, getMonth(month), day, 0, 0, 0, 0, time.UTC)
 
 	var /*v,*/ s string
 	var /*sk,*/ kr []float64
@@ -188,8 +190,9 @@ func Gen(year int) (string, string, []*MoonTableElement) {
 	yrange = pmax - pmin
 
 	// Tabulate new and full moons surrounding the year
-	k1 = math.Floor((float64(year)-1900)*12.3685) - 4
+	k1 = math.Floor((float64(year) - 1900) * 12.3685) // - 4
 	minx = 0
+	isNext := true
 	for l = 0; ; l++ {
 		mtime = truephase(k1, float64(l&1)*0.5)
 		datey, _, _ := jyear(mtime)
@@ -201,9 +204,12 @@ func Gen(year int) (string, string, []*MoonTableElement) {
 			phaseSign = -mtime
 		}
 		phaset = append(phaset, phaseSign)
+		if !isNext {
+			break
+		}
 		if datey > year {
 			minx++
-			break
+			isNext = false
 		}
 		if (l & 1) != 0 {
 			k1 += 1
@@ -292,6 +298,9 @@ func Gen(year int) (string, string, []*MoonTableElement) {
 
 		if elem.T1 != elem.T2 {
 			moonTable = append(moonTable, elem)
+			if tGiven.After(elem.TNew) && tGiven.Before(elem.TFull) {
+				moonDays = tGiven.Sub(elem.TNew)
+			}
 		}
 
 		if len(s) < Pitemlen {
@@ -304,8 +313,7 @@ func Gen(year int) (string, string, []*MoonTableElement) {
 	if s != "" {
 		phaseTable += s + "\n"
 	}
-
-	return perigeeApogeeTable, phaseTable, moonTable
+	return perigeeApogeeTable, phaseTable, moonTable, moonDays
 }
 
 func pad(str string, length int, padChar string) string {
@@ -522,6 +530,18 @@ func cuzcoDate(j float64) string {
 	return edate(j)
 }
 
+func getMonth(datem int) time.Month {
+	datem = datem - 1
+	if datem < 0 {
+		datem = 0
+	}
+	if datem > 11 {
+		datem = 11
+	}
+
+	return monthsGo[datem]
+}
+
 func cuzcoDateTime(j float64) time.Time {
 	datey, datem, dated := jyear(j)
 	//t.AddDate(datey, datem, dated)
@@ -532,15 +552,7 @@ func cuzcoDateTime(j float64) time.Time {
 
 	timeh, timem, times := jhms(j1)
 
-	datem = datem - 1
-	if datem < 0 {
-		datem = 0
-	}
-	if datem > 11 {
-		datem = 11
-	}
-
-	t := time.Date(datey, monthsGo[datem], dated, timeh, timem, times, 0, time.UTC)
+	t := time.Date(datey, getMonth(datem), dated, timeh, timem, times, 0, time.UTC)
 	return t
 }
 
