@@ -19,6 +19,8 @@ type Server struct {
 	Test2        string
 	Test3        []*moon.MoonTableElement
 	Test4        float64
+	Test5        float64
+	Test6        string
 }
 
 func (s *Server) NewRouter() *fiber.App {
@@ -164,7 +166,7 @@ func (s *Server) getMoonPhaseV3(c *fiber.Ctx) error {
 
 	///testingData := []*moon.MoonTableElement{}
 	var test4 time.Duration
-	s.Test, s.Test2, s.Test3, test4 = moon.Gen(yInt, MInt, DInt, HInt, MMInt, SInt, gmtOffsetInt)
+	s.Test, s.Test2, s.Test3, test4, s.Test5, s.Test6 = moon.Gen(yInt, MInt, DInt, HInt, MMInt, SInt, gmtOffsetInt)
 	s.Test4 = test4.Minutes()
 	s.Test4 = s.Test4 / 60 / 24
 

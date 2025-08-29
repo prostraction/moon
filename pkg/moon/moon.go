@@ -2,6 +2,7 @@ package moon
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"strconv"
 	"strings"
@@ -142,24 +143,19 @@ func constrain(d float64) float64 {
 
 func getIlluminatedFractionOfMoon(jd float64) float64 {
 	const toRad = math.Pi / 180.0
-	T := (jd - 2451545) / 36525.0
+	T := (jd - 2451545.) / 36525.0
 
 	D := constrain(297.8501921+445267.1114034*T-0.0018819*T*T+1.0/545868.0*T*T*T-1.0/113065000.0*T*T*T*T) * toRad
 	M := constrain(357.5291092+35999.0502909*T-0.0001536*T*T+1.0/24490000.0*T*T*T) * toRad
 	Mp := constrain(134.9633964+477198.8675055*T+0.0087414*T*T+1.0/69699.0*T*T*T-1.0/14712000.0*T*T*T*T) * toRad
 
-	i := constrain(180-D*180/math.Pi-6.289*math.Sin(Mp)+2.1*math.Sin(M)-1.274*math.Sin(2*D-Mp)-0.658*math.Sin(2*D)-0.214*math.Sin(2*Mp)-0.11*math.Sin(D)) * toRad
+	i := constrain(180.-D*180./math.Pi-6.289*math.Sin(Mp)+2.1*math.Sin(M)-1.274*math.Sin(2.*D-Mp)-0.658*math.Sin(2.*D)-0.214*math.Sin(2.*Mp)-0.11*math.Sin(D)) * toRad
 
-	k := (1 + math.Cos(i)) / 2
+	k := (1. + math.Cos(i)) / 2.
 	return k
 }
 
-func JulianDateFromUnixTime(t int64) float64 {
-	// Not valid for dates before Oct 15, 1582
-	return float64(t)/86400000.0 + 2440587.5
-}
-
-func Gen(year int, month int, day int, hour int, minute int, second int, offset int) (string, string, []*MoonTableElement, time.Duration, float64) {
+func Gen(year int, month int, day int, hour int, minute int, second int, offset int) (string, string, []*MoonTableElement, time.Duration, float64, string) {
 	var moonDays time.Duration
 	moonTable := []*MoonTableElement{}
 	tGiven := time.Date(year, getMonth(month), day, hour-offset, minute, second, 0, time.UTC)
@@ -270,6 +266,7 @@ func Gen(year int, month int, day int, hour int, minute int, second int, offset 
 			}
 		}
 		s += edate(kr[0]) + " " + fmt.Sprintf("%f", math.Round(kr[2])) + " km " + epad + " " + phnear
+		log.Println(edate(kr[0]) + " " + fmt.Sprintf("%f", math.Round(kr[2])) + " km " + epad + " " + phnear)
 		if len(s) < Itemlen {
 			s = pad(s, Itemlen, " ")
 		} else {
@@ -341,9 +338,23 @@ func Gen(year int, month int, day int, hour int, minute int, second int, offset 
 		phaseTable += s + "\n"
 	}
 
-	jdIllumination := JulianDateFromUnixTime(tGiven.Unix())
+	//jdIllumination := JulianDateFromUnixTime(tGiven.Unix())
 
-	return perigeeApogeeTable, phaseTable, moonTable, moonDays
+	jdIllumination := getIlluminatedFractionOfMoon(JulianDate(tGiven))
+
+	log.Println((jdIllumination * 360) / 30)
+	zodiacPosition := int((jdIllumination*360)/30) % 12
+
+	return perigeeApogeeTable, phaseTable, moonTable, moonDays, jdIllumination, getZodiacSign(zodiacPosition)
+}
+
+func getZodiacSign(position int) string {
+	signs := []string{
+		"Aries", "Taurus", "Gemini", "Cancer",
+		"Leo", "Virgo", "Libra", "Scorpio",
+		"Sagittarius", "Capricorn", "Aquarius", "Pisces",
+	}
+	return signs[position]
 }
 
 func pad(str string, length int, padChar string) string {
@@ -593,13 +604,4 @@ func cuzcoNight(j float64) float64 {
 	return math.Floor(j) // round to days
 }
 
-func dsin(x float64) float64 {
-	return math.Sin(dtr(x))
-}
-
-func dcos(x float64) float64 {
-	return math.Cos(dtr(x))
-}
-
 var months = []string{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
-var monthsGo = []time.Month{time.January, time.February, time.March, time.April, time.May, time.June, time.July, time.August, time.September, time.October, time.November, time.December}
