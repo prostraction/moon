@@ -133,6 +133,30 @@ func (s *Server) getMoonPhaseV3(c *fiber.Ctx) error {
 		return err
 	}
 
+	H := c.Query("h", "default")
+	HInt, err := strconv.Atoi(H)
+	if err != nil {
+		return err
+	}
+
+	MM := c.Query("mm", "default")
+	MMInt, err := strconv.Atoi(MM)
+	if err != nil {
+		return err
+	}
+
+	S := c.Query("s", "default")
+	SInt, err := strconv.Atoi(S)
+	if err != nil {
+		return err
+	}
+
+	gmtOffset := c.Query("gmtOffset", "default")
+	gmtOffsetInt, err := strconv.Atoi(gmtOffset)
+	if err != nil {
+		return err
+	}
+
 	L := moon.CalcMoonNumber(yInt)
 	LCalc := ((L * 11) - 14) % 30
 
@@ -140,9 +164,9 @@ func (s *Server) getMoonPhaseV3(c *fiber.Ctx) error {
 
 	///testingData := []*moon.MoonTableElement{}
 	var test4 time.Duration
-	_, _, _, test4 = moon.Gen(yInt, MInt, DInt)
-	s.Test4 = test4.Hours()
-	s.Test4 = s.Test4 / 24
+	s.Test, s.Test2, s.Test3, test4 = moon.Gen(yInt, MInt, DInt, HInt, MMInt, SInt, gmtOffsetInt)
+	s.Test4 = test4.Minutes()
+	s.Test4 = s.Test4 / 60 / 24
 
 	//for i := range testingData {
 	//	s.Test3 += strconv.FormatFloat(testingData[i].T1, 'E', -1, 64)
