@@ -36,62 +36,11 @@ func CalcMoonNumber(yearGiven int) int {
 	return d
 }
 
-func jyear(td float64) (int, int, int) {
-	td += 0.5
-	z := math.Floor(td)
-	f := td - z
-
-	var a float64
-	if z < 2299161.0 {
-		a = z
-	} else {
-		alpha := math.Floor((z - 1867216.25) / 36524.25)
-		a = z + 1 + alpha - math.Floor(alpha/4)
-	}
-
-	b := a + 1524
-	c := math.Floor((b - 122.1) / 365.25)
-	d := math.Floor(365.25 * c)
-	e := math.Floor((b - d) / 30.6001)
-
-	mm := int(math.Floor(e))
-	if mm >= 14 {
-		mm -= 13
-	} else {
-		mm -= 1
-	}
-
-	year := int(math.Floor(c))
-	if mm > 2 {
-		year -= 4716
-	} else {
-		year -= 4715
-	}
-
-	day := int(math.Floor(b - d - math.Floor(30.6001*e) + f))
-
-	return year, mm, day
-}
-
 type MoonTableElement struct {
 	TNew  time.Time
 	TFull time.Time
-	T1    float64
-	T2    float64
-}
-
-/*
-JHMS  --  Convert Julian time to hour, minutes, and seconds,
-
-	returned as three separate values.
-*/
-func jhms(j float64) (int, int, int) {
-	j += 0.5 // Astronomical to civil
-	ij := (j - math.Floor(j)) * 86400.0
-	hours := math.Floor(ij / 3600)
-	minutes := math.Floor((ij / 60))
-	seconds := math.Floor(ij)
-	return int(hours), int(math.Mod(minutes, 60)), int(math.Mod(seconds, 60))
+	t1    float64
+	t2    float64
 }
 
 func getIlluminatedFractionOfMoon(jd float64) float64 {
@@ -121,7 +70,7 @@ func Gen(year int, month int, day int, hour int, minute int, second int, offset 
 	phaset = make([]float64, 0)
 
 	// Tabulate new and full moons surrounding the year
-	k1 = math.Floor((float64(year) - 1900) * 12.3685) // - 4
+	k1 = math.Floor((float64(year) - 1900) * 12.3685)
 	minx = 0
 	isNext := true
 	for l = 0; ; l++ {
@@ -148,26 +97,26 @@ func Gen(year int, month int, day int, hour int, minute int, second int, offset 
 	}
 
 	var lastnew float64
-	for l = 0; l < minx; l++ {
+	for l = range minx {
 		elem := &MoonTableElement{}
 
 		mp := phaset[l]
 		if mp < 0 {
 			mp = -mp
 
-			elem.T1 = mp
-			elem.T2 = lastnew
+			elem.t1 = mp
+			elem.t2 = lastnew
 
 			lastnew = mp
 		}
 
-		elem.T1 = mp
-		elem.T2 = lastnew
+		elem.t1 = mp
+		elem.t2 = lastnew
 
-		elem.TNew = cuzcoDateTime(lastnew)
-		elem.TFull = cuzcoDateTime(mp)
+		elem.TNew = FromJulianDate(lastnew)
+		elem.TFull = FromJulianDate(mp)
 
-		if elem.T1 != elem.T2 {
+		if elem.t1 != elem.t2 {
 			moonTable = append(moonTable, elem)
 			if tGiven.After(elem.TNew) && tGiven.Before(elem.TFull) {
 				moonDays = tGiven.Sub(elem.TNew)
@@ -175,7 +124,7 @@ func Gen(year int, month int, day int, hour int, minute int, second int, offset 
 		}
 	}
 
-	jdIllumination := getIlluminatedFractionOfMoon(JulianDate(tGiven))
+	jdIllumination := getIlluminatedFractionOfMoon(ToJulianDate(tGiven))
 	zodiacPosition := int((jdIllumination*360)/30) % 12
 
 	return moonTable, moonDays, jdIllumination, getZodiacSign(zodiacPosition)
@@ -258,30 +207,4 @@ func truephase(k, phase float64) float64 {
 		}
 	}
 	return pt
-}
-
-func getMonth(datem int) time.Month {
-	datem = datem - 1
-	if datem < 0 {
-		datem = 0
-	}
-	if datem > 11 {
-		datem = 11
-	}
-
-	return monthsGo[datem]
-}
-
-func cuzcoDateTime(j float64) time.Time {
-	datey, datem, dated := jyear(j)
-	//t.AddDate(datey, datem, dated)
-
-	j1 := j
-	//j1 -= 5.0 / 24.0 // 5 timezones west of UTC
-	j1 += (30.0 / (24 * 60 * 60))
-
-	timeh, timem, times := jhms(j1)
-
-	t := time.Date(datey, getMonth(datem), dated, timeh, timem, times, 0, time.UTC)
-	return t
 }

@@ -164,16 +164,10 @@ func (s *Server) getMoonPhaseV3(c *fiber.Ctx) error {
 
 	s.Days = strconv.Itoa((LCalc + DInt + MInt) % 30)
 
-	///testingData := []*moon.MoonTableElement{}
 	var test4 time.Duration
 	s.Test3, test4, s.Test5, s.Test6 = moon.Gen(yInt, MInt, DInt, HInt, MMInt, SInt, gmtOffsetInt)
 	s.Test4 = test4.Minutes()
 	s.Test4 = s.Test4 / 60 / 24
 
-	//for i := range testingData {
-	//	s.Test3 += strconv.FormatFloat(testingData[i].T1, 'E', -1, 64)
-	//}
-
-	//s.Illumination = strconv.Itoa((((LCalc + DInt + MInt) % 30) / 4) % 4)
 	return c.JSON(s)
 }
