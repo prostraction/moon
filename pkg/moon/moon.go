@@ -132,7 +132,34 @@ func sumser(trig func(float64) float64, D, M, F, T float64, argtab []float64, co
 	return sum
 }
 
-func Gen(year int, month int, day int, hour int, minute int, second int, offset int) (string, string, []*MoonTableElement, time.Duration) {
+func constrain(d float64) float64 {
+	t := math.Mod(d, 360)
+	if t < 0 {
+		t += 360
+	}
+	return t
+}
+
+func getIlluminatedFractionOfMoon(jd float64) float64 {
+	const toRad = math.Pi / 180.0
+	T := (jd - 2451545) / 36525.0
+
+	D := constrain(297.8501921+445267.1114034*T-0.0018819*T*T+1.0/545868.0*T*T*T-1.0/113065000.0*T*T*T*T) * toRad
+	M := constrain(357.5291092+35999.0502909*T-0.0001536*T*T+1.0/24490000.0*T*T*T) * toRad
+	Mp := constrain(134.9633964+477198.8675055*T+0.0087414*T*T+1.0/69699.0*T*T*T-1.0/14712000.0*T*T*T*T) * toRad
+
+	i := constrain(180-D*180/math.Pi-6.289*math.Sin(Mp)+2.1*math.Sin(M)-1.274*math.Sin(2*D-Mp)-0.658*math.Sin(2*D)-0.214*math.Sin(2*Mp)-0.11*math.Sin(D)) * toRad
+
+	k := (1 + math.Cos(i)) / 2
+	return k
+}
+
+func JulianDateFromUnixTime(t int64) float64 {
+	// Not valid for dates before Oct 15, 1582
+	return float64(t)/86400000.0 + 2440587.5
+}
+
+func Gen(year int, month int, day int, hour int, minute int, second int, offset int) (string, string, []*MoonTableElement, time.Duration, float64) {
 	var moonDays time.Duration
 	moonTable := []*MoonTableElement{}
 	tGiven := time.Date(year, getMonth(month), day, hour-offset, minute, second, 0, time.UTC)
@@ -313,6 +340,9 @@ func Gen(year int, month int, day int, hour int, minute int, second int, offset 
 	if s != "" {
 		phaseTable += s + "\n"
 	}
+
+	jdIllumination := JulianDateFromUnixTime(tGiven.Unix())
+
 	return perigeeApogeeTable, phaseTable, moonTable, moonDays
 }
 
