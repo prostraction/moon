@@ -166,7 +166,7 @@ func (s *Server) getMoonPhaseV3(c *fiber.Ctx) error {
 
 	///testingData := []*moon.MoonTableElement{}
 	var test4 time.Duration
-	s.Test, s.Test2, s.Test3, test4, s.Test5, s.Test6 = moon.Gen(yInt, MInt, DInt, HInt, MMInt, SInt, gmtOffsetInt)
+	s.Test3, test4, s.Test5, s.Test6 = moon.Gen(yInt, MInt, DInt, HInt, MMInt, SInt, gmtOffsetInt)
 	s.Test4 = test4.Minutes()
 	s.Test4 = s.Test4 / 60 / 24
 
