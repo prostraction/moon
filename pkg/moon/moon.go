@@ -4,37 +4,6 @@ import (
 	"time"
 )
 
-func CalcMoonNumber(yearGiven int) int {
-	d := 6 // 2000
-	mod := 19
-	yearCurrent := 2000
-
-	if yearCurrent < yearGiven {
-		for yearCurrent+mod < yearGiven {
-			yearCurrent += mod
-		}
-		for yearCurrent < yearGiven {
-			yearCurrent++
-			d++
-			if d > 19 {
-				d = 1
-			}
-		}
-	} else {
-		for yearCurrent-mod > yearGiven {
-			yearCurrent -= mod
-		}
-		for yearCurrent > yearGiven {
-			yearCurrent--
-			d--
-			if d < 1 {
-				d = 19
-			}
-		}
-	}
-	return d
-}
-
 func CurrentMoonDays(tGiven time.Time, loc *time.Location) (time.Duration, time.Duration, time.Duration, string) {
 	if loc == nil {
 		loc = time.UTC
@@ -48,7 +17,7 @@ func CurrentMoonDays(tGiven time.Time, loc *time.Location) (time.Duration, time.
 	currentMoonDays := GetMoonDays(tGiven, moonTable)
 	endMoonDays := GetMoonDays(dayEndTime, moonTable)
 
-	zodiacPosition := int((currentMoonDays.Minutes()/Fminute*360)/30) / 30 % 12
+	zodiacPosition := int((currentMoonDays.Minutes()/Fminute*360.)/30.) / 30. % 12
 
 	return beginMoonDays, currentMoonDays, endMoonDays, getZodiacSign(zodiacPosition)
 }
@@ -84,13 +53,13 @@ func currentMoonPhaseCalc(tGiven time.Time, loc *time.Location, calcF illumFunc)
 	return moonIllumination, moonIlluminationBefore, moonIlluminationAfter
 }
 
-func Gen(tGiven time.Time) ([]*MoonTableElement, time.Duration, float64, string) {
-	moonTable := CreateMoonTable(tGiven)
+func GenerateMoonTable(tGiven time.Time) []*MoonTableElement {
+	/*moonTable := CreateMoonTable(tGiven)
 	moonDays := GetMoonDays(tGiven, moonTable)
 	moonIllumination := GetDailyMoonIllumination(tGiven, nil)
 
-	zodiacPosition := int((moonDays.Minutes()/Fminute*360)/30) / 30 % 12
-	return moonTable, moonDays, moonIllumination, getZodiacSign(zodiacPosition)
+	zodiacPosition := int((moonDays.Minutes()/Fminute*360)/30) / 30 % 12*/
+	return CreateMoonTable(tGiven) //, moonDays, moonIllumination, getZodiacSign(zodiacPosition)
 }
 
 func getZodiacSign(position int) string {

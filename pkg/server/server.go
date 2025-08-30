@@ -1,27 +1,10 @@
 package server
 
 import (
-	"errors"
-	"log"
-	"math"
-	"moon/pkg/moon"
-	"strconv"
-	"time"
-
 	"github.com/gofiber/fiber/v2"
 )
 
 type Server struct {
-	Days         string
-	JD           float64
-	L            float64
-	Illumination string
-	Test         string
-	Test2        string
-	Test3        []*moon.MoonTableElement
-	Test4        float64
-	Test5        float64
-	Test6        string
 }
 
 func (s *Server) NewRouter() *fiber.App {
@@ -32,141 +15,7 @@ func (s *Server) NewRouter() *fiber.App {
 		StrictRouting: true,
 	})
 
-	app.Get("/v1.1/getMoonPhase", s.getMoonPhaseV1)
-	app.Get("/v1.2/getMoonPhase", s.getMoonPhaseV2)
-	app.Get("/v1.3/getMoonPhase", s.getMoonPhaseV3)
+	app.Get("/v1/getCurrentMoonTable", s.getCurrentMoonTableV1)
 	app.Get("/v1/getCurrentMoonPhase", s.getCurrentMoonPhaseV1)
 	return app
-}
-
-func (s *Server) getMoonPhaseV1(c *fiber.Ctx) error {
-	D := c.Query("d", "default")
-	DInt, err := strconv.Atoi(D)
-	if err != nil {
-		return err
-	}
-
-	M := c.Query("m", "default")
-	MInt, err := strconv.Atoi(M)
-	if err != nil {
-		return err
-	}
-
-	Y := c.Query("y", "default")
-	yInt, err := strconv.Atoi(Y)
-	if err != nil {
-		return err
-	}
-
-	L := moon.CalcMoonNumber(yInt)
-	LCalc := ((L * 11) - 14) % 30
-
-	s.Days = strconv.Itoa((LCalc + DInt + MInt) % 30)
-	//s.Illumination = strconv.Itoa((((LCalc + DInt + MInt) % 30) / 4) % 4)
-	return c.JSON(s)
-}
-
-func (s *Server) getMoonPhaseV2(c *fiber.Ctx) error {
-	D := c.Query("d", "default")
-	DInt, err := strconv.Atoi(D)
-	if err != nil {
-		return err
-	}
-
-	M := c.Query("m", "default")
-	MInt, err := strconv.Atoi(M)
-	if err != nil {
-		return err
-	}
-
-	Y := c.Query("y", "default")
-	yInt, err := strconv.Atoi(Y)
-	if err != nil {
-		return err
-	}
-
-	referenceDate := time.Date(2000, time.January, 6, 0, 0, 0, 0, time.UTC)
-	givenDate := time.Date(yInt, time.Month(MInt), DInt, 0, 0, 0, 0, time.UTC)
-	days := givenDate.Sub(referenceDate).Hours() / 24
-
-	moons := days / 29.53058770576
-
-	// Step 3: Return the fractional part
-	s.Days = strconv.FormatFloat(29.53058770576*(moons-float64(int(moons))), 'f', -3, 64)
-	//return moons - float64(int(moons)), nil
-
-	if MInt < 3 {
-		yInt--
-		MInt += 12
-	}
-	A := float64(yInt) / 100
-	B := A / 4
-	C := 2 - A + B
-	E := 365.25 * float64(yInt+4716)
-	F := 30.6001 * (float64(MInt) + 1)
-	JD := C + float64(float64(DInt)) + E + F - 1524.5
-
-	if (JD - 2451545.0) == 0 {
-		return errors.New("JD is 0")
-	}
-	T := (JD - 2451545.0) / 36525
-	L := 29.5305888531 + 0.00000021621*T - 3.64*math.Pow(10, -12)*(T*T)
-
-	s.L = L
-	s.JD = JD
-	//s.Illumination = strconv.Itoa((((LCalc + DInt + MInt) % 30) / 4) % 4)
-	return c.JSON(s)
-}
-
-func (s *Server) getMoonPhaseV3(c *fiber.Ctx) error {
-	/*D := c.Query("d", "default")
-	DInt, err := strconv.Atoi(D)
-	if err != nil {
-		return err
-	}
-
-	M := c.Query("m", "default")
-	MInt, err := strconv.Atoi(M)
-	if err != nil {
-		return err
-	}
-
-	Y := c.Query("y", "default")
-	yInt, err := strconv.Atoi(Y)
-	if err != nil {
-		return err
-	}
-
-	H := c.Query("h", "default")
-	HInt, err := strconv.Atoi(H)
-	if err != nil {
-		return err
-	}
-
-	MM := c.Query("mm", "default")
-	MMInt, err := strconv.Atoi(MM)
-	if err != nil {
-		return err
-	}
-
-	S := c.Query("s", "default")
-	SInt, err := strconv.Atoi(S)
-	if err != nil {
-		return err
-	}*/
-
-	utc := c.Query("utc", "UTC:+0")
-	loc, err := moon.SetTimezoneLocFromString(utc)
-	if err != nil {
-		log.Println(err)
-	}
-	//tGiven := time.Date(year, getMonth(month), day, hour-offset, minute, second, 0, time.UTC)
-	tGiven := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), time.Now().Hour(), time.Now().Minute(), time.Now().Second(), 0, loc)
-
-	var test4 time.Duration
-	s.Test3, test4, s.Test5, s.Test6 = moon.Gen(tGiven) //yInt, MInt, DInt, HInt, MMInt, SInt, gmtOffsetInt)
-	s.Test4 = test4.Minutes()
-	s.Test4 = s.Test4 / 60 / 24
-
-	return c.JSON(s)
 }

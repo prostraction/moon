@@ -8,6 +8,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+type MoonTable struct {
+	Table []*moon.MoonTableElement
+}
+
 type MoonPhaseResponse struct {
 	EndDays            float64
 	EndDayIllumination float64
@@ -62,4 +66,19 @@ func (s *Server) getCurrentMoonPhaseV1(c *fiber.Ctx) error {
 	resp.EndDayIllumination = toFixed(resp.FullIlluminationEndDay*100, 2)
 
 	return c.JSON(resp)
+}
+
+func (s *Server) getCurrentMoonTableV1(c *fiber.Ctx) error {
+	utc := c.Query("utc", "UTC:+0")
+	loc, err := moon.SetTimezoneLocFromString(utc)
+	if err != nil {
+		log.Println(err)
+	}
+
+	resp := MoonTable{}
+	tGiven := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), time.Now().Hour(), time.Now().Minute(), time.Now().Second(), 0, loc)
+
+	resp.Table = moon.GenerateMoonTable(tGiven)
+
+	return c.JSON(resp.Table)
 }
