@@ -22,3 +22,10 @@ func constrain(d float64) float64 {
 	}
 	return t
 }
+
+func getSignPrefix(sign int) string {
+	if sign >= 0 {
+		return "+"
+	}
+	return "-"
+}

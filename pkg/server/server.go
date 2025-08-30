@@ -2,6 +2,7 @@ package server
 
 import (
 	"errors"
+	"log"
 	"math"
 	"moon/pkg/moon"
 	"strconv"
@@ -117,7 +118,7 @@ func (s *Server) getMoonPhaseV2(c *fiber.Ctx) error {
 }
 
 func (s *Server) getMoonPhaseV3(c *fiber.Ctx) error {
-	D := c.Query("d", "default")
+	/*D := c.Query("d", "default")
 	DInt, err := strconv.Atoi(D)
 	if err != nil {
 		return err
@@ -151,21 +152,18 @@ func (s *Server) getMoonPhaseV3(c *fiber.Ctx) error {
 	SInt, err := strconv.Atoi(S)
 	if err != nil {
 		return err
-	}
+	}*/
 
-	gmtOffset := c.Query("gmtOffset", "default")
-	gmtOffsetInt, err := strconv.Atoi(gmtOffset)
+	utc := c.Query("utc", "UTC:+0")
+	loc, err := moon.SetTimezoneLocFromString(utc)
 	if err != nil {
-		return err
+		log.Println(err)
 	}
-
-	L := moon.CalcMoonNumber(yInt)
-	LCalc := ((L * 11) - 14) % 30
-
-	s.Days = strconv.Itoa((LCalc + DInt + MInt) % 30)
+	//tGiven := time.Date(year, getMonth(month), day, hour-offset, minute, second, 0, time.UTC)
+	tGiven := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), time.Now().Hour(), time.Now().Minute(), time.Now().Second(), 0, loc)
 
 	var test4 time.Duration
-	s.Test3, test4, s.Test5, s.Test6 = moon.Gen(yInt, MInt, DInt, HInt, MMInt, SInt, gmtOffsetInt)
+	s.Test3, test4, s.Test5, s.Test6 = moon.Gen(tGiven) //yInt, MInt, DInt, HInt, MMInt, SInt, gmtOffsetInt)
 	s.Test4 = test4.Minutes()
 	s.Test4 = s.Test4 / 60 / 24
 
