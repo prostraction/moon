@@ -5,12 +5,26 @@ import (
 	"time"
 )
 
-func GetDailyMoonIllumination(tGiven time.Time) float64 {
-	return getIlluminatedFractionOfMoon(ToJulianDate(tGiven))
+func GetDailyMoonIllumination(tGiven time.Time, loc *time.Location) float64 {
+	dailyTime := time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day(), 0, 0, 0, 0, time.UTC)
+	h, m, err := GetTimeFromLocation(loc)
+	h = -h
+	m = -m
+	if err == nil {
+		dailyTime = dailyTime.Add(time.Hour*time.Duration(h) + time.Minute*time.Duration(m))
+	}
+	return getIlluminatedFractionOfMoon(ToJulianDate(dailyTime) - 0.5)
 }
 
-func GetCurrentMoonIllumination(tGiven time.Time) float64 {
-	return getIlluminatedFractionOfMoon(ToJulianDate(tGiven) + (float64(tGiven.Hour()) / 24.) + (float64(tGiven.Minute()) / (24. * 60.)) + (float64(tGiven.Second()) / (24. * 60. * 60.)))
+func GetCurrentMoonIllumination(tGiven time.Time, loc *time.Location) float64 {
+	tGiven = time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day(), tGiven.Hour(), tGiven.Minute(), tGiven.Second(), 0, time.UTC)
+	h, m, err := GetTimeFromLocation(loc)
+	h = -h
+	m = -m
+	if err == nil {
+		tGiven = tGiven.Add(time.Hour*time.Duration(h) + time.Minute*time.Duration(m))
+	}
+	return getIlluminatedFractionOfMoon(ToJulianDate(tGiven) - 0.5)
 }
 
 func GetMoonPhase(before, current, after float64) (string, string) {

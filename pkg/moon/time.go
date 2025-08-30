@@ -1,6 +1,7 @@
 package moon
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"strconv"
@@ -25,7 +26,13 @@ func ToJulianDate(t time.Time) float64 {
 	C := 2 - A + B
 	E := 365.25 * float64(t.Year()+4716)
 	F := 30.6001 * (float64(m) + 1)
-	return C + float64(float64(t.Day())) + E + F - 1524.5
+	JD := C + float64(float64(t.Day())) + E + F - 1524.5
+
+	JD += float64(t.Hour()) / 24
+	JD += float64(t.Minute()) / (24 * 60)
+	JD += float64(t.Second()) / (24 * 60 * 60)
+
+	return JD
 }
 
 func FromJulianDate(j float64, loc *time.Location) time.Time {
@@ -131,6 +138,105 @@ func SetTimezoneLocFromString(utc string) (*time.Location, error) {
 	}
 
 	return time.FixedZone(locationName, totalSeconds), nil
+}
+
+func GetTimeFromLocation(loc *time.Location) (hours int, minutes int, err error) {
+	if loc == nil {
+		return 0, 0, errors.New("loc is nil")
+	}
+	utc := loc.String()
+
+	// Handle empty string
+	if utc == "" {
+		return 0, 0, errors.New("empty timezone string")
+	}
+
+	// Remove "UTC" prefix if present and convert to lowercase for case-insensitive matching
+	normalized := strings.ToLower(strings.TrimPrefix(utc, "UTC"))
+	normalized = strings.TrimSpace(normalized)
+
+	// Handle cases like "+5", "-3", etc.
+	if normalized == "" || normalized == "+0" || normalized == "-0" || normalized == "0" {
+		return 0, 0, nil
+	}
+
+	// Check if it starts with + or -
+	var sign int = 1
+	if strings.HasPrefix(normalized, "+") {
+		sign = 1
+		normalized = normalized[1:]
+	} else if strings.HasPrefix(normalized, "-") {
+		sign = -1
+		normalized = normalized[1:]
+	}
+
+	// Handle cases with colon separator (e.g., "05:30", "5:30")
+	if strings.Contains(normalized, ":") {
+		parts := strings.Split(normalized, ":")
+		if len(parts) != 2 {
+			return 0, 0, fmt.Errorf("invalid timezone format: %s", utc)
+		}
+
+		hours, err := strconv.Atoi(parts[0])
+		if err != nil {
+			return 0, 0, fmt.Errorf("invalid hours: %s", parts[0])
+		}
+
+		minutes, err := strconv.Atoi(parts[1])
+		if err != nil || minutes < 0 || minutes >= 60 {
+			return 0, 0, fmt.Errorf("invalid minutes: %s", parts[1])
+		}
+
+		return sign * hours, minutes, nil
+	}
+
+	// Handle cases without colon (e.g., "0530", "530", "5")
+	// Check if it's just hours (e.g., "5")
+	if len(normalized) <= 2 {
+		hours, err := strconv.Atoi(normalized)
+		if err != nil {
+			return 0, 0, fmt.Errorf("invalid hours: %s", normalized)
+		}
+		return sign * hours, sign * minutes, nil
+	}
+
+	// Handle cases like "0530" (4 digits)
+	if len(normalized) == 4 {
+		hoursStr := normalized[:2]
+		minutesStr := normalized[2:]
+
+		hours, err := strconv.Atoi(hoursStr)
+		if err != nil {
+			return 0, 0, fmt.Errorf("invalid hours: %s", hoursStr)
+		}
+
+		minutes, err := strconv.Atoi(minutesStr)
+		if err != nil || minutes < 0 || minutes >= 60 {
+			return 0, 0, fmt.Errorf("invalid minutes: %s", minutesStr)
+		}
+
+		return sign * hours, sign * minutes, nil
+	}
+
+	// Handle cases like "530" (3 digits - hours + minutes)
+	if len(normalized) == 3 {
+		hoursStr := normalized[:1]
+		minutesStr := normalized[1:]
+
+		hours, err := strconv.Atoi(hoursStr)
+		if err != nil {
+			return 0, 0, fmt.Errorf("invalid hours: %s", hoursStr)
+		}
+
+		minutes, err := strconv.Atoi(minutesStr)
+		if err != nil || minutes < 0 || minutes >= 60 {
+			return 0, 0, fmt.Errorf("invalid minutes: %s", minutesStr)
+		}
+
+		return sign * hours, sign * minutes, nil
+	}
+
+	return 0, 0, fmt.Errorf("invalid timezone format: %s", utc)
 }
 
 // JYMD - Convert Julian time to year, months, and days

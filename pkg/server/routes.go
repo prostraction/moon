@@ -14,14 +14,19 @@ type MoonPhaseResponse struct {
 	CurrentPhase        string
 	CurrentPhaseEmoji   string
 
-	DailyIllumination float64
-	DailyPhase        string
-	DailyPhaseEmoji   string
+	BeginDayIllumination float64
+	BeginDayPhase        string
+	BeginDayPhaseEmoji   string
 
-	Zodiac                  string
-	FullDays                float64
-	FullIlluminationCurrent float64
-	FullIlluminationDaily   float64
+	EndDayIllumination float64
+	EndDayPhase        string
+	EndDayPhaseEmoji   string
+
+	Zodiac                   string
+	FullDays                 float64
+	FullIlluminationCurrent  float64
+	FullIlluminationBeginDay float64
+	FullIlluminationEndDay   float64
 }
 
 func (s *Server) getCurrentMoonPhaseV1(c *fiber.Ctx) error {
@@ -40,9 +45,10 @@ func (s *Server) getCurrentMoonPhaseV1(c *fiber.Ctx) error {
 	resp.FullDays = resp.FullDays / 60 / 24
 	resp.Days = toFixed(resp.FullDays, 2)
 
-	resp.FullIlluminationCurrent, resp.FullIlluminationDaily, resp.CurrentPhase, resp.CurrentPhaseEmoji, resp.DailyPhase, resp.DailyPhaseEmoji = moon.CurrentMoonPhase(tGiven)
+	resp.FullIlluminationCurrent, resp.FullIlluminationBeginDay, resp.FullIlluminationEndDay, resp.CurrentPhase, resp.CurrentPhaseEmoji, resp.BeginDayPhase, resp.BeginDayPhaseEmoji, resp.EndDayPhase, resp.EndDayPhaseEmoji = moon.CurrentMoonPhase(tGiven, loc)
 	resp.CurrentIllumination = toFixed(resp.FullIlluminationCurrent*100, 2)
-	resp.DailyIllumination = toFixed(resp.FullIlluminationDaily*100, 2)
+	resp.BeginDayIllumination = toFixed(resp.FullIlluminationBeginDay*100, 2)
+	resp.EndDayIllumination = toFixed(resp.FullIlluminationEndDay*100, 2)
 
 	return c.JSON(resp)
 }

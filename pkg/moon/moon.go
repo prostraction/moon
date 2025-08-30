@@ -41,43 +41,41 @@ func CurrentMoonDays(tGiven time.Time) (time.Duration, string) {
 	return moonDays, "not working"
 }
 
-func CurrentMoonPhase(tGiven time.Time) (float64, float64, string, string, string, string) {
-	moonIlluminationCurrent := GetCurrentMoonIllumination(tGiven)
-	moonIlluminationBeforeCurrent := GetCurrentMoonIllumination(tGiven.Local().AddDate(0, 0, -1))
-	moonIlluminationAfterCurrent := GetCurrentMoonIllumination(tGiven.Local().AddDate(0, 0, 1))
+type illumFunc func(tGiven time.Time, loc *time.Location) float64
+
+func CurrentMoonPhase(tGiven time.Time, loc *time.Location) (float64, float64, float64, string, string, string, string, string, string) {
+	currentMoonIllumination, currentMoonIlluminationBefore, currentMoonIlluminationAfter := currentMoonPhaseCalc(tGiven, loc, GetCurrentMoonIllumination)
+	dayBeginMoonIllumination, dayBeginMoonIlluminationBefore, dayBeginMoonIlluminationAfter := currentMoonPhaseCalc(tGiven, loc, GetDailyMoonIllumination)
+	dayEndMoonIllumination, dayEndMoonIlluminationBefore, dayEndMoonIlluminationAfter := currentMoonPhaseCalc(tGiven.Local().AddDate(0, 0, 1), loc, GetDailyMoonIllumination)
+
+	moonPhaseCurrent, moonPhaseEmojiCurrent := GetMoonPhase(currentMoonIlluminationBefore, currentMoonIllumination, currentMoonIlluminationAfter)
+	moonPhaseDayBegin, moonPhaseEmojiDayBegin := GetMoonPhase(dayBeginMoonIlluminationBefore, dayBeginMoonIllumination, dayBeginMoonIlluminationAfter)
+	moonPhaseDayEnd, moonPhaseEmojiDayEnd := GetMoonPhase(dayEndMoonIlluminationBefore, dayEndMoonIllumination, dayEndMoonIlluminationAfter)
+
+	return currentMoonIllumination, dayBeginMoonIllumination, dayEndMoonIllumination, moonPhaseCurrent, moonPhaseEmojiCurrent, moonPhaseDayBegin, moonPhaseEmojiDayBegin, moonPhaseDayEnd, moonPhaseEmojiDayEnd
+}
+
+func currentMoonPhaseCalc(tGiven time.Time, loc *time.Location, calcF illumFunc) (float64, float64, float64) {
+	moonIllumination := calcF(tGiven, loc)
+	moonIlluminationBefore := calcF(tGiven.Local().AddDate(0, 0, -1), loc)
+	moonIlluminationAfter := calcF(tGiven.Local().AddDate(0, 0, 1), loc)
 
 	// in rare UTC-12 case they are equal
-	if moonIlluminationCurrent == moonIlluminationBeforeCurrent {
-		moonIlluminationBeforeCurrent = GetCurrentMoonIllumination(tGiven.Local().AddDate(0, 0, -2))
+	if moonIllumination == moonIlluminationBefore {
+		moonIlluminationBefore = calcF(tGiven.Local().AddDate(0, 0, -2), loc)
 	}
 	// just in case
-	if moonIlluminationCurrent == moonIlluminationAfterCurrent {
-		moonIlluminationAfterCurrent = GetCurrentMoonIllumination(tGiven.Local().AddDate(0, 0, 2))
+	if moonIllumination == moonIlluminationAfter {
+		moonIlluminationAfter = calcF(tGiven.Local().AddDate(0, 0, 2), loc)
 	}
 
-	moonIlluminationDaily := GetDailyMoonIllumination(tGiven)
-	moonIlluminationBeforeDaily := GetDailyMoonIllumination(tGiven.Local().AddDate(0, 0, -1))
-	moonIlluminationAfterDaily := GetDailyMoonIllumination(tGiven.Local().AddDate(0, 0, 1))
-	// in rare UTC-12 case they are equal
-	if moonIlluminationCurrent == moonIlluminationBeforeCurrent {
-		moonIlluminationBeforeCurrent = GetCurrentMoonIllumination(tGiven.Local().AddDate(0, 0, -2))
-	}
-	// just in case
-	if moonIlluminationCurrent == moonIlluminationAfterCurrent {
-		moonIlluminationAfterCurrent = GetCurrentMoonIllumination(tGiven.Local().AddDate(0, 0, 2))
-	}
-
-	moonPhaseCurrent, moonPhaseEmojiCurrent := GetMoonPhase(moonIlluminationBeforeCurrent, moonIlluminationCurrent, moonIlluminationAfterCurrent)
-	moonPhaseDaily, moonPhaseEmojiDaily := GetMoonPhase(moonIlluminationBeforeDaily, moonIlluminationDaily, moonIlluminationAfterDaily)
-
-	return moonIlluminationCurrent, moonIlluminationDaily, moonPhaseCurrent, moonPhaseEmojiCurrent, moonPhaseDaily, moonPhaseEmojiDaily
+	return moonIllumination, moonIlluminationBefore, moonIlluminationAfter
 }
 
 func Gen(tGiven time.Time) ([]*MoonTableElement, time.Duration, float64, string) {
-
 	moonTable := CreateMoonTable(tGiven)
 	moonDays := GetMoonDays(tGiven, moonTable)
-	moonIllumination := GetDailyMoonIllumination(tGiven)
+	moonIllumination := GetDailyMoonIllumination(tGiven, nil)
 
 	return moonTable, moonDays, moonIllumination, "not working" //getZodiacSign(zodiacPosition)
 }
