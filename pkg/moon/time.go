@@ -25,7 +25,7 @@ func ToJulianDate(t time.Time) float64 {
 	C := 2 - A + B
 	E := 365.25 * float64(t.Year()+4716)
 	F := 30.6001 * (float64(m) + 1)
-	return C + float64(float64(t.Day()+t.Hour()/24.+t.Minute()/60)) + E + F - 1524.5
+	return C + float64(float64(t.Day())) + E + F - 1524.5
 }
 
 func FromJulianDate(j float64, loc *time.Location) time.Time {

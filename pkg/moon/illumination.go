@@ -1,6 +1,7 @@
 package moon
 
 import (
+	"log"
 	"math"
 	"time"
 )
@@ -10,6 +11,7 @@ func GetMoonIllumination(tGiven time.Time) float64 {
 }
 
 func GetMoonPhase(before, current, after float64) (string, string) {
+	log.Println(before, current, after)
 	switch {
 	case current > 0.05 && current < 0.45 && current < after:
 		return phases[0], phasesEmoji[0]

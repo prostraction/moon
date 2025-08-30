@@ -9,13 +9,15 @@ import (
 )
 
 type MoonPhaseResponse struct {
-	Days             float64
-	DaysFull         float64
-	Illumination     float64
-	IlluminationFull float64
-	Phase            string
-	PhaseEmoji       string
-	Zodiac           string
+	Days                  float64
+	Illumination          float64
+	IlluminationDaily     float64
+	Phase                 string
+	PhaseEmoji            string
+	Zodiac                string
+	FullDays              float64
+	FullIllumination      float64
+	FullIlluminationDaily float64
 }
 
 func (s *Server) getCurrentMoonPhaseV1(c *fiber.Ctx) error {
@@ -30,12 +32,13 @@ func (s *Server) getCurrentMoonPhaseV1(c *fiber.Ctx) error {
 
 	var duration time.Duration
 	duration, resp.Zodiac = moon.CurrentMoonDays(tGiven)
-	resp.DaysFull = duration.Minutes()
-	resp.DaysFull = resp.DaysFull / 60 / 24
-	resp.Days = toFixed(resp.DaysFull, 2)
+	resp.FullDays = duration.Minutes()
+	resp.FullDays = resp.FullDays / 60 / 24
+	resp.Days = toFixed(resp.FullDays, 2)
 
-	resp.IlluminationFull, resp.Phase, resp.PhaseEmoji = moon.CurrentMoonPhase(tGiven)
-	resp.Illumination = toFixed(resp.IlluminationFull*100, 2)
+	resp.FullIllumination, resp.FullIlluminationDaily, resp.Phase, resp.PhaseEmoji = moon.CurrentMoonPhase(tGiven)
+	resp.Illumination = toFixed(resp.FullIllumination*100, 2)
+	resp.IlluminationDaily = toFixed(resp.FullIlluminationDaily*100, 2)
 
 	return c.JSON(resp)
 }
