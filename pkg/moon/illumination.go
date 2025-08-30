@@ -1,17 +1,19 @@
 package moon
 
 import (
-	"log"
 	"math"
 	"time"
 )
 
-func GetMoonIllumination(tGiven time.Time) float64 {
+func GetDailyMoonIllumination(tGiven time.Time) float64 {
 	return getIlluminatedFractionOfMoon(ToJulianDate(tGiven))
 }
 
+func GetCurrentMoonIllumination(tGiven time.Time) float64 {
+	return getIlluminatedFractionOfMoon(ToJulianDate(tGiven) + (float64(tGiven.Hour()) / 24.) + (float64(tGiven.Minute()) / (24. * 60.)) + (float64(tGiven.Second()) / (24. * 60. * 60.)))
+}
+
 func GetMoonPhase(before, current, after float64) (string, string) {
-	log.Println(before, current, after)
 	switch {
 	case current > 0.05 && current < 0.45 && current < after:
 		return phases[0], phasesEmoji[0]
