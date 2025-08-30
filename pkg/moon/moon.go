@@ -48,7 +48,9 @@ func CurrentMoonDays(tGiven time.Time, loc *time.Location) (time.Duration, time.
 	currentMoonDays := GetMoonDays(tGiven, moonTable)
 	endMoonDays := GetMoonDays(dayEndTime, moonTable)
 
-	return beginMoonDays, currentMoonDays, endMoonDays, "not working"
+	zodiacPosition := int((currentMoonDays.Minutes()/Fminute*360)/30) / 30 % 12
+
+	return beginMoonDays, currentMoonDays, endMoonDays, getZodiacSign(zodiacPosition)
 }
 
 type illumFunc func(tGiven time.Time, loc *time.Location) float64
@@ -87,7 +89,8 @@ func Gen(tGiven time.Time) ([]*MoonTableElement, time.Duration, float64, string)
 	moonDays := GetMoonDays(tGiven, moonTable)
 	moonIllumination := GetDailyMoonIllumination(tGiven, nil)
 
-	return moonTable, moonDays, moonIllumination, "not working" //getZodiacSign(zodiacPosition)
+	zodiacPosition := int((moonDays.Minutes()/Fminute*360)/30) / 30 % 12
+	return moonTable, moonDays, moonIllumination, getZodiacSign(zodiacPosition)
 }
 
 func getZodiacSign(position int) string {

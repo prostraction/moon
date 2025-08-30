@@ -8,9 +8,9 @@ var phases = []string{"Waxing Crescent", "First quarter", "Waxing Gibbous", "Ful
 var phasesEmoji = []string{"🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘", "🌑"}
 
 var signs = []string{
-	"Aries", "Taurus", "Gemini", "Cancer",
-	"Leo", "Virgo", "Libra", "Scorpio",
-	"Sagittarius", "Capricorn", "Aquarius", "Pisces",
+	"Virgo", "Libra", "Scorpio", "Sagittarius",
+	"Capricorn", "Aquarius", "Pisces", "Aries",
+	"Taurus", "Gemini", "Cancer", "Leo",
 }
 
 var Fhour = 24.
