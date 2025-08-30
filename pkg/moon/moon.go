@@ -35,14 +35,27 @@ func CalcMoonNumber(yearGiven int) int {
 	return d
 }
 
+func CurrentMoonDays(tGiven time.Time) (time.Duration, string) {
+	moonTable := CreateMoonTable(tGiven)
+	moonDays := GetMoonDays(tGiven, moonTable)
+	return moonDays, "not working"
+}
+
+func CurrentMoonPhase(tGiven time.Time) (float64, string, string) {
+	moonIllumination := GetMoonIllumination(tGiven)
+	moonIlluminationBefore := GetMoonIllumination(tGiven.Local().AddDate(0, 0, -1))
+	moonIlluminationAfter := GetMoonIllumination(tGiven.Local().AddDate(0, 0, 1))
+
+	moonPhase, moonPhaseEmoji := GetMoonPhase(moonIlluminationBefore, moonIllumination, moonIlluminationAfter)
+	return moonIllumination, moonPhase, moonPhaseEmoji
+
+}
+
 func Gen(tGiven time.Time) ([]*MoonTableElement, time.Duration, float64, string) {
-	//
 
 	moonTable := CreateMoonTable(tGiven)
 	moonDays := GetMoonDays(tGiven, moonTable)
 	moonIllumination := GetMoonIllumination(tGiven)
-
-	//zodiacPosition := int((jdIllumination*360)/30) % 12
 
 	return moonTable, moonDays, moonIllumination, "not working" //getZodiacSign(zodiacPosition)
 }

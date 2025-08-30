@@ -30,10 +30,6 @@ func ToJulianDate(t time.Time) float64 {
 
 func FromJulianDate(j float64, loc *time.Location) time.Time {
 	datey, datem, dated := jyear(j)
-
-	//j += gmtOffset / 24.0 // 5 timezones west of UTC
-	//j += (30.0 / (24 * 60 * 60))
-
 	timeh, timem, times := jhms(j)
 
 	t := time.Date(datey, getMonth(datem), dated, timeh, timem, times, 0, time.UTC)

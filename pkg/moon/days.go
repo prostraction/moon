@@ -89,24 +89,6 @@ func GetMoonDays(tGiven time.Time, table []*MoonTableElement) time.Duration {
 	return moonDays
 }
 
-func GetMoonIllumination(tGiven time.Time) float64 {
-	return getIlluminatedFractionOfMoon(ToJulianDate(tGiven))
-}
-
-func getIlluminatedFractionOfMoon(jd float64) float64 {
-	const toRad = math.Pi / 180.
-	T := (jd - 2451545.) / 36525.
-
-	D := constrain(297.8501921+445267.1114034*T-0.0018819*T*T+1./545868.0*T*T*T-1./113065000.0*T*T*T*T) * toRad
-	M := constrain(357.5291092+35999.0502909*T-0.0001536*T*T+1./24490000.0*T*T*T) * toRad
-	Mp := constrain(134.9633964+477198.8675055*T+0.0087414*T*T+1./69699.0*T*T*T-1./14712000.0*T*T*T*T) * toRad
-
-	i := constrain(180.-D*180./math.Pi-6.289*math.Sin(Mp)+2.1*math.Sin(M)-1.274*math.Sin(2.*D-Mp)-0.658*math.Sin(2.*D)-0.214*math.Sin(2.*Mp)-0.11*math.Sin(D)) * toRad
-
-	k := (1. + math.Cos(i)) / 2.
-	return k
-}
-
 func truephase(k, phase float64) float64 {
 	var t, t2, t3, pt, m, mprime, f float64
 	SynMonth := 29.53058868 // Synodic month (mean time from new to next new Moon)

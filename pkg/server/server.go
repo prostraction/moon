@@ -35,6 +35,7 @@ func (s *Server) NewRouter() *fiber.App {
 	app.Get("/v1.1/getMoonPhase", s.getMoonPhaseV1)
 	app.Get("/v1.2/getMoonPhase", s.getMoonPhaseV2)
 	app.Get("/v1.3/getMoonPhase", s.getMoonPhaseV3)
+	app.Get("/v1/getCurrentMoonPhase", s.getCurrentMoonPhaseV1)
 	return app
 }
 
