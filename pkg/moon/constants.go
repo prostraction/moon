@@ -6,3 +6,13 @@ var months = []time.Month{time.January, time.February, time.March, time.April, t
 
 var phases = []string{"Waxing Crescent", "First quarter", "Waxing Gibbous", "Full Moon", "Waning Gibbous", "Third quarter", "Waning Crescent", "New Moon"}
 var phasesEmoji = []string{"🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘", "🌑"}
+
+var signs = []string{
+	"Aries", "Taurus", "Gemini", "Cancer",
+	"Leo", "Virgo", "Libra", "Scorpio",
+	"Sagittarius", "Capricorn", "Aquarius", "Pisces",
+}
+
+var Fhour = 24.
+var Fminute = 24. * 60.
+var Fseconds = 24. * 60. * 60.

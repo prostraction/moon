@@ -9,21 +9,27 @@ import (
 )
 
 type MoonPhaseResponse struct {
-	Days                float64
-	CurrentIllumination float64
-	CurrentPhase        string
-	CurrentPhaseEmoji   string
-
-	BeginDayIllumination float64
-	BeginDayPhase        string
-	BeginDayPhaseEmoji   string
-
+	EndDays            float64
 	EndDayIllumination float64
 	EndDayPhase        string
 	EndDayPhaseEmoji   string
 
-	Zodiac                   string
-	FullDays                 float64
+	CurrentDays         float64
+	CurrentIllumination float64
+	CurrentPhase        string
+	CurrentPhaseEmoji   string
+
+	BeginDays            float64
+	BeginDayIllumination float64
+	BeginDayPhase        string
+	BeginDayPhaseEmoji   string
+
+	Zodiac string
+
+	FullDaysBegin   float64
+	FullDaysCurrent float64
+	FullDaysEnd     float64
+
 	FullIlluminationCurrent  float64
 	FullIlluminationBeginDay float64
 	FullIlluminationEndDay   float64
@@ -39,11 +45,16 @@ func (s *Server) getCurrentMoonPhaseV1(c *fiber.Ctx) error {
 	resp := MoonPhaseResponse{}
 	tGiven := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), time.Now().Hour(), time.Now().Minute(), time.Now().Second(), 0, loc)
 
-	var duration time.Duration
-	duration, resp.Zodiac = moon.CurrentMoonDays(tGiven)
-	resp.FullDays = duration.Minutes()
-	resp.FullDays = resp.FullDays / 60 / 24
-	resp.Days = toFixed(resp.FullDays, 2)
+	var beginDuration, currentDuration, endDuration time.Duration
+	beginDuration, currentDuration, endDuration, resp.Zodiac = moon.CurrentMoonDays(tGiven, loc)
+
+	resp.FullDaysBegin = beginDuration.Minutes() / moon.Fminute
+	resp.FullDaysCurrent = currentDuration.Minutes() / moon.Fminute
+	resp.FullDaysEnd = endDuration.Minutes() / moon.Fminute
+
+	resp.BeginDays = toFixed(resp.FullDaysBegin, 2)
+	resp.CurrentDays = toFixed(resp.FullDaysCurrent, 2)
+	resp.EndDays = toFixed(resp.FullDaysEnd, 2)
 
 	resp.FullIlluminationCurrent, resp.FullIlluminationBeginDay, resp.FullIlluminationEndDay, resp.CurrentPhase, resp.CurrentPhaseEmoji, resp.BeginDayPhase, resp.BeginDayPhaseEmoji, resp.EndDayPhase, resp.EndDayPhaseEmoji = moon.CurrentMoonPhase(tGiven, loc)
 	resp.CurrentIllumination = toFixed(resp.FullIlluminationCurrent*100, 2)

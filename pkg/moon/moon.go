@@ -35,10 +35,20 @@ func CalcMoonNumber(yearGiven int) int {
 	return d
 }
 
-func CurrentMoonDays(tGiven time.Time) (time.Duration, string) {
+func CurrentMoonDays(tGiven time.Time, loc *time.Location) (time.Duration, time.Duration, time.Duration, string) {
+	if loc == nil {
+		loc = time.UTC
+	}
+
+	dayBeginTime := time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day(), 0, 0, 0, 0, loc)
+	dayEndTime := time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day()+1, 0, 0, 0, 0, loc)
+
 	moonTable := CreateMoonTable(tGiven)
-	moonDays := GetMoonDays(tGiven, moonTable)
-	return moonDays, "not working"
+	beginMoonDays := GetMoonDays(dayBeginTime, moonTable)
+	currentMoonDays := GetMoonDays(tGiven, moonTable)
+	endMoonDays := GetMoonDays(dayEndTime, moonTable)
+
+	return beginMoonDays, currentMoonDays, endMoonDays, "not working"
 }
 
 type illumFunc func(tGiven time.Time, loc *time.Location) float64
@@ -81,10 +91,8 @@ func Gen(tGiven time.Time) ([]*MoonTableElement, time.Duration, float64, string)
 }
 
 func getZodiacSign(position int) string {
-	signs := []string{
-		"Aries", "Taurus", "Gemini", "Cancer",
-		"Leo", "Virgo", "Libra", "Scorpio",
-		"Sagittarius", "Capricorn", "Aquarius", "Pisces",
+	if position >= 0 && position < len(signs) {
+		return signs[position]
 	}
-	return signs[position]
+	return ""
 }

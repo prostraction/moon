@@ -28,9 +28,9 @@ func ToJulianDate(t time.Time) float64 {
 	F := 30.6001 * (float64(m) + 1)
 	JD := C + float64(float64(t.Day())) + E + F - 1524.5
 
-	JD += float64(t.Hour()) / 24
-	JD += float64(t.Minute()) / (24 * 60)
-	JD += float64(t.Second()) / (24 * 60 * 60)
+	JD += float64(t.Hour()) / Fhour
+	JD += float64(t.Minute()) / Fminute
+	JD += float64(t.Second()) / Fseconds
 
 	return JD
 }
@@ -241,7 +241,7 @@ func GetTimeFromLocation(loc *time.Location) (hours int, minutes int, err error)
 
 // JYMD - Convert Julian time to year, months, and days
 func jyear(td float64) (int, int, int) {
-	td += 0.5
+	td += 0.5 // Astronomical to civil
 	z := math.Floor(td)
 	f := td - z
 
