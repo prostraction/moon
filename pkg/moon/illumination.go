@@ -1,7 +1,6 @@
 package moon
 
 import (
-	"log"
 	"math"
 	"time"
 )
@@ -15,7 +14,6 @@ func GetDailyMoonIllumination(tGiven time.Time, loc *time.Location) float64 {
 	if err == nil {
 		dailyTime = dailyTime.Add(time.Hour*time.Duration(h) + time.Minute*time.Duration(m))
 	}
-	log.Println(dailyTime)
 	return getIlluminatedFractionOfMoon(ToJulianDate(dailyTime) - 0.5)
 }
 

@@ -1,7 +1,6 @@
 package moon
 
 import (
-	"log"
 	"time"
 )
 
@@ -28,7 +27,7 @@ type illumFunc func(tGiven time.Time, loc *time.Location) float64
 func CurrentMoonPhase(tGiven time.Time, loc *time.Location) (float64, float64, float64, string, string, string, string, string, string) {
 	currentMoonIllumination, currentMoonIlluminationBefore, currentMoonIlluminationAfter := currentMoonPhaseCalc(tGiven, loc, GetCurrentMoonIllumination)
 	dayBeginMoonIllumination, dayBeginMoonIlluminationBefore, dayBeginMoonIlluminationAfter := currentMoonPhaseCalc(tGiven, loc, GetDailyMoonIllumination)
-	dayEndMoonIllumination, dayEndMoonIlluminationBefore, dayEndMoonIlluminationAfter := currentMoonPhaseCalc(tGiven.Local().AddDate(0, 0, 1), loc, GetDailyMoonIllumination)
+	dayEndMoonIllumination, dayEndMoonIlluminationBefore, dayEndMoonIlluminationAfter := currentMoonPhaseCalc(tGiven.AddDate(0, 0, 1), loc, GetDailyMoonIllumination)
 
 	moonPhaseCurrent, moonPhaseEmojiCurrent := GetMoonPhase(currentMoonIlluminationBefore, currentMoonIllumination, currentMoonIlluminationAfter)
 	moonPhaseDayBegin, moonPhaseEmojiDayBegin := GetMoonPhase(dayBeginMoonIlluminationBefore, dayBeginMoonIllumination, dayBeginMoonIlluminationAfter)
@@ -38,23 +37,17 @@ func CurrentMoonPhase(tGiven time.Time, loc *time.Location) (float64, float64, f
 }
 
 func currentMoonPhaseCalc(tGiven time.Time, loc *time.Location, calcF illumFunc) (float64, float64, float64) {
-
 	moonIllumination := calcF(tGiven, loc)
-	log.Println(tGiven, moonIllumination)
-
-	moonIlluminationBefore := calcF(tGiven.Local().AddDate(0, 0, -1), loc)
-	log.Println(tGiven.Local().AddDate(0, 0, -1), moonIlluminationBefore)
-
-	moonIlluminationAfter := calcF(tGiven.Local().AddDate(0, 0, 1), loc)
-	log.Println(tGiven.Local().AddDate(0, 0, 1), moonIlluminationAfter)
+	moonIlluminationBefore := calcF(tGiven.AddDate(0, 0, -1), loc)
+	moonIlluminationAfter := calcF(tGiven.AddDate(0, 0, 1), loc)
 
 	// in rare UTC-12 case they are equal
 	if moonIllumination == moonIlluminationBefore {
-		moonIlluminationBefore = calcF(tGiven.Local().AddDate(0, 0, -1), loc)
+		moonIlluminationBefore = calcF(tGiven.AddDate(0, 0, -2), loc)
 	}
 	// just in case
 	if moonIllumination == moonIlluminationAfter {
-		moonIlluminationAfter = calcF(tGiven.Local().AddDate(0, 0, 1), loc)
+		moonIlluminationAfter = calcF(tGiven.AddDate(0, 0, 2), loc)
 	}
 
 	return moonIllumination, moonIlluminationBefore, moonIlluminationAfter

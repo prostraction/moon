@@ -9,37 +9,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type MoonTable struct {
-	Table []*moon.MoonTableElement
-}
-
-type MoonStat struct {
-	Days         float64
-	Illumination float64
-	Phase        string
-	PhaseEmoji   string
-}
-
-type FullInfo struct {
-	DaysEnd     float64
-	DaysCurrent float64
-	DaysBegin   float64
-
-	IlluminationEndDay   float64
-	IlluminationCurrent  float64
-	IlluminationBeginDay float64
-}
-
-type MoonPhaseResponse struct {
-	EndDay     *MoonStat
-	CurrentDay *MoonStat
-	BeginDay   *MoonStat
-
-	Zodiac string
-
-	Info *FullInfo
-}
-
 /*    MOON PHASE    */
 
 func (s *Server) moonPhaseCurrentV1(c *fiber.Ctx) error {
@@ -100,22 +69,22 @@ func (s *Server) moonPhaseV1(c *fiber.Ctx, tGiven time.Time) error {
 	beginDuration, currentDuration, endDuration, resp.Zodiac = s.moonCache.CurrentMoonDays(tGiven, loc)
 
 	resp.EndDay = new(MoonStat)
-	resp.CurrentDay = new(MoonStat)
+	resp.CurrentState = new(MoonStat)
 	resp.BeginDay = new(MoonStat)
 	resp.Info = new(FullInfo)
 
-	resp.Info.DaysBegin = beginDuration.Minutes() / moon.Fminute
-	resp.Info.DaysCurrent = currentDuration.Minutes() / moon.Fminute
-	resp.Info.DaysEnd = endDuration.Minutes() / moon.Fminute
+	resp.Info.MoonDaysBegin = beginDuration.Minutes() / moon.Fminute
+	resp.Info.MoonDaysCurrent = currentDuration.Minutes() / moon.Fminute
+	resp.Info.MoonDaysEnd = endDuration.Minutes() / moon.Fminute
 
-	resp.BeginDay.Days = toFixed(resp.Info.DaysBegin, 2)
-	resp.CurrentDay.Days = toFixed(resp.Info.DaysCurrent, 2)
-	resp.EndDay.Days = toFixed(resp.Info.DaysEnd, 2)
+	resp.BeginDay.MoonDays = toFixed(resp.Info.MoonDaysBegin, 2)
+	resp.CurrentState.MoonDays = toFixed(resp.Info.MoonDaysCurrent, 2)
+	resp.EndDay.MoonDays = toFixed(resp.Info.MoonDaysEnd, 2)
 
 	resp.Info.IlluminationCurrent, resp.Info.IlluminationBeginDay, resp.Info.IlluminationEndDay, resp.CurrentDay.Phase, resp.CurrentDay.PhaseEmoji, resp.BeginDay.Phase, resp.BeginDay.PhaseEmoji, resp.EndDay.Phase, resp.EndDay.PhaseEmoji = moon.CurrentMoonPhase(tGiven, loc)
 
 	resp.BeginDay.Illumination = toFixed(resp.Info.IlluminationBeginDay*100, 2)
-	resp.CurrentDay.Illumination = toFixed(resp.Info.IlluminationCurrent*100, 2)
+	resp.CurrentState.Illumination = toFixed(resp.Info.IlluminationCurrent*100, 2)
 	resp.EndDay.Illumination = toFixed(resp.Info.IlluminationEndDay*100, 2)
 
 	return c.JSON(resp)
