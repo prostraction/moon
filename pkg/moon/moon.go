@@ -1,6 +1,7 @@
 package moon
 
 import (
+	"log"
 	"time"
 )
 
@@ -37,17 +38,23 @@ func CurrentMoonPhase(tGiven time.Time, loc *time.Location) (float64, float64, f
 }
 
 func currentMoonPhaseCalc(tGiven time.Time, loc *time.Location, calcF illumFunc) (float64, float64, float64) {
+
 	moonIllumination := calcF(tGiven, loc)
+	log.Println(tGiven, moonIllumination)
+
 	moonIlluminationBefore := calcF(tGiven.Local().AddDate(0, 0, -1), loc)
+	log.Println(tGiven.Local().AddDate(0, 0, -1), moonIlluminationBefore)
+
 	moonIlluminationAfter := calcF(tGiven.Local().AddDate(0, 0, 1), loc)
+	log.Println(tGiven.Local().AddDate(0, 0, 1), moonIlluminationAfter)
 
 	// in rare UTC-12 case they are equal
 	if moonIllumination == moonIlluminationBefore {
-		moonIlluminationBefore = calcF(tGiven.Local().AddDate(0, 0, -2), loc)
+		moonIlluminationBefore = calcF(tGiven.Local().AddDate(0, 0, -1), loc)
 	}
 	// just in case
 	if moonIllumination == moonIlluminationAfter {
-		moonIlluminationAfter = calcF(tGiven.Local().AddDate(0, 0, 2), loc)
+		moonIlluminationAfter = calcF(tGiven.Local().AddDate(0, 0, 1), loc)
 	}
 
 	return moonIllumination, moonIlluminationBefore, moonIlluminationAfter

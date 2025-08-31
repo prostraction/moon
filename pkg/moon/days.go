@@ -68,18 +68,18 @@ func (c *Cache) CreateMoonTable(timeGiven time.Time) []*MoonTableElement {
 			firstQuarterTime += 0.001
 			firstQuarterIllum = GetCurrentMoonIllumination(FromJulianDate(firstQuarterTime, timeGiven.Location()), timeGiven.Location())
 		}
-		elem.TFirstQuarter = FromJulianDate(firstQuarterTime, timeGiven.Location())
+		elem.FirstQuarter = FromJulianDate(firstQuarterTime, timeGiven.Location())
 
 		lastQuarterTime := mp
 		lastQuarterIllum := 1.
-		for lastQuarterIllum > 0.5 {
+		for lastQuarterIllum > 0.5000 {
 			lastQuarterTime += 0.001
 			lastQuarterIllum = GetCurrentMoonIllumination(FromJulianDate(lastQuarterTime, timeGiven.Location()), timeGiven.Location())
 		}
-		elem.TLastQuarter = FromJulianDate(lastQuarterTime, timeGiven.Location())
+		elem.LastQuarter = FromJulianDate(lastQuarterTime, timeGiven.Location())
 
-		elem.TNew = FromJulianDate(lastnew, timeGiven.Location())
-		elem.TFull = FromJulianDate(mp, timeGiven.Location())
+		elem.NewMoon = FromJulianDate(lastnew, timeGiven.Location())
+		elem.FullMoon = FromJulianDate(mp, timeGiven.Location())
 
 		if elem.t1 != elem.t2 {
 			moonTable = append(moonTable, elem)
@@ -100,8 +100,8 @@ func GetMoonDays(tGiven time.Time, table []*MoonTableElement) time.Duration {
 		elem := table[i]
 
 		if elem.t1 != elem.t2 {
-			if tGiven.After(elem.TNew) /*&& tGiven.Before(elem.TFull)*/ {
-				moonDays = tGiven.Sub(elem.TNew)
+			if tGiven.After(elem.NewMoon) /*&& tGiven.Before(elem.TFull)*/ {
+				moonDays = tGiven.Sub(elem.NewMoon)
 			}
 		}
 	}

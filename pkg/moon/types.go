@@ -6,12 +6,12 @@ import (
 )
 
 type MoonTableElement struct {
-	TNew          time.Time
-	TFirstQuarter time.Time
-	TFull         time.Time
-	TLastQuarter  time.Time
-	t1            float64
-	t2            float64
+	NewMoon      time.Time
+	FirstQuarter time.Time
+	FullMoon     time.Time
+	LastQuarter  time.Time
+	t1           float64
+	t2           float64
 }
 
 type Cache struct {

@@ -13,31 +13,31 @@ type MoonTable struct {
 	Table []*moon.MoonTableElement
 }
 
+type MoonStat struct {
+	Days         float64
+	Illumination float64
+	Phase        string
+	PhaseEmoji   string
+}
+
+type FullInfo struct {
+	DaysEnd     float64
+	DaysCurrent float64
+	DaysBegin   float64
+
+	IlluminationEndDay   float64
+	IlluminationCurrent  float64
+	IlluminationBeginDay float64
+}
+
 type MoonPhaseResponse struct {
-	EndDays            float64
-	EndDayIllumination float64
-	EndDayPhase        string
-	EndDayPhaseEmoji   string
-
-	CurrentDays         float64
-	CurrentIllumination float64
-	CurrentPhase        string
-	CurrentPhaseEmoji   string
-
-	BeginDays            float64
-	BeginDayIllumination float64
-	BeginDayPhase        string
-	BeginDayPhaseEmoji   string
+	EndDay     *MoonStat
+	CurrentDay *MoonStat
+	BeginDay   *MoonStat
 
 	Zodiac string
 
-	FullDaysBegin   float64
-	FullDaysCurrent float64
-	FullDaysEnd     float64
-
-	FullIlluminationCurrent  float64
-	FullIlluminationBeginDay float64
-	FullIlluminationEndDay   float64
+	Info *FullInfo
 }
 
 /*    MOON PHASE    */
@@ -99,18 +99,24 @@ func (s *Server) moonPhaseV1(c *fiber.Ctx, tGiven time.Time) error {
 	var beginDuration, currentDuration, endDuration time.Duration
 	beginDuration, currentDuration, endDuration, resp.Zodiac = s.moonCache.CurrentMoonDays(tGiven, loc)
 
-	resp.FullDaysBegin = beginDuration.Minutes() / moon.Fminute
-	resp.FullDaysCurrent = currentDuration.Minutes() / moon.Fminute
-	resp.FullDaysEnd = endDuration.Minutes() / moon.Fminute
+	resp.EndDay = new(MoonStat)
+	resp.CurrentDay = new(MoonStat)
+	resp.BeginDay = new(MoonStat)
+	resp.Info = new(FullInfo)
 
-	resp.BeginDays = toFixed(resp.FullDaysBegin, 2)
-	resp.CurrentDays = toFixed(resp.FullDaysCurrent, 2)
-	resp.EndDays = toFixed(resp.FullDaysEnd, 2)
+	resp.Info.DaysBegin = beginDuration.Minutes() / moon.Fminute
+	resp.Info.DaysCurrent = currentDuration.Minutes() / moon.Fminute
+	resp.Info.DaysEnd = endDuration.Minutes() / moon.Fminute
 
-	resp.FullIlluminationCurrent, resp.FullIlluminationBeginDay, resp.FullIlluminationEndDay, resp.CurrentPhase, resp.CurrentPhaseEmoji, resp.BeginDayPhase, resp.BeginDayPhaseEmoji, resp.EndDayPhase, resp.EndDayPhaseEmoji = moon.CurrentMoonPhase(tGiven, loc)
-	resp.CurrentIllumination = toFixed(resp.FullIlluminationCurrent*100, 2)
-	resp.BeginDayIllumination = toFixed(resp.FullIlluminationBeginDay*100, 2)
-	resp.EndDayIllumination = toFixed(resp.FullIlluminationEndDay*100, 2)
+	resp.BeginDay.Days = toFixed(resp.Info.DaysBegin, 2)
+	resp.CurrentDay.Days = toFixed(resp.Info.DaysCurrent, 2)
+	resp.EndDay.Days = toFixed(resp.Info.DaysEnd, 2)
+
+	resp.Info.IlluminationCurrent, resp.Info.IlluminationBeginDay, resp.Info.IlluminationEndDay, resp.CurrentDay.Phase, resp.CurrentDay.PhaseEmoji, resp.BeginDay.Phase, resp.BeginDay.PhaseEmoji, resp.EndDay.Phase, resp.EndDay.PhaseEmoji = moon.CurrentMoonPhase(tGiven, loc)
+
+	resp.BeginDay.Illumination = toFixed(resp.Info.IlluminationBeginDay*100, 2)
+	resp.CurrentDay.Illumination = toFixed(resp.Info.IlluminationCurrent*100, 2)
+	resp.EndDay.Illumination = toFixed(resp.Info.IlluminationEndDay*100, 2)
 
 	return c.JSON(resp)
 }
