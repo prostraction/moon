@@ -5,17 +5,6 @@ import (
 	"time"
 )
 
-type MoonTableElement struct {
-	TNew  time.Time
-	TFull time.Time
-	t1    float64
-	t2    float64
-}
-
-type Cache struct {
-	tables map[string][]*MoonTableElement
-}
-
 func (c *Cache) CreateMoonTable(timeGiven time.Time) []*MoonTableElement {
 	t := time.Date(timeGiven.Year(), 0, 0, 0, 0, 0, 0, timeGiven.Location())
 	if c.tables != nil && c.tables[t.String()] != nil {
@@ -72,6 +61,22 @@ func (c *Cache) CreateMoonTable(timeGiven time.Time) []*MoonTableElement {
 
 		elem.t1 = mp
 		elem.t2 = lastnew
+
+		firstQuarterTime := lastnew
+		firstQuarterIllum := 0.
+		for firstQuarterIllum < 0.5 {
+			firstQuarterTime += 0.001
+			firstQuarterIllum = GetCurrentMoonIllumination(FromJulianDate(firstQuarterTime, timeGiven.Location()), timeGiven.Location())
+		}
+		elem.TFirstQuarter = FromJulianDate(firstQuarterTime, timeGiven.Location())
+
+		lastQuarterTime := mp
+		lastQuarterIllum := 1.
+		for lastQuarterIllum > 0.5 {
+			lastQuarterTime += 0.001
+			lastQuarterIllum = GetCurrentMoonIllumination(FromJulianDate(lastQuarterTime, timeGiven.Location()), timeGiven.Location())
+		}
+		elem.TLastQuarter = FromJulianDate(lastQuarterTime, timeGiven.Location())
 
 		elem.TNew = FromJulianDate(lastnew, timeGiven.Location())
 		elem.TFull = FromJulianDate(mp, timeGiven.Location())
