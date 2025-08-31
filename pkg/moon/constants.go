@@ -1,6 +1,9 @@
 package moon
 
-import "time"
+import (
+	"math"
+	"time"
+)
 
 var months = []time.Month{time.January, time.February, time.March, time.April, time.May, time.June, time.July, time.August, time.September, time.October, time.November, time.December}
 
@@ -13,6 +16,10 @@ var signs = []string{
 	"Taurus", "Gemini", "Cancer", "Leo",
 }
 
-var Fhour = 24.
-var Fminute = 24. * 60.
-var Fseconds = 24. * 60. * 60.
+const Fhour = 24.
+const Fminute = 24. * 60.
+const Fseconds = 24. * 60. * 60.
+
+const toRad = math.Pi / 180.
+
+var tables map[time.Time][]*MoonTableElement

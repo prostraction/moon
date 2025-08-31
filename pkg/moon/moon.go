@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-func CurrentMoonDays(tGiven time.Time, loc *time.Location) (time.Duration, time.Duration, time.Duration, string) {
+func (c *Cache) CurrentMoonDays(tGiven time.Time, loc *time.Location) (time.Duration, time.Duration, time.Duration, string) {
 	if loc == nil {
 		loc = time.UTC
 	}
@@ -12,7 +12,7 @@ func CurrentMoonDays(tGiven time.Time, loc *time.Location) (time.Duration, time.
 	dayBeginTime := time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day(), 0, 0, 0, 0, loc)
 	dayEndTime := time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day()+1, 0, 0, 0, 0, loc)
 
-	moonTable := CreateMoonTable(tGiven)
+	moonTable := c.CreateMoonTable(tGiven)
 	beginMoonDays := GetMoonDays(dayBeginTime, moonTable)
 	currentMoonDays := GetMoonDays(tGiven, moonTable)
 	endMoonDays := GetMoonDays(dayEndTime, moonTable)
@@ -53,13 +53,13 @@ func currentMoonPhaseCalc(tGiven time.Time, loc *time.Location, calcF illumFunc)
 	return moonIllumination, moonIlluminationBefore, moonIlluminationAfter
 }
 
-func GenerateMoonTable(tGiven time.Time) []*MoonTableElement {
+func (c *Cache) GenerateMoonTable(tGiven time.Time) []*MoonTableElement {
 	/*moonTable := CreateMoonTable(tGiven)
 	moonDays := GetMoonDays(tGiven, moonTable)
 	moonIllumination := GetDailyMoonIllumination(tGiven, nil)
 
 	zodiacPosition := int((moonDays.Minutes()/Fminute*360)/30) / 30 % 12*/
-	return CreateMoonTable(tGiven) //, moonDays, moonIllumination, getZodiacSign(zodiacPosition)
+	return c.CreateMoonTable(tGiven) //, moonDays, moonIllumination, getZodiacSign(zodiacPosition)
 }
 
 func getZodiacSign(position int) string {

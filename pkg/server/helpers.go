@@ -1,6 +1,9 @@
 package server
 
-import "math"
+import (
+	"math"
+	"strconv"
+)
 
 func round(num float64) int {
 	return int(num + math.Copysign(0.5, num))
@@ -9,4 +12,15 @@ func round(num float64) int {
 func toFixed(num float64, precision int) float64 {
 	output := math.Pow(10, float64(precision))
 	return float64(round(num*output)) / output
+}
+
+func strToInt(val string, fallback int, limit int) int {
+	v, err := strconv.Atoi(val)
+	if err != nil {
+		v = fallback
+	}
+	if limit != 0 && v > limit {
+		v = limit
+	}
+	return v
 }

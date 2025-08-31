@@ -39,7 +39,7 @@ func FromJulianDate(j float64, loc *time.Location) time.Time {
 	datey, datem, dated := jyear(j)
 	timeh, timem, times := jhms(j)
 
-	t := time.Date(datey, getMonth(datem), dated, timeh, timem, times, 0, time.UTC)
+	t := time.Date(datey, GetMonth(datem), dated, timeh, timem, times, 0, time.UTC)
 	t = t.In(loc)
 	return t
 }
@@ -287,7 +287,7 @@ func jhms(j float64) (int, int, int) {
 	return int(hours), int(math.Mod(minutes, 60)), int(math.Mod(seconds, 60))
 }
 
-func getMonth(datem int) time.Month {
+func GetMonth(datem int) time.Month {
 	datem = min(max(datem-1, 0), 11)
 	return months[datem]
 }

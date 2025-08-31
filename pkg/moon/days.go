@@ -12,7 +12,15 @@ type MoonTableElement struct {
 	t2    float64
 }
 
-func CreateMoonTable(timeGiven time.Time) []*MoonTableElement {
+type Cache struct {
+	tables map[string][]*MoonTableElement
+}
+
+func (c *Cache) CreateMoonTable(timeGiven time.Time) []*MoonTableElement {
+	t := time.Date(timeGiven.Year(), 0, 0, 0, 0, 0, 0, timeGiven.Location())
+	if c.tables != nil && c.tables[t.String()] != nil {
+		return c.tables[t.String()]
+	}
 	moonTable := []*MoonTableElement{}
 
 	var l int
@@ -72,7 +80,12 @@ func CreateMoonTable(timeGiven time.Time) []*MoonTableElement {
 			moonTable = append(moonTable, elem)
 		}
 	}
-
+	if c.tables == nil {
+		c.tables = make(map[string][]*MoonTableElement)
+	}
+	if c.tables[t.String()] == nil {
+		c.tables[t.String()] = moonTable
+	}
 	return moonTable
 }
 
@@ -80,8 +93,9 @@ func GetMoonDays(tGiven time.Time, table []*MoonTableElement) time.Duration {
 	var moonDays time.Duration
 	for i := range table {
 		elem := table[i]
+
 		if elem.t1 != elem.t2 {
-			if tGiven.After(elem.TNew) && tGiven.Before(elem.TFull) {
+			if tGiven.After(elem.TNew) /*&& tGiven.Before(elem.TFull)*/ {
 				moonDays = tGiven.Sub(elem.TNew)
 			}
 		}

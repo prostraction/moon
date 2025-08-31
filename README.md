@@ -13,7 +13,7 @@ go run cmd/main.go
 
 ## Methods
 
-### GET /v1/getCurrentMoonPhase
+### GET /v1/moonPhaseCurrent
 
 Params:
 - utc: string in format `UTC+7`, `UTC+09:30`, `-3`
@@ -50,7 +50,7 @@ Response:
 ```
 
 
-### GET /v1/getCurrentMoonTable
+### GET /v1/moonTableCurrent
 
 Params:
 - utc: string in format `UTC+7`, `UTC+09:30`, `-3`
