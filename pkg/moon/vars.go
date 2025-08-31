@@ -5,19 +5,6 @@ import (
 	"time"
 )
 
-type MoonTableElement struct {
-	NewMoon      time.Time
-	FirstQuarter time.Time
-	FullMoon     time.Time
-	LastQuarter  time.Time
-	t1           float64
-	t2           float64
-}
-
-type Cache struct {
-	tables map[string][]*MoonTableElement
-}
-
 var months = []time.Month{time.January, time.February, time.March, time.April, time.May, time.June, time.July, time.August, time.September, time.October, time.November, time.December}
 
 var phases = []string{"Waxing Crescent", "First quarter", "Waxing Gibbous", "Full Moon", "Waning Gibbous", "Third quarter", "Waning Crescent", "New Moon"}
@@ -28,6 +15,8 @@ var signs = []string{
 	"Capricorn", "Aquarius", "Pisces", "Aries",
 	"Taurus", "Gemini", "Cancer", "Leo",
 }
+
+var signsEmoji = []string{"♍", "♎", "♏", "♐", "♑", "♒", "♓", "♈", "♉", "♊", "♋", "♌"}
 
 const Fhour = 24.
 const Fminute = 24. * 60.

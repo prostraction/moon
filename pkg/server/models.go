@@ -12,8 +12,8 @@ type MoonTable struct {
 type MoonStat struct {
 	MoonDays     float64
 	Illumination float64
-	Phase        string
-	PhaseEmoji   string
+	Phase        moon.PhaseResp
+	Zodiac       moon.Zodiac
 }
 
 type FullInfo struct {
@@ -42,7 +42,7 @@ type MoonPhaseResponse struct {
 	BeginDay         *MoonStat
 	MoonDaysDetailed *MoonDays
 
-	Zodiac string
+	ZodiacDetailed *moon.Zodiacs
 
-	Info *FullInfo
+	info *FullInfo
 }
