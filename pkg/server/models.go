@@ -44,5 +44,5 @@ type MoonPhaseResponse struct {
 
 	ZodiacDetailed *moon.Zodiacs
 
-	info *FullInfo
+	Info *FullInfo
 }

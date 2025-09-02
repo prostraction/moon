@@ -68,24 +68,24 @@ func (s *Server) moonPhaseV1(c *fiber.Ctx, tGiven time.Time) error {
 	resp.EndDay = new(MoonStat)
 	resp.CurrentState = new(MoonStat)
 	resp.BeginDay = new(MoonStat)
-	resp.info = new(FullInfo)
+	resp.Info = new(FullInfo)
 
 	var beginDuration, currentDuration, endDuration time.Duration
 	beginDuration, currentDuration, endDuration = s.moonCache.CurrentMoonDays(tGiven, loc)
 
-	resp.info.MoonDaysBegin = beginDuration.Minutes() / moon.Fminute
-	resp.info.MoonDaysCurrent = currentDuration.Minutes() / moon.Fminute
-	resp.info.MoonDaysEnd = endDuration.Minutes() / moon.Fminute
+	resp.Info.MoonDaysBegin = beginDuration.Minutes() / moon.Fminute
+	resp.Info.MoonDaysCurrent = currentDuration.Minutes() / moon.Fminute
+	resp.Info.MoonDaysEnd = endDuration.Minutes() / moon.Fminute
 
-	resp.BeginDay.MoonDays = toFixed(resp.info.MoonDaysBegin, 2)
-	resp.CurrentState.MoonDays = toFixed(resp.info.MoonDaysCurrent, 2)
-	resp.EndDay.MoonDays = toFixed(resp.info.MoonDaysEnd, 2)
+	resp.BeginDay.MoonDays = toFixed(resp.Info.MoonDaysBegin, 2)
+	resp.CurrentState.MoonDays = toFixed(resp.Info.MoonDaysCurrent, 2)
+	resp.EndDay.MoonDays = toFixed(resp.Info.MoonDaysEnd, 2)
 
-	resp.info.IlluminationCurrent, resp.info.IlluminationBeginDay, resp.info.IlluminationEndDay, resp.CurrentState.Phase, resp.BeginDay.Phase, resp.EndDay.Phase = moon.CurrentMoonPhase(tGiven, loc)
+	resp.Info.IlluminationCurrent, resp.Info.IlluminationBeginDay, resp.Info.IlluminationEndDay, resp.CurrentState.Phase, resp.BeginDay.Phase, resp.EndDay.Phase = moon.CurrentMoonPhase(tGiven, loc)
 
-	resp.BeginDay.Illumination = toFixed(resp.info.IlluminationBeginDay*100, 2)
-	resp.CurrentState.Illumination = toFixed(resp.info.IlluminationCurrent*100, 2)
-	resp.EndDay.Illumination = toFixed(resp.info.IlluminationEndDay*100, 2)
+	resp.BeginDay.Illumination = toFixed(resp.Info.IlluminationBeginDay*100, 2)
+	resp.CurrentState.Illumination = toFixed(resp.Info.IlluminationCurrent*100, 2)
+	resp.EndDay.Illumination = toFixed(resp.Info.IlluminationEndDay*100, 2)
 
 	resp.ZodiacDetailed, resp.BeginDay.Zodiac, resp.CurrentState.Zodiac, resp.EndDay.Zodiac = s.moonCache.CurrentZodiacs(tGiven, loc)
 

@@ -28,11 +28,18 @@ func ToJulianDate(t time.Time) float64 {
 	F := 30.6001 * (float64(m) + 1)
 	JD := C + float64(float64(t.Day())) + E + F - 1524.5
 
-	JD += float64(t.Hour()) / Fhour
-	JD += float64(t.Minute()) / Fminute
-	JD += float64(t.Second()) / Fseconds
+	val := float64(t.Hour())/Fhour + float64(t.Minute())/Fminute + float64(t.Second())/Fseconds
+	JD += val // / 2.
 
-	return JD
+	/*JD += float64(t.Hour()) / Fhour
+	JD += float64(t.Minute()) / Fminute
+	JD += float64(t.Second()) / Fseconds*/
+
+	/*log.Println("hour: ", float64(t.Hour()), float64(t.Hour())/Fhour)
+	log.Println("Minute: ", float64(t.Minute()), float64(t.Minute())/Fminute)
+	log.Println("Second: ", float64(t.Second()), float64(t.Second())/Fseconds)*/
+
+	return JD - 0.5
 }
 
 func FromJulianDate(j float64, loc *time.Location) time.Time {
