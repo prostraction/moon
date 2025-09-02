@@ -84,6 +84,10 @@ func (c *Cache) CreateMoonTable(timeGiven time.Time) []*MoonTableElement {
 		if elem.t1 != elem.t2 {
 			moonTable = append(moonTable, elem)
 		}
+
+		if elem.LastQuarter.Year() > timeGiven.Year() {
+			break
+		}
 	}
 	if c.tables == nil {
 		c.tables = make(map[string][]*MoonTableElement)

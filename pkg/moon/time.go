@@ -29,15 +29,7 @@ func ToJulianDate(t time.Time) float64 {
 	JD := C + float64(float64(t.Day())) + E + F - 1524.5
 
 	val := float64(t.Hour())/Fhour + float64(t.Minute())/Fminute + float64(t.Second())/Fseconds
-	JD += val // / 2.
-
-	/*JD += float64(t.Hour()) / Fhour
-	JD += float64(t.Minute()) / Fminute
-	JD += float64(t.Second()) / Fseconds*/
-
-	/*log.Println("hour: ", float64(t.Hour()), float64(t.Hour())/Fhour)
-	log.Println("Minute: ", float64(t.Minute()), float64(t.Minute())/Fminute)
-	log.Println("Second: ", float64(t.Second()), float64(t.Second())/Fseconds)*/
+	JD += val
 
 	return JD - 0.5
 }

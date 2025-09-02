@@ -1,38 +1,30 @@
 package moon
 
 import (
-	"log"
 	"math"
 	"time"
 )
 
 func GetDailyMoonIllumination(tGiven time.Time, loc *time.Location) float64 {
 	dailyTime := time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day(), 0, 0, 0, 0, time.UTC)
-	log.Println("!!!!!!! ++++++ ", dailyTime)
-	//log.Println("daily before: ", dailyTime)
 	h, m, err := GetTimeFromLocation(loc)
-	log.Println(h, m)
 	h = -h
 	m = -m
 
 	if err == nil {
 		dailyTime = dailyTime.Add(time.Hour*time.Duration(h) + time.Minute*time.Duration(m))
 	}
-	log.Println("!!!!!!! ------- ", dailyTime, time.Hour*time.Duration(h), time.Minute*time.Duration(m))
-	//log.Println("daily after: ", dailyTime)
 	return getIlluminatedFractionOfMoon(ToJulianDate(dailyTime))
 }
 
 func GetCurrentMoonIllumination(tGiven time.Time, loc *time.Location) float64 {
 	tGiven = time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day(), tGiven.Hour(), tGiven.Minute(), tGiven.Second(), 0, time.UTC)
-	//log.Println("given before: ", tGiven)
 	h, m, err := GetTimeFromLocation(loc)
 	h = -h
 	m = -m
 	if err == nil {
 		tGiven = tGiven.Add(time.Hour*time.Duration(h) + time.Minute*time.Duration(m))
 	}
-	//log.Println("given after: ", tGiven)
 	return getIlluminatedFractionOfMoon(ToJulianDate(tGiven))
 }
 

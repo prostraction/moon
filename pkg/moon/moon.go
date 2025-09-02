@@ -1,7 +1,6 @@
 package moon
 
 import (
-	"log"
 	"time"
 )
 
@@ -24,17 +23,9 @@ func (c *Cache) CurrentMoonDays(tGiven time.Time, loc *time.Location) (time.Dura
 type illumFunc func(tGiven time.Time, loc *time.Location) float64
 
 func CurrentMoonPhase(tGiven time.Time, loc *time.Location) (float64, float64, float64, PhaseResp, PhaseResp, PhaseResp) {
-	log.Println(tGiven)
-	log.Println(time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day(), tGiven.Hour(), tGiven.Minute(), tGiven.Second(), 0, time.UTC))
-	log.Println(time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day(), 0, 0, 0, 0, time.UTC))
-	log.Println(time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day()+1, 0, 0, 0, 0, time.UTC))
 	currentMoonIllumination, currentMoonIlluminationBefore, currentMoonIlluminationAfter := currentMoonPhaseCalc(tGiven, loc, GetCurrentMoonIllumination)
 	dayBeginMoonIllumination, dayBeginMoonIlluminationBefore, dayBeginMoonIlluminationAfter := currentMoonPhaseCalc(tGiven, loc, GetDailyMoonIllumination)
 	dayEndMoonIllumination, dayEndMoonIlluminationBefore, dayEndMoonIlluminationAfter := currentMoonPhaseCalc(tGiven.AddDate(0, 0, 1), loc, GetDailyMoonIllumination)
-
-	log.Println(currentMoonIllumination)
-	log.Println(dayBeginMoonIllumination)
-	log.Println(dayEndMoonIllumination)
 
 	moonPhaseCurrent := PhaseResp{}
 	moonPhaseBegin := PhaseResp{}
@@ -53,13 +44,13 @@ func currentMoonPhaseCalc(tGiven time.Time, loc *time.Location, calcF illumFunc)
 	moonIlluminationAfter := calcF(tGiven.AddDate(0, 0, 1), loc)
 
 	// in rare UTC-12 case they are equal
-	//if moonIllumination == moonIlluminationBefore {
-	//	moonIlluminationBefore = calcF(tGiven.AddDate(0, 0, -2), loc)
-	//}
+	if moonIllumination == moonIlluminationBefore {
+		moonIlluminationBefore = calcF(tGiven.AddDate(0, 0, -2), loc)
+	}
 	// just in case
-	//if moonIllumination == moonIlluminationAfter {
-	//		moonIlluminationAfter = calcF(tGiven.AddDate(0, 0, 2), loc)
-	//}
+	if moonIllumination == moonIlluminationAfter {
+		moonIlluminationAfter = calcF(tGiven.AddDate(0, 0, 2), loc)
+	}
 
 	return moonIllumination, moonIlluminationBefore, moonIlluminationAfter
 }
