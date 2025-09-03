@@ -34,5 +34,5 @@ type ZodiacDetailed struct {
 
 type Zodiacs struct {
 	Count  int
-	Zodiac *ZodiacDetailed
+	Zodiac []ZodiacDetailed
 }
