@@ -22,7 +22,7 @@ func (c *Cache) CurrentMoonDays(tGiven time.Time, loc *time.Location) (time.Dura
 
 type illumFunc func(tGiven time.Time, loc *time.Location) float64
 
-func CurrentMoonPhase(tGiven time.Time, loc *time.Location) (float64, float64, float64, PhaseResp, PhaseResp, PhaseResp) {
+func CurrentMoonPhase(tGiven time.Time, loc *time.Location, lang string) (float64, float64, float64, PhaseResp, PhaseResp, PhaseResp) {
 	currentMoonIllumination, currentMoonIlluminationBefore, currentMoonIlluminationAfter := currentMoonPhaseCalc(tGiven, loc, GetCurrentMoonIllumination)
 	dayBeginMoonIllumination, dayBeginMoonIlluminationBefore, dayBeginMoonIlluminationAfter := currentMoonPhaseCalc(tGiven, loc, GetDailyMoonIllumination)
 	dayEndMoonIllumination, dayEndMoonIlluminationBefore, dayEndMoonIlluminationAfter := currentMoonPhaseCalc(tGiven.AddDate(0, 0, 1), loc, GetDailyMoonIllumination)
@@ -31,9 +31,9 @@ func CurrentMoonPhase(tGiven time.Time, loc *time.Location) (float64, float64, f
 	moonPhaseBegin := PhaseResp{}
 	moonPhaseEnd := PhaseResp{}
 
-	moonPhaseCurrent.Name, moonPhaseCurrent.Emoji = GetMoonPhase(currentMoonIlluminationBefore, currentMoonIllumination, currentMoonIlluminationAfter)
-	moonPhaseBegin.Name, moonPhaseBegin.Emoji = GetMoonPhase(dayBeginMoonIlluminationBefore, dayBeginMoonIllumination, dayBeginMoonIlluminationAfter)
-	moonPhaseEnd.Name, moonPhaseEnd.Emoji = GetMoonPhase(dayEndMoonIlluminationBefore, dayEndMoonIllumination, dayEndMoonIlluminationAfter)
+	moonPhaseCurrent.Name, moonPhaseCurrent.Emoji = GetMoonPhase(currentMoonIlluminationBefore, currentMoonIllumination, currentMoonIlluminationAfter, lang)
+	moonPhaseBegin.Name, moonPhaseBegin.Emoji = GetMoonPhase(dayBeginMoonIlluminationBefore, dayBeginMoonIllumination, dayBeginMoonIlluminationAfter, lang)
+	moonPhaseEnd.Name, moonPhaseEnd.Emoji = GetMoonPhase(dayEndMoonIlluminationBefore, dayEndMoonIllumination, dayEndMoonIlluminationAfter, lang)
 
 	return currentMoonIllumination, dayBeginMoonIllumination, dayEndMoonIllumination, moonPhaseCurrent, moonPhaseBegin, moonPhaseEnd
 }

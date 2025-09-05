@@ -5,5 +5,5 @@ import "moon/pkg/server"
 func main() {
 	s := server.Server{}
 	app := s.NewRouter()
-	app.Listen(":9999")
+	app.Listen(":9998")
 }

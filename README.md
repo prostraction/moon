@@ -2,7 +2,7 @@
 
 ## Run
 
-Port by default: 3000
+Port by default: 9998
 
 ```
 git clone https://github.com/prostraction/moon

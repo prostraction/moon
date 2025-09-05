@@ -28,24 +28,44 @@ func GetCurrentMoonIllumination(tGiven time.Time, loc *time.Location) float64 {
 	return getIlluminatedFractionOfMoon(ToJulianDate(tGiven))
 }
 
-func GetMoonPhase(before, current, after float64) (string, string) {
+func GetMoonPhase(before, current, after float64, lang string) (string, string) {
 	switch {
 	case current > 0.05 && current < 0.45 && current < after:
-		return phases[0], phasesEmoji[0]
+		return getMoonPhasesLocaled(lang, 0)
 	case current >= 0.45 && current <= 0.55 && current < after:
-		return phases[1], phasesEmoji[1]
+		return getMoonPhasesLocaled(lang, 1)
 	case current > 0.55 && current < 0.95 && current > before:
-		return phases[2], phasesEmoji[2]
+		return getMoonPhasesLocaled(lang, 2)
 	case current >= 0.95:
-		return phases[3], phasesEmoji[3]
+		return getMoonPhasesLocaled(lang, 3)
 	case current < 0.95 && current > 0.55 && current < before:
-		return phases[4], phasesEmoji[4]
+		return getMoonPhasesLocaled(lang, 4)
 	case current <= 0.55 && current >= 0.45 && current < before:
-		return phases[5], phasesEmoji[5]
+		return getMoonPhasesLocaled(lang, 5)
 	case current < 0.45 && current > 0.05 && current < before:
-		return phases[6], phasesEmoji[6]
+		return getMoonPhasesLocaled(lang, 6)
 	case current <= 0.05:
-		return phases[7], phasesEmoji[7]
+		return getMoonPhasesLocaled(lang, 7)
+	}
+	return "", ""
+}
+
+func getMoonPhasesLocaled(lang string, position int) (string, string) {
+	switch lang {
+	case "en":
+		return phasesEn[position], phasesEmoji[position]
+	case "ru":
+		return phasesRu[position], phasesEmoji[position]
+	case "es":
+		return phasesEs[position], phasesEmoji[position]
+	case "de":
+		return phasesDe[position], phasesEmoji[position]
+	case "fr":
+		return phasesFr[position], phasesEmoji[position]
+	case "jp":
+		return phasesJp[position], phasesEmoji[position]
+	default:
+		return phasesEn[position], phasesEmoji[position]
 	}
 	return "", ""
 }

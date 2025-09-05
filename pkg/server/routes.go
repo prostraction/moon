@@ -58,6 +58,7 @@ func (s *Server) moonPhaseDatetV1(c *fiber.Ctx) error {
 }
 
 func (s *Server) moonPhaseV1(c *fiber.Ctx, tGiven time.Time) error {
+	lang := c.Query("lang", "en")
 	utc := c.Query("utc", "UTC:+0")
 	loc, err := moon.SetTimezoneLocFromString(utc)
 	if err != nil {
@@ -81,13 +82,13 @@ func (s *Server) moonPhaseV1(c *fiber.Ctx, tGiven time.Time) error {
 	resp.CurrentState.MoonDays = toFixed(resp.Info.MoonDaysCurrent, 2)
 	resp.EndDay.MoonDays = toFixed(resp.Info.MoonDaysEnd, 2)
 
-	resp.Info.IlluminationCurrent, resp.Info.IlluminationBeginDay, resp.Info.IlluminationEndDay, resp.CurrentState.Phase, resp.BeginDay.Phase, resp.EndDay.Phase = moon.CurrentMoonPhase(tGiven, loc)
+	resp.Info.IlluminationCurrent, resp.Info.IlluminationBeginDay, resp.Info.IlluminationEndDay, resp.CurrentState.Phase, resp.BeginDay.Phase, resp.EndDay.Phase = moon.CurrentMoonPhase(tGiven, loc, lang)
 
 	resp.BeginDay.Illumination = toFixed(resp.Info.IlluminationBeginDay*100, 2)
 	resp.CurrentState.Illumination = toFixed(resp.Info.IlluminationCurrent*100, 2)
 	resp.EndDay.Illumination = toFixed(resp.Info.IlluminationEndDay*100, 2)
 
-	resp.ZodiacDetailed, resp.BeginDay.Zodiac, resp.CurrentState.Zodiac, resp.EndDay.Zodiac = s.moonCache.CurrentZodiacs(tGiven, loc)
+	resp.ZodiacDetailed, resp.BeginDay.Zodiac, resp.CurrentState.Zodiac, resp.EndDay.Zodiac = s.moonCache.CurrentZodiacs(tGiven, loc, lang)
 
 	return c.JSON(resp)
 }
