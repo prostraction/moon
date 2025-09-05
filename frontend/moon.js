@@ -51,9 +51,9 @@ async function showMoonDay(date) {
         resultDiv.innerHTML = `
             <div class="moon-day">Лунный день: <span class="highlight">${moonDay}</span></div>
             <div class="moon-details">
-                <div class="detail-item"><span class="detail-label">Фаза:</span> <span class="detail-value">${phase.Emoji} ${phase.Name}</span></div>
-                <div class="detail-item"><span class="detail-label">Знак:</span> <span class="detail-value">${zodiac.Emoji} ${zodiac.Name}</span></div>
-                <div class="detail-item"><span class="detail-label">Освещение:</span> <span class="detail-value">${illumination}%</span></div>
+                <div class="detail-item"><span class="detail-label">Фаза луны:</span> <span class="detail-value">${phase.Emoji} ${phase.Name}</span></div>
+                <div class="detail-item"><span class="detail-label">Освещённость:</span> <span class="detail-value">${illumination}%</span></div>
+                <div class="detail-item"><span class="detail-label">Знак зодиака:</span> <span class="detail-value">${zodiac.Emoji} ${zodiac.Name}</span></div>
             </div>
         `;
     } catch (err) {

@@ -1,7 +1,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #0a0a2a, #333366);
+    background: linear-gradient(135deg, #0a0a2a, #23234d);
     color: #dad9ff;
     overflow-x: hidden;
     height: 100vh;
@@ -45,43 +45,50 @@ body {
     position: relative;
 }
 
-
-
 .controls-container {
     display: flex;
     gap: 10px;
     margin-bottom: 15px;
+    width: 100%;
+    max-width: 400px; /* такая же ширина, как у .result */
 }
 
-.btn { 
-    padding: 8px 16px; 
-    background: linear-gradient(165deg, #7373b9, #353555); 
-    color: #ffffcc; 
-    border: none; 
-    border-radius: 5px; 
+
+.btn {
+    flex: 1; /* кнопки занимают равные доли */
+    border: none;
+    outline: none;
+    padding: 10px; 
+    border-radius: 15px;
+    background: linear-gradient(15deg, #111129, #23234d); 
+    box-shadow: 0 4px 15px #00000080, 
+                inset 0 0 10px #23234d;
+    color: #dad9ff; 
     cursor: pointer;
-} 
-
-.btn:hover { background-color: #5555cc; }
-
-.result {
-    margin-top: 20px;
-    padding: 20px;
-    border-radius: 15px; /* Скруглённые углы */
-    background: linear-gradient(135deg, #0a0a2a, #333366);
-    border: 1px solid #5f5f97;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 
-                inset 0 0 10px rgba(255, 255, 255, 0.1); /* Внешняя и внутренняя тень */
-    color: #dad9ff; /* Светлый текст */
-    font-size: 16px;
+    font-size: 14px;
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Эффект при наведении */
-.result:hover {
+/* Эффект при наведении btn*/
+.btn:hover {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6),
                 inset 0 0 15px rgba(255, 255, 255, 0.15);
+}
+
+.result {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 15px;
+    background: linear-gradient(120deg, #0a0a2a, #23234d);
+    box-shadow: 0 4px 15px #00000080, 
+                inset 0 0 10px #23234d;
+    color: #dad9ff;
+    font-size: 16px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    max-width: 365px; /* одинаково с .controls-container */
 }
 
 
@@ -96,12 +103,14 @@ body {
 
 .highlight {
     font-weight: bold;
-    color: #ffdd66;
+    color: #f0f0d0;
 }
 
 /* Контейнер выбора даты */
 .date-picker-inline {
     display: none; /* изначально скрыт */
+    border: none;
+    outline: none;
     margin: 10px auto;
     justify-content: center;
     align-items: center;
@@ -113,18 +122,31 @@ body {
 }
 
 .date-picker-inline input[type="date"] {
-    padding: 5px;
-    font-size: 16px;
-    background: linear-gradient(165deg, #7373b9, #353555);
-    color: #ffffcc;
+    padding: 10px;
+    font-size: 14px;
+    border: none;
+    outline: none;
+    border-radius: 10px; /* Скруглённые углы */
+    background: linear-gradient(120deg, #0a0a2a, #23234d);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 
+                inset 0 0 10px rgba(255, 255, 255, 0.1); /* Внешняя и внутренняя тень */
+    color: #dad9ff;
     cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.date-picker-inline:hover {
+    border-radius: 10px; /* Скруглённые углы */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6),
+                inset 0 0 15px rgba(255, 255, 255, 0.15);
 }
 
 .date-picker-inline button {
     padding: 5px 15px;
     border: none;
+    outline: none;
     background-color: #7373b9;
-    color: #ffffcc;
+    color: #f0f0d0;
     cursor: pointer;
 }
 
@@ -141,50 +163,16 @@ body {
 
 .star {
     position: absolute;
-    width: 2px;   /* диаметр центра звезды */
-    height: 2px;
-    background: white;
     border-radius: 50%;
-    animation: twinkle 2s infinite alternate;
+    animation-name: twinkle;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
 }
 
-/* Лучики через псевдоэлементы */
-.star::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    transform-origin: center;
-}
-
-/* Горизонтальные и вертикальные лучики */
-.star::before {
-    width: 8px;    /* длина лучика */
-    height: 1px;   /* толщина */
-    margin-left: -4px;
-    margin-top: -0.5px;
-}
-
-.star::after {
-    width: 1px;
-    height: 8px;
-    margin-left: -0.5px;
-    margin-top: -4px;
-}
-
-/* Дополнительные лучики (диагонали) */
-.star.diagonal::before {
-    transform: rotate(45deg);
-}
-.star.diagonal::after {
-    transform: rotate(-45deg);
-}
-
+/* мерцание */
 @keyframes twinkle {
-    0% { opacity: 0.2; }
-    50% { opacity: 0.6; }
-    100% { opacity: 1; }
+    0%   { opacity: 0.2; transform: scale(0.9); }
+    50%  { opacity: 1;   transform: scale(1.2); }
+    100% { opacity: 0.2; transform: scale(0.9); }
 }
-
