@@ -1,0 +1,86 @@
+const resultDiv = document.getElementById('result');
+const todayBtn = document.getElementById('todayBtn');
+const chooseDateBtn = document.getElementById('chooseDateBtn');
+
+const datePickerInline = document.getElementById('datePickerInline');
+const moonDateInput = document.getElementById('moonDateInput');
+
+
+// Ограничение выбора даты
+moonDateInput.max = new Date().toISOString().split('T')[0];
+
+// --- API ---
+async function getMoonData(date = new Date()) {
+    const params = {
+        utc: -Math.round(date.getTimezoneOffset() / 60),
+        day: date.getDate(),
+        month: date.getMonth() + 1,
+        year: date.getFullYear(),
+        hour: date.getHours(),
+        minute: date.getMinutes(),
+        second: date.getSeconds()
+    };
+
+    const url = new URL('https://moon.qoph.org/v1/moonPhaseDate');
+    Object.entries(params).forEach(([key, value]) => url.searchParams.append(key, value.toString()));
+
+    const response = await fetch(url.toString(), {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' }
+    });
+
+    if (!response.ok) throw new Error(`Ошибка API: ${response.status} ${response.statusText}`);
+    return await response.json();
+}
+
+// --- Отображение ---
+async function showMoonDay(date) {
+    resultDiv.innerHTML = '<div class="loading-text">Подключаемся к лунному API...</div>';
+
+    try {
+        const data = await getMoonData(date);
+        const moonDay = Math.floor(data.CurrentState.MoonDays);
+        const illumination = data.CurrentState.Illumination.toFixed(1);
+        const phase = data.CurrentState.Phase;
+        const zodiac = data.CurrentState.Zodiac;
+
+        // Удаляем приветственный блок, если он есть
+        const initialMessage = resultDiv.querySelector('.initial-message');
+        if (initialMessage) initialMessage.remove();
+
+        resultDiv.innerHTML = `
+            <div class="moon-day">Лунный день: <span class="highlight">${moonDay}</span></div>
+            <div class="moon-details">
+                <div class="detail-item"><span class="detail-label">Фаза:</span> <span class="detail-value">${phase.Emoji} ${phase.Name}</span></div>
+                <div class="detail-item"><span class="detail-label">Знак:</span> <span class="detail-value">${zodiac.Emoji} ${zodiac.Name}</span></div>
+                <div class="detail-item"><span class="detail-label">Освещение:</span> <span class="detail-value">${illumination}%</span></div>
+            </div>
+        `;
+    } catch (err) {
+        resultDiv.innerHTML = `
+            <div class="error-title">Ошибка получения данных</div>
+            <div class="error-detail">${err.message || 'Неизвестная ошибка'}</div>
+        `;
+    }
+}
+
+
+// --- Кнопки ---
+todayBtn.addEventListener('click', () => showMoonDay(new Date()));
+
+chooseDateBtn.addEventListener('click', () => {
+    datePickerInline.classList.toggle('show'); // показываем/скрываем контейнер
+    if (datePickerInline.classList.contains('show')) {
+        moonDateInput.focus();
+    }
+});
+
+
+// Отправка через Enter
+moonDateInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && moonDateInput.value) {
+        const date = new Date(moonDateInput.value + 'T12:00:00');
+        showMoonDay(date);
+        datePickerInline.classList.remove('show');
+    }
+});

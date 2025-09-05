@@ -1,0 +1,190 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #0a0a2a, #333366);
+    color: #dad9ff;
+    overflow-x: hidden;
+    height: 100vh;
+}
+
+.app-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* центр по горизонтали */
+    margin-top: 50px;    /* отступ от верха страницы */
+    z-index: 1;
+}
+
+/* Луна */
+#moon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #e6e6e6; /* базовый серый цвет */
+    background-image:
+        /* Кратеры */
+        radial-gradient(circle 6px at 10% 15%, #888 100%, transparent 101%),
+        radial-gradient(circle 4px at 75% 20%, #bbb 100%, transparent 101%),
+        radial-gradient(circle 5px at 20% 40%, #999 100%, transparent 101%),
+        radial-gradient(circle 3px at 35% 50%, #888 100%, transparent 101%),
+        radial-gradient(circle 6px at 50% 55%, #aaa 100%, transparent 101%),
+        radial-gradient(circle 4px at 65% 60%, #777 100%, transparent 101%),
+        radial-gradient(circle 5px at 30% 70%, #bbb 100%, transparent 101%),
+
+        radial-gradient(circle 3px at 80% 50%, #777 100%, transparent 101%),
+        radial-gradient(circle 2px at 15% 60%, #bbb 100%, transparent 101%),
+        /* Лунные моря (немного тёмнее) */
+        radial-gradient(circle 12px at 40% 35%, #d6d6d6 100%, transparent 101%),
+        radial-gradient(circle 10px at 60% 70%, #cfcfcf 100%, transparent 101%),
+        radial-gradient(circle 8px at 25% 50%, #d0d0d0 100%, transparent 101%),
+        radial-gradient(circle 6px at 70% 30%, #d8d8d8 100%, transparent 101%);
+    background-repeat: no-repeat;
+    box-shadow: 0 0 15px #f0f0d0; /* мягкий свет */
+    margin-bottom: 20px;
+    position: relative;
+}
+
+
+
+.controls-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.btn { 
+    padding: 8px 16px; 
+    background: linear-gradient(165deg, #7373b9, #353555); 
+    color: #ffffcc; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer;
+} 
+
+.btn:hover { background-color: #5555cc; }
+
+.result {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 15px; /* Скруглённые углы */
+    background: linear-gradient(135deg, #0a0a2a, #333366);
+    border: 1px solid #5f5f97;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 
+                inset 0 0 10px rgba(255, 255, 255, 0.1); /* Внешняя и внутренняя тень */
+    color: #dad9ff; /* Светлый текст */
+    font-size: 16px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Эффект при наведении */
+.result:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6),
+                inset 0 0 15px rgba(255, 255, 255, 0.15);
+}
+
+
+.moon-day {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.moon-details .detail-item {
+    margin: 5px 0;
+}
+
+.highlight {
+    font-weight: bold;
+    color: #ffdd66;
+}
+
+/* Контейнер выбора даты */
+.date-picker-inline {
+    display: none; /* изначально скрыт */
+    margin: 10px auto;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-picker-inline.show {
+    display: flex; /* показываем при добавлении класса */
+}
+
+.date-picker-inline input[type="date"] {
+    padding: 5px;
+    font-size: 16px;
+    background: linear-gradient(165deg, #7373b9, #353555);
+    color: #ffffcc;
+    cursor: pointer;
+}
+
+.date-picker-inline button {
+    padding: 5px 15px;
+    border: none;
+    background-color: #7373b9;
+    color: #ffffcc;
+    cursor: pointer;
+}
+
+/* Звёзды */
+.stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.star {
+    position: absolute;
+    width: 2px;   /* диаметр центра звезды */
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 2s infinite alternate;
+}
+
+/* Лучики через псевдоэлементы */
+.star::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    transform-origin: center;
+}
+
+/* Горизонтальные и вертикальные лучики */
+.star::before {
+    width: 8px;    /* длина лучика */
+    height: 1px;   /* толщина */
+    margin-left: -4px;
+    margin-top: -0.5px;
+}
+
+.star::after {
+    width: 1px;
+    height: 8px;
+    margin-left: -0.5px;
+    margin-top: -4px;
+}
+
+/* Дополнительные лучики (диагонали) */
+.star.diagonal::before {
+    transform: rotate(45deg);
+}
+.star.diagonal::after {
+    transform: rotate(-45deg);
+}
+
+@keyframes twinkle {
+    0% { opacity: 0.2; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+

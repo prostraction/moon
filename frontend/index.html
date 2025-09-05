@@ -1,37 +1,38 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Лунный календарь</title>
-  <link rel="stylesheet" href="style.css"> <!-- подключаем стили -->
-  <script type="module" src="js/main.js"></script> <!-- главный JS -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лунный календарь</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Контейнер с луной и звёздами -->
-  <div class="sky">
-    <div class="stars"></div> <!-- блок со звёздами -->
-    <div class="moon"></div>  <!-- блок с луной -->
-  </div>
+<body>
+    <div class="app-container">
+        <!-- Луна -->
+        <div id="moon"></div>
 
-  <!-- Основное приложение -->
-  <div class="app">
-    <!-- Кнопка с иконкой ракеты (для красоты) -->
-    <button class="submit-date-btn" id="submitDateBtn">🚀</button>
+        <!-- Кнопки -->
+        <div class="controls-container">
+            <button class="btn" id="todayBtn">Лунный день сегодня</button>
+            <button class="btn" id="chooseDateBtn">Выбрать другой день</button>
+        </div>
 
-    <!-- Кнопка "сегодня" -->
-    <button class="btn" id="getMoonDayBtn">Лунный день сегодня</button>
+        <!-- Интерактивный выбор даты -->
+        <div class="date-picker-inline" id="datePickerInline" hidden>
+            <input type="date" id="moonDateInput" max="">
+        </div>
 
-    <!-- Кнопка выбора даты -->
-    <button class="btn" id="getMoonDayByDateBtn">Выбрать другую дату</button>
-
-    <!-- Контейнер для выбора даты (скрыт по умолчанию) -->
-    <div class="date-picker-container" id="datePickerContainer" hidden>
-      <input type="date" id="dateInput">
-      <button class="btn" id="submitDateBtn2">Показать</button>
+        <!-- Результат -->
+        <div class="result" id="result">
+            <div class="initial-message">
+                <div class="welcome">Добро пожаловать в лунный календарь!</div>
+                <div class="instruction">Нажмите кнопку, чтобы узнать лунный день</div>
+            </div>
+        </div>
     </div>
-
-    <!-- Результат API -->
-    <div id="result" class="result hidden"></div>
-  </div>
+    <div class="stars"></div>
+</body>
+    <script type="module" src="main.js"></script>
 </body>
 </html>
