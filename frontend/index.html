@@ -1,215 +1,37 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Лунный день сегодня</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <title>Лунный календарь</title>
+  <link rel="stylesheet" href="style.css"> <!-- подключаем стили -->
+  <script type="module" src="js/main.js"></script> <!-- главный JS -->
 </head>
 <body>
-    <div class="container">
-        <h1>🌙 Лунный календарь</h1>
-        
-        <div class="sky-container">
-            <div class="stars"></div>
-        <div class="clouds"></div>
-        <div class="moon-hidden" id="moonHidden">
-            <div class="moon" id="moon"></div>
-        </div>
-    </div>
+  <!-- Контейнер с луной и звёздами -->
+  <div class="sky">
+    <div class="stars"></div> <!-- блок со звёздами -->
+    <div class="moon"></div>  <!-- блок с луной -->
+  </div>
 
+  <!-- Основное приложение -->
+  <div class="app">
+    <!-- Кнопка с иконкой ракеты (для красоты) -->
+    <button class="submit-date-btn" id="submitDateBtn">🚀</button>
+
+    <!-- Кнопка "сегодня" -->
     <button class="btn" id="getMoonDayBtn">Лунный день сегодня</button>
 
-    <div class="result" id="result">
-        <div class="initial-message">
-            <div class="welcome">Добро пожаловать в лунный календарь!</div>
-            <div class="instruction">Нажмите кнопку, чтобы узнать текущий лунный день</div>
-        </div>
+    <!-- Кнопка выбора даты -->
+    <button class="btn" id="getMoonDayByDateBtn">Выбрать другую дату</button>
+
+    <!-- Контейнер для выбора даты (скрыт по умолчанию) -->
+    <div class="date-picker-container" id="datePickerContainer" hidden>
+      <input type="date" id="dateInput">
+      <button class="btn" id="submitDateBtn2">Показать</button>
     </div>
-</div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const stars = document.querySelector('.stars');
-        const clouds = document.querySelector('.clouds');
-        const moonHidden = document.getElementById('moonHidden');
-        const moon = document.getElementById('moon');
-        const btn = document.getElementById('getMoonDayBtn');
-        const result = document.getElementById('result');
-
-        let isAnimationInProgress = false;
-
-        function createStars() {
-            const starsCount = 100;
-            for (let i = 0; i < starsCount; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 3 + 's';
-                star.style.animationDuration = (Math.random() * 2 + 1) + 's';
-                stars.appendChild(star);
-            }
-        }
-
-        function createClouds() {
-            const cloudPositions = [
-                {left: '10%', top: '20%', size: '60px', delay: '0s'},
-                {left: '70%', top: '30%', size: '80px', delay: '1s'},
-                {left: '30%', top: '60%', size: '100px', delay: '2s'},
-                {left: '80%', top: '70%', size: '70px', delay: '1.5s'},
-                {left: '20%', top: '80%', size: '90px', delay: '0.5s'}
-            ];
-
-            cloudPositions.forEach(pos => {
-                const cloud = document.createElement('div');
-                cloud.className = 'cloud';
-                cloud.style.left = pos.left;
-                cloud.style.top = pos.top;
-                cloud.style.width = pos.size;
-                cloud.style.height = pos.size;
-                cloud.style.animationDelay = pos.delay;
-                clouds.appendChild(cloud);
-            });
-        }
-
-        function revealMoon(illumination) {
-            return new Promise((resolve) => {
-                isAnimationInProgress = true;
-                
-                clouds.style.animation = 'cloudsDisappear 2s forwards';
-                
-                moonHidden.style.opacity = '1';
-                moonHidden.style.transform = 'translate(-50%, -50%) scale(1)';
-                
-                setMoonPhase(illumination);
-                setTimeout(() => {
-                    stars.style.opacity = '0.3';
-                }, 1000);
-                setTimeout(() => {
-                    isAnimationInProgress = false;
-                    resolve();
-                }, 2000);
-            });
-        }
-
-        function setMoonPhase(illumination) {
-            moon.style.boxShadow = '';
-            const shadowPosition = Math.abs(50 - illumination) * 3;
-            
-            if (illumination === 0) {
-                moon.style.boxShadow = 'inset 0 0 0 150px #1a1a3a';
-            } else if (illumination === 100) {
-                moon.style.boxShadow = '0 0 40px rgba(255, 255, 255, 0.4)';
-            } else if (illumination > 50) {
-                moon.style.boxShadow = `inset ${shadowPosition}px 0 0 0 #1a1a3a, 0 0 40px rgba(255, 255, 255, 0.4)`;
-            } else {
-                moon.style.boxShadow = `inset -${shadowPosition}px 0 0 0 #1a1a3a, 0 0 40px rgba(255, 255, 255, 0.4)`;
-            }
-        }
-
-        async function getMoonData() {
-            const now = new Date();
-
-            const params = {
-                utc: -Math.round(now.getTimezoneOffset() / 60),
-                day: now.getDate(),
-                month: now.getMonth() + 1,
-                year: now.getFullYear(),
-                hour: now.getHours(),
-                minute: now.getMinutes(),
-                second: now.getSeconds()
-            };
-
-            const url = new URL('https://moon.qoph.org/v1/moonPhaseDate');
-            Object.entries(params).forEach(([key, value]) => {
-                url.searchParams.append(key, value.toString());
-            });
-
-            console.log('Запрос к API:', url.toString());
-
-            const response = await fetch(url.toString(), {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка API: ${response.status} ${response.statusText}`);
-            }
-            return await response.json();
-        }
-
-        btn.addEventListener('click', async function() {
-            if (isAnimationInProgress) return;
-            
-            startLoading();
-            try {
-                const moonData = await getMoonData();
-                console.log('Ответ API:', moonData);
-                
-                await revealMoon(moonData.CurrentState.Illumination);
-                
-                handleSuccessResponse(moonData);
-
-            } catch (error) {
-                console.error('Ошибка:', error);
-                handleError(error);
-            }
-        });
-
-        function startLoading() {
-            btn.disabled = true;
-            result.innerHTML = '<div class="loading-text">Подключаемся к лунному API...</div>';
-        }
-
-        function stopLoading() {
-            btn.disabled = false;
-        }
-
-        function handleSuccessResponse(moonData) {
-            const moonDay = Math.floor(moonData.CurrentState.MoonDays);
-            const illumination = moonData.CurrentState.Illumination.toFixed(1);
-            const phase = moonData.CurrentState.Phase;
-            const zodiac = moonData.CurrentState.Zodiac;
-
-            result.innerHTML = `
-                <div class="moon-day">Сегодня <span class="highlight">${moonDay}</span> лунный день</div>
-                <div class="moon-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Фаза:</span>
-                        <span class="detail-value">${phase.Emoji} ${phase.Name}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Знак:</span>
-                        <span class="detail-value">${zodiac.Emoji} ${zodiac.Name}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Освещение:</span>
-                        <span class="detail-value">${illumination}%</span>
-                    </div>
-                </div>
-            `;
-            result.className = 'result success';
-            
-            stopLoading();
-        }
-
-        function handleError(error) {
-            result.innerHTML = `
-                <div class="error-title">Ошибка получения данных</div>
-                <div class="error-detail">${error.message || 'Неизвестная ошибка'}</div>
-                <div class="error-hint">Попробуйте обновить страницу и нажать кнопку еще раз</div>
-            `;
-            result.className = 'result error';
-            
-            stopLoading();
-        }
-
-        createStars();
-        createClouds();
-    });
-</script>
+    <!-- Результат API -->
+    <div id="result" class="result hidden"></div>
+  </div>
 </body>
 </html>
