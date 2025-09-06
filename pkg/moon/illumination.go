@@ -64,10 +64,8 @@ func getMoonPhasesLocaled(lang string, position int) (string, string) {
 		return phasesFr[position], phasesEmoji[position]
 	case "jp":
 		return phasesJp[position], phasesEmoji[position]
-	default:
-		return phasesEn[position], phasesEmoji[position]
 	}
-	return "", ""
+	return phasesEn[position], phasesEmoji[position]
 }
 
 func getIlluminatedFractionOfMoon(jd float64) float64 {

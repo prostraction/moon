@@ -17,13 +17,13 @@ type MoonStat struct {
 }
 
 type FullInfo struct {
+	MoonDaysBegin   float64
 	MoonDaysEnd     float64
 	MoonDaysCurrent float64
-	MoonDaysBegin   float64
 
-	IlluminationEndDay   float64
-	IlluminationCurrent  float64
 	IlluminationBeginDay float64
+	IlluminationCurrent  float64
+	IlluminationEndDay   float64
 }
 
 type MoonDay struct {
@@ -37,12 +37,12 @@ type MoonDays struct {
 }
 
 type MoonPhaseResponse struct {
-	EndDay           *MoonStat
-	CurrentState     *MoonStat
-	BeginDay         *MoonStat
-	MoonDaysDetailed *MoonDays
+	BeginDay     *MoonStat
+	CurrentState *MoonStat
+	EndDay       *MoonStat
 
-	ZodiacDetailed *moon.Zodiacs
+	MoonDaysDetailed *MoonDays
+	ZodiacDetailed   *moon.Zodiacs
 
 	Info *FullInfo
 }

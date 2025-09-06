@@ -1,7 +1,6 @@
 package moon
 
 import (
-	"log"
 	"math"
 	"time"
 )
@@ -100,39 +99,27 @@ func (c *Cache) CreateMoonTable(timeGiven time.Time) []*MoonTableElement {
 }
 
 func (c *Cache) BeginMoonDayToEarthDay(tGiven time.Time, duration time.Duration) time.Time {
-	log.Println(tGiven)
 	moonTable := c.CreateMoonTable(tGiven)
 	for i := range moonTable {
 		elem := moonTable[i]
-
 		if elem.t1 != elem.t2 {
-			if tGiven.After(elem.NewMoon) && tGiven.Before(elem.FullMoon) {
+			if tGiven.After(elem.NewMoon) && tGiven.Before(elem.LastQuarter) {
 				t := elem.NewMoon
 				t = t.Add(duration)
 				return t
+			}
+			if i < len(moonTable) {
+				elem2 := moonTable[i+1]
+				if tGiven.After(elem.LastQuarter) && tGiven.Before(elem2.NewMoon) {
+					t := elem.NewMoon
+					t = t.Add(duration)
+					return t
+				}
 			}
 		}
 	}
 	return time.Time{} // fix
 }
-
-/*
-func (c *Cache) EndMoonDayToEarthDay(tGiven time.Time, duration time.Duration) time.Time {
-	log.Println(tGiven)
-	moonTable := c.CreateMoonTable(tGiven)
-	for i := range moonTable {
-		elem := moonTable[i]
-
-		if elem.t1 != elem.t2 {
-			if tGiven.After(elem.FullMoon) && tGiven.Before(elem.NewMoon) {
-				t := elem.FullMoon
-				t = t.Add(duration)
-				return t
-			}
-		}
-	}
-	return time.Time{} // fix
-}*/
 
 func GetMoonDays(tGiven time.Time, table []*MoonTableElement) time.Duration {
 	var moonDays time.Duration

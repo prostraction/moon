@@ -25,12 +25,16 @@ func (s *Server) NewRouter() *fiber.App {
 		AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH,OPTIONS",
 	}))
 
+	app.Static("/", "frontend")
+
 	app.Get("/v1/moonTableCurrent", s.moonTableCurrentV1)
 	app.Get("/v1/moonTableYear", s.moonTableYearV1)
 
 	app.Get("/v1/moonPhaseCurrent", s.moonPhaseCurrentV1)
 	app.Get("/v1/moonPhaseTimestamp", s.moonPhaseTimestampV1)
 	app.Get("/v1/moonPhaseDate", s.moonPhaseDatetV1)
+
+	app.Get("/v1/version", s.versionV1)
 
 	s.moonCache = new(moon.Cache)
 

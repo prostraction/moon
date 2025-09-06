@@ -1,7 +1,6 @@
 package server
 
 import (
-	"log"
 	"moon/pkg/moon"
 	"strconv"
 	"time"
@@ -9,24 +8,28 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func (s *Server) versionV1(c *fiber.Ctx) error {
+	return c.JSON("1.0.1")
+}
+
 /*    MOON PHASE    */
 
 func (s *Server) moonPhaseCurrentV1(c *fiber.Ctx) error {
 	utc := c.Query("utc", "UTC:+0")
-	loc, err := moon.SetTimezoneLocFromString(utc)
-	if err != nil {
+	loc, _ := moon.SetTimezoneLocFromString(utc)
+	/*if err != nil {
 		log.Println(err)
-	}
+	}*/
 	tGiven := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), time.Now().Hour(), time.Now().Minute(), time.Now().Second(), 0, loc)
 	return s.moonPhaseV1(c, tGiven)
 }
 
 func (s *Server) moonPhaseTimestampV1(c *fiber.Ctx) error {
 	utc := c.Query("utc", "UTC:+0")
-	loc, err := moon.SetTimezoneLocFromString(utc)
-	if err != nil {
+	loc, _ := moon.SetTimezoneLocFromString(utc)
+	/*if err != nil {
 		log.Println(err)
-	}
+	}*/
 
 	tStr := c.Query("t", "0")
 	t, err := strconv.ParseInt(tStr, 10, 64)
@@ -40,18 +43,20 @@ func (s *Server) moonPhaseTimestampV1(c *fiber.Ctx) error {
 
 func (s *Server) moonPhaseDatetV1(c *fiber.Ctx) error {
 	utc := c.Query("utc", "UTC:+0")
-	loc, err := moon.SetTimezoneLocFromString(utc)
-	if err != nil {
+	loc, _ := moon.SetTimezoneLocFromString(utc)
+	/*if err != nil {
 		log.Println(err)
-	}
+	}*/
 
-	year := strToInt(c.Query("year", "1970"), 1970, 0)
-	month := strToInt(c.Query("month", "1"), 1, 12)
-	day := strToInt(c.Query("day", "1"), 1, 31)
+	tNow := time.Now()
 
-	hour := strToInt(c.Query("hour", "0"), 0, 23)
-	minute := strToInt(c.Query("minute", "0"), 0, 59)
-	second := strToInt(c.Query("second", "0"), 0, 59)
+	year := strToInt(c.Query("year", strconv.Itoa(tNow.Year())), tNow.Year(), 0)
+	month := strToInt(c.Query("month", strconv.Itoa(int(tNow.Month()))), int(tNow.Month()), 12)
+	day := strToInt(c.Query("day", strconv.Itoa(int(tNow.Day()))), int(tNow.Day()), 31)
+
+	hour := strToInt(c.Query("hour", strconv.Itoa(int(tNow.Hour()))), int(tNow.Hour()), 23)
+	minute := strToInt(c.Query("minute", strconv.Itoa(int(tNow.Minute()))), int(tNow.Minute()), 59)
+	second := strToInt(c.Query("second", strconv.Itoa(int(tNow.Second()))), int(tNow.Second()), 59)
 
 	tGiven := time.Date(year, moon.GetMonth(month), day, hour, minute, second, 0, loc)
 	return s.moonPhaseV1(c, tGiven)
@@ -60,10 +65,10 @@ func (s *Server) moonPhaseDatetV1(c *fiber.Ctx) error {
 func (s *Server) moonPhaseV1(c *fiber.Ctx, tGiven time.Time) error {
 	lang := c.Query("lang", "en")
 	utc := c.Query("utc", "UTC:+0")
-	loc, err := moon.SetTimezoneLocFromString(utc)
-	if err != nil {
+	loc, _ := moon.SetTimezoneLocFromString(utc)
+	/*if err != nil {
 		log.Println(err)
-	}
+	}*/
 
 	resp := MoonPhaseResponse{}
 	resp.EndDay = new(MoonStat)
@@ -97,10 +102,10 @@ func (s *Server) moonPhaseV1(c *fiber.Ctx, tGiven time.Time) error {
 
 func (s *Server) moonTableCurrentV1(c *fiber.Ctx) error {
 	utc := c.Query("utc", "UTC:+0")
-	loc, err := moon.SetTimezoneLocFromString(utc)
-	if err != nil {
+	loc, _ := moon.SetTimezoneLocFromString(utc)
+	/*if err != nil {
 		log.Println(err)
-	}
+	}*/
 
 	tGiven := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), time.Now().Hour(), time.Now().Minute(), time.Now().Second(), 0, loc)
 	return s.moonTableV1(c, tGiven)
@@ -108,10 +113,10 @@ func (s *Server) moonTableCurrentV1(c *fiber.Ctx) error {
 
 func (s *Server) moonTableYearV1(c *fiber.Ctx) error {
 	utc := c.Query("utc", "UTC:+0")
-	loc, err := moon.SetTimezoneLocFromString(utc)
-	if err != nil {
+	loc, _ := moon.SetTimezoneLocFromString(utc)
+	/*if err != nil {
 		log.Println(err)
-	}
+	}*/
 
 	yearStr := c.Query("year", "1970")
 	year, err := strconv.Atoi(yearStr)
