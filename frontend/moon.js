@@ -21,7 +21,7 @@ async function getMoonData(date = new Date()) {
         second: date.getSeconds()
     };
 
-    const url = new URL('https://moon.qoph.org/v1/moonPhaseDate');
+    const url = new URL(CONFIG.API_URL);
     Object.entries(params).forEach(([key, value]) => url.searchParams.append(key, value.toString()));
 
     const response = await fetch(url.toString(), {
@@ -48,12 +48,17 @@ async function showMoonDay(date) {
         const initialMessage = resultDiv.querySelector('.initial-message');
         if (initialMessage) initialMessage.remove();
 
+
         resultDiv.innerHTML = `
             <div class="moon-day">Лунный день: <span class="highlight">${moonDay}</span></div>
             <div class="moon-details">
                 <div class="detail-item"><span class="detail-label">Фаза луны:</span> <span class="detail-value">${phase.Emoji} ${phase.Name}</span></div>
                 <div class="detail-item"><span class="detail-label">Освещённость:</span> <span class="detail-value">${illumination}%</span></div>
-                <div class="detail-item"><span class="detail-label">Знак зодиака:</span> <span class="detail-value">${zodiac.Emoji} ${zodiac.Name}</span></div>
+                <div class="detail-item"><span class="detail-label">Знак зодиака:</span> 
+                <span class="detail-value">
+                    <img src="icons/${zodiac.Name}.svg" alt="${zodiac.Name}" class="zodiac-icon"> 
+                    ${zodiac.Name}
+                </span>
             </div>
         `;
     } catch (err) {
