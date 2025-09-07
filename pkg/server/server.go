@@ -15,7 +15,7 @@ func (s *Server) NewRouter() *fiber.App {
 	app := fiber.New(fiber.Config{
 		Prefork:       true,
 		ServerHeader:  "Fiber",
-		CaseSensitive: true,
+		CaseSensitive: false,
 		StrictRouting: true,
 	})
 
@@ -25,7 +25,7 @@ func (s *Server) NewRouter() *fiber.App {
 		AllowMethods: "GET,HEAD,OPTIONS",
 	}))
 
-	app.Static("/icons", "frontend/icons")
+	app.Static("/icons", "frontend/icons/")
 	app.Static("/", "frontend")
 
 	app.Get("/v1/moonTableCurrent", s.moonTableCurrentV1)
