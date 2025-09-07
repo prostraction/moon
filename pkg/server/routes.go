@@ -9,11 +9,10 @@ import (
 )
 
 func (s *Server) versionV1(c *fiber.Ctx) error {
-	return c.JSON("1.0.1")
+	return c.JSON("1.0.2")
 }
 
 /*    MOON PHASE    */
-
 func (s *Server) moonPhaseCurrentV1(c *fiber.Ctx) error {
 	utc := c.Query("utc", "UTC:+0")
 	loc, _ := moon.SetTimezoneLocFromString(utc)
@@ -31,7 +30,7 @@ func (s *Server) moonPhaseTimestampV1(c *fiber.Ctx) error {
 		log.Println(err)
 	}*/
 
-	tStr := c.Query("t", "0")
+	tStr := c.Query("t", strconv.FormatInt(time.Now().Unix(), 10))
 	t, err := strconv.ParseInt(tStr, 10, 64)
 	if err != nil {
 		t = time.Now().Unix()
@@ -118,11 +117,8 @@ func (s *Server) moonTableYearV1(c *fiber.Ctx) error {
 		log.Println(err)
 	}*/
 
-	yearStr := c.Query("year", "1970")
-	year, err := strconv.Atoi(yearStr)
-	if err != nil {
-		year = time.Now().Year()
-	}
+	tNow := time.Now()
+	year := strToInt(c.Query("year", strconv.Itoa(tNow.Year())), tNow.Year(), 0)
 
 	tGiven := time.Date(year, time.January, 1, 0, 0, 0, 0, loc)
 	return s.moonTableV1(c, tGiven)

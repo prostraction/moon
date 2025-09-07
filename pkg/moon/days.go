@@ -62,20 +62,10 @@ func (c *Cache) CreateMoonTable(timeGiven time.Time) []*MoonTableElement {
 		elem.t1 = mp
 		elem.t2 = lastnew
 
-		firstQuarterTime := lastnew
-		firstQuarterIllum := 0.
-		for firstQuarterIllum < 0.5 {
-			firstQuarterTime += 0.001
-			firstQuarterIllum = GetCurrentMoonIllumination(FromJulianDate(firstQuarterTime, timeGiven.Location()), timeGiven.Location())
-		}
+		firstQuarterTime := binarySearchIllumination(lastnew, mp, timeGiven.Location(), true)
 		elem.FirstQuarter = FromJulianDate(firstQuarterTime, timeGiven.Location())
 
-		lastQuarterTime := mp
-		lastQuarterIllum := 1.
-		for lastQuarterIllum > 0.5000 {
-			lastQuarterTime += 0.001
-			lastQuarterIllum = GetCurrentMoonIllumination(FromJulianDate(lastQuarterTime, timeGiven.Location()), timeGiven.Location())
-		}
+		lastQuarterTime := binarySearchIllumination(mp, mp+10, timeGiven.Location(), false)
 		elem.LastQuarter = FromJulianDate(lastQuarterTime, timeGiven.Location())
 
 		elem.NewMoon = FromJulianDate(lastnew, timeGiven.Location())
@@ -133,6 +123,50 @@ func GetMoonDays(tGiven time.Time, table []*MoonTableElement) time.Duration {
 		}
 	}
 	return moonDays
+}
+
+func binarySearchIllumination(jdTimeBegin, jdTimeEnd float64, loc *time.Location, direction bool) (jdTime float64) {
+	it := 0
+	low := jdTimeBegin
+	high := jdTimeEnd
+
+	mid := low + (high-low)/2.0
+	illum := GetCurrentMoonIllumination(FromJulianDate(mid, loc), loc)
+	if !direction && illum < 0.5 {
+		direction = true
+	}
+
+	for it < 50 {
+		mid = low + (high-low)/2.0
+		illum = GetCurrentMoonIllumination(FromJulianDate(mid, loc), loc)
+
+		//log.Printf("Direction: %v, Iteration %d: low=%.6f, high=%.6f, mid=%.6f, illum=%.6f", direction, it, low, high, mid, illum)
+
+		if math.Abs(illum-0.5) < 0.0001 {
+			return mid
+		}
+
+		if direction {
+			if illum < 0.5 {
+				low = mid
+			} else {
+				high = mid
+			}
+		} else {
+			if illum > 0.5 {
+				low = mid
+			} else {
+				high = mid
+			}
+		}
+
+		if high-low < 1e-10 {
+			return mid
+		}
+
+		it++
+	}
+	return low + (high-low)/2.0
 }
 
 func truephase(k, phase float64) float64 {
