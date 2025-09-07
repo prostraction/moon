@@ -16,23 +16,36 @@ type Cache struct {
 }
 
 type PhaseResp struct {
-	Name  string
-	Emoji string
+	Name          string
+	NameLocalized string
+	Emoji         string
 }
 
 type Zodiac struct {
-	Name  string
-	Emoji string
+	Name          string
+	NameLocalized string
+	Emoji         string
 }
 
 type ZodiacDetailed struct {
-	Name  string
-	Emoji string
-	Begin time.Time
-	End   time.Time
+	Name          string
+	NameLocalized string
+	Emoji         string
+	Begin         time.Time
+	End           time.Time
 }
 
 type Zodiacs struct {
 	Count  int
 	Zodiac []ZodiacDetailed
+}
+
+type MoonDay struct {
+	Begin time.Time
+	End   time.Time
+}
+
+type MoonDaysDetailed struct {
+	Count int
+	Day   []MoonDay
 }

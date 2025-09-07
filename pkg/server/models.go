@@ -31,18 +31,13 @@ type MoonDay struct {
 	End   time.Time
 }
 
-type MoonDays struct {
-	Count   int
-	MoonDay *MoonDay
-}
-
 type MoonPhaseResponse struct {
 	BeginDay     *MoonStat
 	CurrentState *MoonStat
 	EndDay       *MoonStat
 
-	MoonDaysDetailed *MoonDays
+	MoonDaysDetailed *moon.MoonDaysDetailed
 	ZodiacDetailed   *moon.Zodiacs
 
-	Info *FullInfo
+	info *FullInfo
 }

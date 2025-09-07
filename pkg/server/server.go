@@ -22,9 +22,10 @@ func (s *Server) NewRouter() *fiber.App {
 	app.Use(cors.New(cors.Config{
 		AllowHeaders: "Origin,Content-Type,Accept,Content-Length,Accept-Language,Accept-Encoding,Connection,Access-Control-Allow-Origin",
 		AllowOrigins: "*",
-		AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH,OPTIONS",
+		AllowMethods: "GET,HEAD,OPTIONS",
 	}))
 
+	app.Static("/icons", "frontend/icons")
 	app.Static("/", "frontend")
 
 	app.Get("/v1/moonTableCurrent", s.moonTableCurrentV1)

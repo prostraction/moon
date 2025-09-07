@@ -126,6 +126,10 @@ func GetMoonDays(tGiven time.Time, table []*MoonTableElement) time.Duration {
 }
 
 func binarySearchIllumination(jdTimeBegin, jdTimeEnd float64, loc *time.Location, direction bool) (jdTime float64) {
+	if loc == nil {
+		loc = time.UTC
+	}
+
 	it := 0
 	low := jdTimeBegin
 	high := jdTimeEnd
@@ -139,13 +143,10 @@ func binarySearchIllumination(jdTimeBegin, jdTimeEnd float64, loc *time.Location
 	for it < 50 {
 		mid = low + (high-low)/2.0
 		illum = GetCurrentMoonIllumination(FromJulianDate(mid, loc), loc)
-
 		//log.Printf("Direction: %v, Iteration %d: low=%.6f, high=%.6f, mid=%.6f, illum=%.6f", direction, it, low, high, mid, illum)
-
 		if math.Abs(illum-0.5) < 0.0001 {
 			return mid
 		}
-
 		if direction {
 			if illum < 0.5 {
 				low = mid
@@ -159,11 +160,9 @@ func binarySearchIllumination(jdTimeBegin, jdTimeEnd float64, loc *time.Location
 				high = mid
 			}
 		}
-
 		if high-low < 1e-10 {
 			return mid
 		}
-
 		it++
 	}
 	return low + (high-low)/2.0

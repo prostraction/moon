@@ -32,17 +32,25 @@ func (c *Cache) CurrentZodiacs(tGiven time.Time, loc *time.Location, lang string
 		zods.Zodiac = make([]ZodiacDetailed, 1)
 		zods.Zodiac[0].Begin = tBegin
 		zods.Zodiac[0].End = tEnd
-		zods.Zodiac[0].Name, zods.Zodiac[0].Emoji = getZodiacResp(zodiacPositionBegin, lang)
+		zods.Zodiac[0].Name, zods.Zodiac[0].Emoji = getZodiacResp(zodiacPositionBegin)
+		zods.Zodiac[0].NameLocalized = getZodiacRespLocalized(zodiacPositionBegin, lang)
 	} else {
 		zods.Count = 2
 		zodBegin1 := (zodiacPositionBegin) * Fminute / 360 * 30. * 30.
 		zodEnd1 := (zodiacPositionBegin + 1) * Fminute / 360 * 30. * 30.
+
 		tBegin1 := c.BeginMoonDayToEarthDay(tGiven, time.Duration(zodBegin1)*time.Minute)
 		tEnd1 := c.BeginMoonDayToEarthDay(tGiven, time.Duration(zodEnd1)*time.Minute)
 		zods.Zodiac = make([]ZodiacDetailed, 2)
 		zods.Zodiac[0].Begin = tBegin1
 		zods.Zodiac[0].End = tEnd1
-		zods.Zodiac[0].Name, zods.Zodiac[0].Emoji = getZodiacResp(zodiacPositionBegin, lang)
+		zods.Zodiac[0].Name, zods.Zodiac[0].Emoji = getZodiacResp(zodiacPositionBegin)
+		zods.Zodiac[0].NameLocalized = getZodiacRespLocalized(zodiacPositionBegin, lang)
+
+		if int(endMoonDays.Minutes()/Fminute) == 0 {
+			endMoonDays += (beginMoonDays + 24*time.Hour)
+			zodiacPositionEnd = int((endMoonDays.Minutes()/Fminute*360.)/30./30.) % 12
+		}
 
 		zodBegin2 := (zodiacPositionEnd) * Fminute / 360 * 30. * 30.
 		zodEnd2 := (zodiacPositionEnd + 1) * Fminute / 360 * 30. * 30.
@@ -50,46 +58,58 @@ func (c *Cache) CurrentZodiacs(tGiven time.Time, loc *time.Location, lang string
 		tEnd2 := c.BeginMoonDayToEarthDay(tGiven, time.Duration(zodEnd2)*time.Minute)
 		zods.Zodiac[1].Begin = tBegin2
 		zods.Zodiac[1].End = tEnd2
-		zods.Zodiac[1].Name, zods.Zodiac[1].Emoji = getZodiacResp(zodiacPositionEnd, lang)
+		zods.Zodiac[1].Name, zods.Zodiac[1].Emoji = getZodiacResp(zodiacPositionEnd)
+		zods.Zodiac[1].NameLocalized = getZodiacRespLocalized(zodiacPositionBegin, lang)
 	}
 
-	zodiacBegin.Name, zodiacBegin.Emoji = getZodiacResp(zodiacPositionBegin, lang)
-	zodiacCurrent.Name, zodiacCurrent.Emoji = getZodiacResp(zodiacPositionCurrent, lang)
-	zodiacEnd.Name, zodiacEnd.Emoji = getZodiacResp(zodiacPositionEnd, lang)
+	zodiacBegin.Name, zodiacBegin.Emoji = getZodiacResp(zodiacPositionBegin)
+	zodiacCurrent.Name, zodiacCurrent.Emoji = getZodiacResp(zodiacPositionCurrent)
+	zodiacEnd.Name, zodiacEnd.Emoji = getZodiacResp(zodiacPositionEnd)
+
+	zodiacBegin.NameLocalized = getZodiacRespLocalized(zodiacPositionBegin, lang)
+	zodiacCurrent.NameLocalized = getZodiacRespLocalized(zodiacPositionCurrent, lang)
+	zodiacEnd.NameLocalized = getZodiacRespLocalized(zodiacPositionEnd, lang)
 
 	return zods, zodiacBegin, zodiacCurrent, zodiacEnd
 }
 
-func getZodiacResp(position int, lang string) (string, string) {
+func getZodiacResp(position int) (string, string) {
+	if position >= 0 && position < len(signsEn) && position < len(signsEmoji) {
+		return signsEn[position], signsEmoji[position]
+	}
+	return "", ""
+}
+
+func getZodiacRespLocalized(position int, lang string) string {
 	switch lang {
 	case "en":
 		if position >= 0 && position < len(signsEn) && position < len(signsEmoji) {
-			return signsEn[position], signsEmoji[position]
+			return signsEn[position]
 		}
 	case "ru":
 		if position >= 0 && position < len(signsRu) && position < len(signsEmoji) {
-			return signsRu[position], signsEmoji[position]
+			return signsRu[position]
 		}
 	case "es":
 		if position >= 0 && position < len(signsEs) && position < len(signsEmoji) {
-			return signsEs[position], signsEmoji[position]
+			return signsEs[position]
 		}
 	case "de":
 		if position >= 0 && position < len(signsDe) && position < len(signsEmoji) {
-			return signsDe[position], signsEmoji[position]
+			return signsDe[position]
 		}
 	case "fr":
 		if position >= 0 && position < len(signsFr) && position < len(signsEmoji) {
-			return signsFr[position], signsEmoji[position]
+			return signsFr[position]
 		}
 	case "jp":
 		if position >= 0 && position < len(signsJp) && position < len(signsEmoji) {
-			return signsJp[position], signsEmoji[position]
+			return signsJp[position]
 		}
 	default:
 		if position >= 0 && position < len(signsEn) && position < len(signsEmoji) {
-			return signsEn[position], signsEmoji[position]
+			return signsEn[position]
 		}
 	}
-	return "", ""
+	return ""
 }

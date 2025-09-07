@@ -28,44 +28,57 @@ func GetCurrentMoonIllumination(tGiven time.Time, loc *time.Location) float64 {
 	return getIlluminatedFractionOfMoon(ToJulianDate(tGiven))
 }
 
-func GetMoonPhase(before, current, after float64, lang string) (string, string) {
+func GetMoonPhase(before, current, after float64, lang string) (string, string, string) {
+	phaseName, phangeNameLocalized, phaseEmoji := "", "", ""
 	switch {
 	case current > 0.05 && current < 0.45 && current < after:
-		return getMoonPhasesLocaled(lang, 0)
+		phangeNameLocalized = getMoonPhasesLocalized(lang, 0)
+		phaseName, phaseEmoji = getMoonPhases(0)
 	case current >= 0.45 && current <= 0.55 && current < after:
-		return getMoonPhasesLocaled(lang, 1)
+		phangeNameLocalized = getMoonPhasesLocalized(lang, 1)
+		phaseName, phaseEmoji = getMoonPhases(1)
 	case current > 0.55 && current < 0.95 && current > before:
-		return getMoonPhasesLocaled(lang, 2)
+		phangeNameLocalized = getMoonPhasesLocalized(lang, 2)
+		phaseName, phaseEmoji = getMoonPhases(2)
 	case current >= 0.95:
-		return getMoonPhasesLocaled(lang, 3)
+		phangeNameLocalized = getMoonPhasesLocalized(lang, 3)
+		phaseName, phaseEmoji = getMoonPhases(3)
 	case current < 0.95 && current > 0.55 && current < before:
-		return getMoonPhasesLocaled(lang, 4)
+		phangeNameLocalized = getMoonPhasesLocalized(lang, 4)
+		phaseName, phaseEmoji = getMoonPhases(4)
 	case current <= 0.55 && current >= 0.45 && current < before:
-		return getMoonPhasesLocaled(lang, 5)
+		phangeNameLocalized = getMoonPhasesLocalized(lang, 5)
+		phaseName, phaseEmoji = getMoonPhases(5)
 	case current < 0.45 && current > 0.05 && current < before:
-		return getMoonPhasesLocaled(lang, 6)
+		phangeNameLocalized = getMoonPhasesLocalized(lang, 6)
+		phaseName, phaseEmoji = getMoonPhases(6)
 	case current <= 0.05:
-		return getMoonPhasesLocaled(lang, 7)
+		phangeNameLocalized = getMoonPhasesLocalized(lang, 7)
+		phaseName, phaseEmoji = getMoonPhases(7)
 	}
-	return "", ""
+	return phaseName, phangeNameLocalized, phaseEmoji
 }
 
-func getMoonPhasesLocaled(lang string, position int) (string, string) {
+func getMoonPhases(position int) (string, string) {
+	return phasesEn[position], phasesEmoji[position]
+}
+
+func getMoonPhasesLocalized(lang string, position int) string {
 	switch lang {
 	case "en":
-		return phasesEn[position], phasesEmoji[position]
+		return phasesEn[position]
 	case "ru":
-		return phasesRu[position], phasesEmoji[position]
+		return phasesRu[position]
 	case "es":
-		return phasesEs[position], phasesEmoji[position]
+		return phasesEs[position]
 	case "de":
-		return phasesDe[position], phasesEmoji[position]
+		return phasesDe[position]
 	case "fr":
-		return phasesFr[position], phasesEmoji[position]
+		return phasesFr[position]
 	case "jp":
-		return phasesJp[position], phasesEmoji[position]
+		return phasesJp[position]
 	}
-	return phasesEn[position], phasesEmoji[position]
+	return phasesEn[position]
 }
 
 func getIlluminatedFractionOfMoon(jd float64) float64 {
