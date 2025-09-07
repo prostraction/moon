@@ -59,7 +59,7 @@ func (c *Cache) CurrentZodiacs(tGiven time.Time, loc *time.Location, lang string
 		zods.Zodiac[1].Begin = tBegin2
 		zods.Zodiac[1].End = tEnd2
 		zods.Zodiac[1].Name, zods.Zodiac[1].Emoji = getZodiacResp(zodiacPositionEnd)
-		zods.Zodiac[1].NameLocalized = getZodiacRespLocalized(zodiacPositionBegin, lang)
+		zods.Zodiac[1].NameLocalized = getZodiacRespLocalized(zodiacPositionEnd, lang)
 	}
 
 	zodiacBegin.Name, zodiacBegin.Emoji = getZodiacResp(zodiacPositionBegin)

@@ -96,7 +96,7 @@ Response:
             },
             {
                 "Name": "Pisces",
-                "NameLocalized": "Acuario",
+                "NameLocalized": "Piscis",
                 "Emoji": "♓",
                 "Begin": "2025-09-07T16:07:06+10:00",
                 "End": "2025-09-10T04:07:06+10:00"
