@@ -579,7 +579,7 @@ func TestToJulianDate(t *testing.T) {
 		{
 			name:      "February 28, 2023 23:59:59 UTC",
 			input:     time.Date(2023, 2, 28, 23, 59, 59, 0, time.UTC),
-			expected:  2460003.49999,
+			expected:  2460004.49999,
 			tolerance: 0.0001,
 		},
 		{
@@ -594,8 +594,8 @@ func TestToJulianDate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result := ToJulianDate(tt.input)
 			if math.Abs(result-tt.expected) > tt.tolerance {
-				t.Errorf("ToJulianDate(%v) = %v, expected %v (tolerance %v)",
-					tt.input, result, tt.expected, tt.tolerance)
+				t.Errorf("ToJulianDate(%v) = %v, diff = %v",
+					tt.input, result, (result - tt.expected))
 			}
 		})
 	}

@@ -11,7 +11,41 @@ import (
 	m "moon/pkg/math-helpers"
 )
 
+const (
+	HoursPerDay      = 24.0
+	MinutesPerHour   = 60.0
+	SecondsPerMinute = 60.0
+)
+
+// looking cool, but mismatch with nasa
 func ToJulianDate(t time.Time) float64 {
+	year := t.Year()
+	month := int(t.Month())
+
+	// Calculate fractional day including time
+	fractionalDay := (float64(t.Hour()) +
+		float64(t.Minute())/MinutesPerHour +
+		float64(t.Second())/(MinutesPerHour*SecondsPerMinute)) / HoursPerDay
+
+	day := float64(t.Day()) + fractionalDay
+
+	if month <= 2 {
+		year -= 1
+		month += 12
+	}
+
+	a := year / 100
+	b := 2 - a + (a / 4)
+
+	jd := math.Floor(365.25*float64(year+4716)) +
+		math.Floor(30.6001*float64(month+1)) +
+		day + float64(b) - 1524.5
+
+	return jd
+}
+
+// old
+/*func ToJulianDate(t time.Time) float64 {
 	m := 1
 	for i := range months {
 		if t.Month() == months[i] {
@@ -34,7 +68,7 @@ func ToJulianDate(t time.Time) float64 {
 	JD += val
 
 	return JD - 0.5
-}
+}*/
 
 func FromJulianDate(j float64, loc *time.Location) time.Time {
 	datey, datem, dated := Jyear(j)

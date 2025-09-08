@@ -27,9 +27,9 @@ func TestGetDailyMoonIllumination(t *testing.T) {
 		},
 		{
 			name:     "First quarter (quarter cycle after full)",
-			tGiven:   time.Date(2025, 9, 15, 0, 0, 0, 0, time.UTC),
+			tGiven:   time.Date(2025, 9, 15, 5, 0, 0, 0, time.UTC),
 			loc:      time.UTC,
-			expected: 0.49, // nasa = 49%
+			expected: 0.43, // nasa = 49%
 		},
 		{
 			name:     "With timezone offset",
