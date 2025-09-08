@@ -1,7 +1,6 @@
 package moon
 
 import (
-	il "moon/pkg/illumination"
 	jt "moon/pkg/julian-time"
 	"time"
 )
@@ -21,8 +20,6 @@ func (c *Cache) CurrentMoonDays(tGiven time.Time, loc *time.Location) (time.Dura
 
 	return beginMoonDays, currentMoonDays, endMoonDays
 }
-
-type illumFunc func(tGiven time.Time, loc *time.Location) float64
 
 func (c *Cache) MoonDetailed(tGiven time.Time, loc *time.Location, lang string) *MoonDaysDetailed {
 	if loc == nil {
@@ -71,35 +68,6 @@ func (c *Cache) MoonDetailed(tGiven time.Time, loc *time.Location, lang string) 
 	moonDaysDetailed.Day[0].End = tFirstDayEnd
 
 	return moonDaysDetailed
-}
-
-func CurrentMoonPhase(tGiven time.Time, loc *time.Location, lang string) (float64, float64, float64, il.PhaseResp, il.PhaseResp, il.PhaseResp) {
-	currentMoonIllumination, currentMoonIlluminationBefore, currentMoonIlluminationAfter := currentMoonPhaseCalc(tGiven, loc, il.GetCurrentMoonIllumination)
-	dayBeginMoonIllumination, dayBeginMoonIlluminationBefore, dayBeginMoonIlluminationAfter := currentMoonPhaseCalc(tGiven, loc, il.GetDailyMoonIllumination)
-	dayEndMoonIllumination, dayEndMoonIlluminationBefore, dayEndMoonIlluminationAfter := currentMoonPhaseCalc(tGiven.AddDate(0, 0, 1), loc, il.GetDailyMoonIllumination)
-
-	moonPhaseCurrent := il.GetMoonPhase(currentMoonIlluminationBefore, currentMoonIllumination, currentMoonIlluminationAfter, lang)
-	moonPhaseBegin := il.GetMoonPhase(dayBeginMoonIlluminationBefore, dayBeginMoonIllumination, dayBeginMoonIlluminationAfter, lang)
-	moonPhaseEnd := il.GetMoonPhase(dayEndMoonIlluminationBefore, dayEndMoonIllumination, dayEndMoonIlluminationAfter, lang)
-
-	return currentMoonIllumination, dayBeginMoonIllumination, dayEndMoonIllumination, moonPhaseCurrent, moonPhaseBegin, moonPhaseEnd
-}
-
-func currentMoonPhaseCalc(tGiven time.Time, loc *time.Location, calcF illumFunc) (float64, float64, float64) {
-	moonIllumination := calcF(tGiven, loc)
-	moonIlluminationBefore := calcF(tGiven.AddDate(0, 0, -1), loc)
-	moonIlluminationAfter := calcF(tGiven.AddDate(0, 0, 1), loc)
-
-	// in rare UTC-12 case they are equal
-	if moonIllumination == moonIlluminationBefore {
-		moonIlluminationBefore = calcF(tGiven.AddDate(0, 0, -2), loc)
-	}
-	// just in case
-	if moonIllumination == moonIlluminationAfter {
-		moonIlluminationAfter = calcF(tGiven.AddDate(0, 0, 2), loc)
-	}
-
-	return moonIllumination, moonIlluminationBefore, moonIlluminationAfter
 }
 
 func (c *Cache) GenerateMoonTable(tGiven time.Time) []*MoonTableElement {

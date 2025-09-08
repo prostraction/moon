@@ -15,12 +15,6 @@ type Cache struct {
 	tables map[string][]*MoonTableElement
 }
 
-type PhaseResp struct {
-	Name          string
-	NameLocalized string
-	Emoji         string
-}
-
 type MoonDay struct {
 	Begin time.Time
 	End   time.Time
