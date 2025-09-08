@@ -3,6 +3,10 @@ package moon
 import (
 	"math"
 	"time"
+
+	il "moon/pkg/illumination"
+	jt "moon/pkg/julian-time"
+	phase "moon/pkg/phase"
 )
 
 func (c *Cache) CreateMoonTable(timeGiven time.Time) []*MoonTableElement {
@@ -24,8 +28,8 @@ func (c *Cache) CreateMoonTable(timeGiven time.Time) []*MoonTableElement {
 	minx = 0
 	isNext := true
 	for l = 0; ; l++ {
-		mtime = truephase(k1, float64(l&1)*0.5)
-		datey, _, _ := jyear(mtime)
+		mtime = phase.Truephase(k1, float64(l&1)*0.5)
+		datey, _, _ := jt.Jyear(mtime)
 		if datey >= timeGiven.Year() {
 			minx++
 		}
@@ -62,14 +66,14 @@ func (c *Cache) CreateMoonTable(timeGiven time.Time) []*MoonTableElement {
 		elem.t1 = mp
 		elem.t2 = lastnew
 
-		firstQuarterTime := binarySearchIllumination(lastnew, mp, timeGiven.Location(), true)
-		elem.FirstQuarter = FromJulianDate(firstQuarterTime, timeGiven.Location())
+		firstQuarterTime := il.BinarySearchIllumination(lastnew, mp, timeGiven.Location(), true)
+		elem.FirstQuarter = jt.FromJulianDate(firstQuarterTime, timeGiven.Location())
 
-		lastQuarterTime := binarySearchIllumination(mp, mp+10, timeGiven.Location(), false)
-		elem.LastQuarter = FromJulianDate(lastQuarterTime, timeGiven.Location())
+		lastQuarterTime := il.BinarySearchIllumination(mp, mp+10, timeGiven.Location(), false)
+		elem.LastQuarter = jt.FromJulianDate(lastQuarterTime, timeGiven.Location())
 
-		elem.NewMoon = FromJulianDate(lastnew, timeGiven.Location())
-		elem.FullMoon = FromJulianDate(mp, timeGiven.Location())
+		elem.NewMoon = jt.FromJulianDate(lastnew, timeGiven.Location())
+		elem.FullMoon = jt.FromJulianDate(mp, timeGiven.Location())
 
 		if elem.t1 != elem.t2 {
 			moonTable = append(moonTable, elem)
@@ -88,8 +92,7 @@ func (c *Cache) CreateMoonTable(timeGiven time.Time) []*MoonTableElement {
 	return moonTable
 }
 
-func (c *Cache) BeginMoonDayToEarthDay(tGiven time.Time, duration time.Duration) time.Time {
-	moonTable := c.CreateMoonTable(tGiven)
+func BeginMoonDayToEarthDay(tGiven time.Time, duration time.Duration, moonTable []*MoonTableElement) time.Time {
 	for i := range moonTable {
 		elem := moonTable[i]
 		if elem.t1 != elem.t2 {
@@ -123,117 +126,4 @@ func GetMoonDays(tGiven time.Time, table []*MoonTableElement) time.Duration {
 		}
 	}
 	return moonDays
-}
-
-func binarySearchIllumination(jdTimeBegin, jdTimeEnd float64, loc *time.Location, direction bool) (jdTime float64) {
-	if loc == nil {
-		loc = time.UTC
-	}
-
-	it := 0
-	low := jdTimeBegin
-	high := jdTimeEnd
-
-	mid := low + (high-low)/2.0
-	illum := GetCurrentMoonIllumination(FromJulianDate(mid, loc), loc)
-	if !direction && illum < 0.5 {
-		direction = true
-	}
-
-	for it < 50 {
-		mid = low + (high-low)/2.0
-		illum = GetCurrentMoonIllumination(FromJulianDate(mid, loc), loc)
-		//log.Printf("Direction: %v, Iteration %d: low=%.6f, high=%.6f, mid=%.6f, illum=%.6f", direction, it, low, high, mid, illum)
-		if math.Abs(illum-0.5) < 0.0001 {
-			return mid
-		}
-		if direction {
-			if illum < 0.5 {
-				low = mid
-			} else {
-				high = mid
-			}
-		} else {
-			if illum > 0.5 {
-				low = mid
-			} else {
-				high = mid
-			}
-		}
-		if high-low < 1e-10 {
-			return mid
-		}
-		it++
-	}
-	return low + (high-low)/2.0
-}
-
-func truephase(k, phase float64) float64 {
-	var t, t2, t3, pt, m, mprime, f float64
-	SynMonth := 29.53058868 // Synodic month (mean time from new to next new Moon)
-
-	k += phase           // Add phase to new moon time
-	t = k / 1236.85      // Time in Julian centuries from 1900 January 0.5
-	t2 = t * t           // Square for frequent use
-	t3 = t2 * t          // Cube for frequent use
-	pt = 2415020.75933 + // Mean time of phase
-		SynMonth*k +
-		0.0001178*t2 -
-		0.000000155*t3 +
-		0.00033*dsin(166.56+132.87*t-0.009173*t2)
-
-	m = 359.2242 + // Sun's mean anomaly
-		29.10535608*k -
-		0.0000333*t2 -
-		0.00000347*t3
-	mprime = 306.0253 + // Moon's mean anomaly
-		385.81691806*k +
-		0.0107306*t2 +
-		0.00001236*t3
-	f = 21.2964 + // Moon's argument of latitude
-		390.67050646*k -
-		0.0016528*t2 -
-		0.00000239*t3
-
-	if (phase < 0.01) || (math.Abs(phase-0.5) < 0.01) {
-		// Corrections for New and Full Moon
-		pt += (0.1734-0.000393*t)*dsin(m) +
-			0.0021*dsin(2*m) -
-			0.4068*dsin(mprime) +
-			0.0161*dsin(2*mprime) -
-			0.0004*dsin(3*mprime) +
-			0.0104*dsin(2*f) -
-			0.0051*dsin(m+mprime) -
-			0.0074*dsin(m-mprime) +
-			0.0004*dsin(2*f+m) -
-			0.0004*dsin(2*f-m) -
-			0.0006*dsin(2*f+mprime) +
-			0.0010*dsin(2*f-mprime) +
-			0.0005*dsin(m+2*mprime)
-	} else if (math.Abs(phase-0.25) < 0.01) || (math.Abs(phase-0.75) < 0.01) {
-		pt += (0.1721-0.0004*t)*dsin(m) +
-			0.0021*dsin(2*m) -
-			0.6280*dsin(mprime) +
-			0.0089*dsin(2*mprime) -
-			0.0004*dsin(3*mprime) +
-			0.0079*dsin(2*f) -
-			0.0119*dsin(m+mprime) -
-			0.0047*dsin(m-mprime) +
-			0.0003*dsin(2*f+m) -
-			0.0004*dsin(2*f-m) -
-			0.0006*dsin(2*f+mprime) +
-			0.0021*dsin(2*f-mprime) +
-			0.0003*dsin(m+2*mprime) +
-			0.0004*dsin(m-2*mprime) -
-			0.0003*dsin(2*m+mprime)
-
-		if phase < 0.5 {
-			// First quarter correction
-			pt += 0.0028 - 0.0004*dcos(m) + 0.0003*dcos(mprime)
-		} else {
-			// Last quarter correction
-			pt += -0.0028 + 0.0004*dcos(m) - 0.0003*dcos(mprime)
-		}
-	}
-	return pt
 }

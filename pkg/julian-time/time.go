@@ -1,4 +1,4 @@
-package moon
+package julian_time
 
 import (
 	"errors"
@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	m "moon/pkg/math-helpers"
 )
 
 func ToJulianDate(t time.Time) float64 {
@@ -35,8 +37,8 @@ func ToJulianDate(t time.Time) float64 {
 }
 
 func FromJulianDate(j float64, loc *time.Location) time.Time {
-	datey, datem, dated := jyear(j)
-	timeh, timem, times := jhms(j)
+	datey, datem, dated := Jyear(j)
+	timeh, timem, times := Jhms(j)
 
 	t := time.Date(datey, GetMonth(datem), dated, timeh, timem, times, 0, time.UTC)
 	t = t.In(loc)
@@ -131,9 +133,9 @@ func SetTimezoneLocFromString(utc string) (*time.Location, error) {
 	totalSeconds := sign * (hours*3600 + minutes*60)
 
 	// Create location name
-	locationName := fmt.Sprintf("UTC%s%d:%02d", getSignPrefix(sign), hours, minutes)
+	locationName := fmt.Sprintf("UTC%s%d:%02d", m.GetSignPrefix(sign), hours, minutes)
 	if minutes == 0 {
-		locationName = fmt.Sprintf("UTC%s%d", getSignPrefix(sign), hours)
+		locationName = fmt.Sprintf("UTC%s%d", m.GetSignPrefix(sign), hours)
 	}
 
 	return time.FixedZone(locationName, totalSeconds), nil
@@ -239,7 +241,7 @@ func GetTimeFromLocation(loc *time.Location) (hours int, minutes int, err error)
 }
 
 // JYMD - Convert Julian time to year, months, and days
-func jyear(td float64) (int, int, int) {
+func Jyear(td float64) (int, int, int) {
 	td += 0.5 // Astronomical to civil
 	z := math.Floor(td)
 	f := td - z
@@ -277,7 +279,7 @@ func jyear(td float64) (int, int, int) {
 }
 
 // JHMS - Convert Julian time to hour, minutes, and seconds
-func jhms(j float64) (int, int, int) {
+func Jhms(j float64) (int, int, int) {
 	j += 0.5 // Astronomical to civil
 	ij := (j - math.Floor(j)) * 86400.0
 	hours := math.Floor(ij / 3600)
