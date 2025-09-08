@@ -40,16 +40,16 @@ async function showMoonDay(date, isCurrent) {
 
     try {
         const data = await getMoonData(date);
+        const moonDay = Math.floor(data.EndDay.MoonDays);
+        const illumination = data.EndDay.Illumination;
+        const phase = data.EndDay.Phase;
+        const zodiac = data.EndDay.Zodiac;
+        
         if (isCurrent) {
             const moonDay = Math.floor(data.CurrentState.MoonDays);
             const illumination = data.CurrentState.Illumination;
             const phase = data.CurrentState.Phase;
             const zodiac = data.CurrentState.Zodiac;
-        } else {
-            const moonDay = Math.floor(data.EndDay.MoonDays);
-            const illumination = data.EndDay.Illumination;
-            const phase = data.EndDay.Phase;
-            const zodiac = data.EndDay.Zodiac;
         }
 
         // Удаляем приветственный блок, если он есть
