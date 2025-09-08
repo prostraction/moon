@@ -7,7 +7,7 @@ const moonDateInput = document.getElementById('moonDateInput');
 
 
 // Ограничение выбора даты
-moonDateInput.max = new Date().toISOString().split('T')[0];
+//moonDateInput.max = new Date().toISOString().split('T')[0];
 
 // --- API ---
 async function getMoonData(date = new Date()) {
@@ -18,7 +18,8 @@ async function getMoonData(date = new Date()) {
         year: date.getFullYear(),
         hour: date.getHours(),
         minute: date.getMinutes(),
-        second: date.getSeconds()
+        second: date.getSeconds(),
+        lang: 'ru'
     };
 
     const url = new URL(CONFIG.API_URL);
@@ -34,20 +35,26 @@ async function getMoonData(date = new Date()) {
 }
 
 // --- Отображение ---
-async function showMoonDay(date) {
+async function showMoonDay(date, isCurrent) {
     resultDiv.innerHTML = '<div class="loading-text">Подключаемся к лунному API...</div>';
 
     try {
         const data = await getMoonData(date);
-        const moonDay = Math.floor(data.CurrentState.MoonDays);
-        const illumination = data.CurrentState.Illumination.toFixed(1);
-        const phase = data.CurrentState.Phase;
-        const zodiac = data.CurrentState.Zodiac;
+        if (isCurrent) {
+            const moonDay = Math.floor(data.CurrentState.MoonDays);
+            const illumination = data.CurrentState.Illumination;
+            const phase = data.CurrentState.Phase;
+            const zodiac = data.CurrentState.Zodiac;
+        } else {
+            const moonDay = Math.floor(data.EndDay.MoonDays);
+            const illumination = data.EndDay.Illumination;
+            const phase = data.EndDay.Phase;
+            const zodiac = data.EndDay.Zodiac;
+        }
 
         // Удаляем приветственный блок, если он есть
         const initialMessage = resultDiv.querySelector('.initial-message');
         if (initialMessage) initialMessage.remove();
-
 
         resultDiv.innerHTML = `
             <div class="moon-day">Лунный день: <span class="highlight">${moonDay}</span></div>
@@ -56,8 +63,8 @@ async function showMoonDay(date) {
                 <div class="detail-item"><span class="detail-label">Освещённость:</span> <span class="detail-value">${illumination}%</span></div>
                 <div class="detail-item"><span class="detail-label">Знак зодиака:</span> 
                 <span class="detail-value">
-                    <img src="icons/${zodiac.Name}.svg" alt="${zodiac.Name}" class="zodiac-icon"> 
-                    ${zodiac.Name}
+                    <img src="icons/${zodiac.Name.toLowerCase()}.svg" alt="${zodiac.Name}" class="zodiac-icon"> 
+                    ${zodiac.NameLocalized}
                 </span>
             </div>
         `;
@@ -71,7 +78,7 @@ async function showMoonDay(date) {
 
 
 // --- Кнопки ---
-todayBtn.addEventListener('click', () => showMoonDay(new Date()));
+todayBtn.addEventListener('click', () => showMoonDay(new Date(), true));
 
 chooseDateBtn.addEventListener('click', () => {
     datePickerInline.classList.toggle('show'); // показываем/скрываем контейнер
@@ -84,8 +91,8 @@ chooseDateBtn.addEventListener('click', () => {
 // Отправка через Enter
 moonDateInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter' && moonDateInput.value) {
-        const date = new Date(moonDateInput.value + 'T12:00:00');
-        showMoonDay(date);
+        const date = new Date(moonDateInput.value);// + 'T12:00:00');
+        showMoonDay(date, false);
         datePickerInline.classList.remove('show');
     }
 });

@@ -1,0 +1,518 @@
+{
+	"info": {
+		"_postman_id": "80646cbb-9731-4960-a3f1-acf6ab588126",
+		"name": "Moon Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37785427"
+	},
+	"item": [
+		{
+			"name": "Moon Phase Day",
+			"item": [
+				{
+					"name": "Get current moon plase",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/moonPhaseCurrent",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"moonPhaseCurrent"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/v1/moonPhaseCurrent?utc=5&lang=ru&precision=2",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"moonPhaseCurrent"
+									],
+									"query": [
+										{
+											"key": "utc",
+											"value": "5",
+											"description": "Timezone. Example: \"UTC+5\", \"5\", \"-10:30\""
+										},
+										{
+											"key": "lang",
+											"value": "ru",
+											"description": "Language for NameLocalized (Phase, Zodiac)"
+										},
+										{
+											"key": "precision",
+											"value": "2",
+											"description": "Precision for MoonDays and Illumination."
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.24.0 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 08 Sep 2025 07:46:52 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "Content-Length",
+									"value": "959"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=900"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"BeginDay\": {\n        \"MoonDays\": 15.54,\n        \"Illumination\": 99.78,\n        \"Phase\": {\n            \"Name\": \"Full Moon\",\n            \"NameLocalized\": \"Полнолуние\",\n            \"Emoji\": \"🌕\"\n        },\n        \"Zodiac\": {\n            \"Name\": \"Pisces\",\n            \"NameLocalized\": \"Рыбы\",\n            \"Emoji\": \"♓\"\n        }\n    },\n    \"CurrentState\": {\n        \"MoonDays\": 15.99,\n        \"Illumination\": 100,\n        \"Phase\": {\n            \"Name\": \"Full Moon\",\n            \"NameLocalized\": \"Полнолуние\",\n            \"Emoji\": \"🌕\"\n        },\n        \"Zodiac\": {\n            \"Name\": \"Pisces\",\n            \"NameLocalized\": \"Рыбы\",\n            \"Emoji\": \"♓\"\n        }\n    },\n    \"EndDay\": {\n        \"MoonDays\": 16.54,\n        \"Illumination\": 99.53,\n        \"Phase\": {\n            \"Name\": \"Full Moon\",\n            \"NameLocalized\": \"Полнолуние\",\n            \"Emoji\": \"🌕\"\n        },\n        \"Zodiac\": {\n            \"Name\": \"Pisces\",\n            \"NameLocalized\": \"Рыбы\",\n            \"Emoji\": \"♓\"\n        }\n    },\n    \"MoonDaysDetailed\": {\n        \"Count\": 2,\n        \"Day\": [\n            {\n                \"Begin\": \"2025-09-07T11:08:06+05:00\",\n                \"End\": \"2025-09-08T11:08:06+05:00\"\n            },\n            {\n                \"Begin\": \"2025-09-08T11:08:06+05:00\",\n                \"End\": \"2025-09-09T11:08:06+05:00\"\n            }\n        ]\n    },\n    \"ZodiacDetailed\": {\n        \"Count\": 1,\n        \"Zodiac\": [\n            {\n                \"Name\": \"Pisces\",\n                \"NameLocalized\": \"Рыбы\",\n                \"Emoji\": \"♓\",\n                \"Begin\": \"2025-09-07T11:07:06+05:00\",\n                \"End\": \"2025-09-09T23:07:06+05:00\"\n            }\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get moon plase by day",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/moonPhaseCurrent",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"moonPhaseCurrent"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/v1/moonPhaseDate?utc=5&lang=ru&precision=2&year=2025&month=9&day=7&hour=12&minute=0&second=0",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"moonPhaseDate"
+									],
+									"query": [
+										{
+											"key": "utc",
+											"value": "5",
+											"description": "Timezone. Example: \"UTC+5\", \"5\", \"-10:30\""
+										},
+										{
+											"key": "lang",
+											"value": "ru",
+											"description": "Language for NameLocalized (Phase, Zodiac)"
+										},
+										{
+											"key": "precision",
+											"value": "2",
+											"description": "Precision for MoonDays and Illumination."
+										},
+										{
+											"key": "year",
+											"value": "2025",
+											"description": "Year for request: YYYY"
+										},
+										{
+											"key": "month",
+											"value": "9",
+											"description": "Month for request: 1-12, could be MM (\"01\" for example)"
+										},
+										{
+											"key": "day",
+											"value": "7",
+											"description": "Day for request: 1-31, could be DD (\"01\" for example)"
+										},
+										{
+											"key": "hour",
+											"value": "12",
+											"description": "Hour for request: 0-23, could be hh (\"01\" for example)"
+										},
+										{
+											"key": "minute",
+											"value": "0",
+											"description": "Minute for request: 0-59, could be mm(\"01\" for example) "
+										},
+										{
+											"key": "second",
+											"value": "0",
+											"description": "Second for request: 0-59, could be ss (\"01\" for example)"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.24.0 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 08 Sep 2025 07:57:14 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1106"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=900"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"BeginDay\": {\n        \"MoonDays\": 14.54,\n        \"Illumination\": 97.44,\n        \"Phase\": {\n            \"Name\": \"Full Moon\",\n            \"NameLocalized\": \"Полнолуние\",\n            \"Emoji\": \"🌕\"\n        },\n        \"Zodiac\": {\n            \"Name\": \"Aquarius\",\n            \"NameLocalized\": \"Водолей\",\n            \"Emoji\": \"♒\"\n        }\n    },\n    \"CurrentState\": {\n        \"MoonDays\": 15.04,\n        \"Illumination\": 98.92,\n        \"Phase\": {\n            \"Name\": \"Full Moon\",\n            \"NameLocalized\": \"Полнолуние\",\n            \"Emoji\": \"🌕\"\n        },\n        \"Zodiac\": {\n            \"Name\": \"Pisces\",\n            \"NameLocalized\": \"Рыбы\",\n            \"Emoji\": \"♓\"\n        }\n    },\n    \"EndDay\": {\n        \"MoonDays\": 15.54,\n        \"Illumination\": 99.78,\n        \"Phase\": {\n            \"Name\": \"Full Moon\",\n            \"NameLocalized\": \"Полнолуние\",\n            \"Emoji\": \"🌕\"\n        },\n        \"Zodiac\": {\n            \"Name\": \"Pisces\",\n            \"NameLocalized\": \"Рыбы\",\n            \"Emoji\": \"♓\"\n        }\n    },\n    \"MoonDaysDetailed\": {\n        \"Count\": 2,\n        \"Day\": [\n            {\n                \"Begin\": \"2025-09-06T11:08:06+05:00\",\n                \"End\": \"2025-09-07T11:08:06+05:00\"\n            },\n            {\n                \"Begin\": \"2025-09-07T11:08:06+05:00\",\n                \"End\": \"2025-09-08T11:08:06+05:00\"\n            }\n        ]\n    },\n    \"ZodiacDetailed\": {\n        \"Count\": 2,\n        \"Zodiac\": [\n            {\n                \"Name\": \"Aquarius\",\n                \"NameLocalized\": \"Водолей\",\n                \"Emoji\": \"♒\",\n                \"Begin\": \"2025-09-04T23:07:06+05:00\",\n                \"End\": \"2025-09-07T11:07:06+05:00\"\n            },\n            {\n                \"Name\": \"Pisces\",\n                \"NameLocalized\": \"Рыбы\",\n                \"Emoji\": \"♓\",\n                \"Begin\": \"2025-09-07T11:07:06+05:00\",\n                \"End\": \"2025-09-09T23:07:06+05:00\"\n            }\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get moon plase by timestamp",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/moonPhaseCurrent",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"moonPhaseCurrent"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/v1/moonPhaseTimestamp?utc=5&lang=ru&precision=2&t=1757235600",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"moonPhaseTimestamp"
+									],
+									"query": [
+										{
+											"key": "utc",
+											"value": "5",
+											"description": "Timezone. Example: \"UTC+5\", \"5\", \"-10:30\""
+										},
+										{
+											"key": "lang",
+											"value": "ru",
+											"description": "Language for NameLocalized (Phase, Zodiac)"
+										},
+										{
+											"key": "precision",
+											"value": "2",
+											"description": "Precision for MoonDays and Illumination."
+										},
+										{
+											"key": "t",
+											"value": "1757235600",
+											"description": "UNIX timestamp for request"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.24.0 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 08 Sep 2025 07:59:59 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1106"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=900"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"BeginDay\": {\n        \"MoonDays\": 14.54,\n        \"Illumination\": 97.44,\n        \"Phase\": {\n            \"Name\": \"Full Moon\",\n            \"NameLocalized\": \"Полнолуние\",\n            \"Emoji\": \"🌕\"\n        },\n        \"Zodiac\": {\n            \"Name\": \"Aquarius\",\n            \"NameLocalized\": \"Водолей\",\n            \"Emoji\": \"♒\"\n        }\n    },\n    \"CurrentState\": {\n        \"MoonDays\": 15.04,\n        \"Illumination\": 98.92,\n        \"Phase\": {\n            \"Name\": \"Full Moon\",\n            \"NameLocalized\": \"Полнолуние\",\n            \"Emoji\": \"🌕\"\n        },\n        \"Zodiac\": {\n            \"Name\": \"Pisces\",\n            \"NameLocalized\": \"Рыбы\",\n            \"Emoji\": \"♓\"\n        }\n    },\n    \"EndDay\": {\n        \"MoonDays\": 15.54,\n        \"Illumination\": 99.78,\n        \"Phase\": {\n            \"Name\": \"Full Moon\",\n            \"NameLocalized\": \"Полнолуние\",\n            \"Emoji\": \"🌕\"\n        },\n        \"Zodiac\": {\n            \"Name\": \"Pisces\",\n            \"NameLocalized\": \"Рыбы\",\n            \"Emoji\": \"♓\"\n        }\n    },\n    \"MoonDaysDetailed\": {\n        \"Count\": 2,\n        \"Day\": [\n            {\n                \"Begin\": \"2025-09-06T11:08:06+05:00\",\n                \"End\": \"2025-09-07T11:08:06+05:00\"\n            },\n            {\n                \"Begin\": \"2025-09-07T11:08:06+05:00\",\n                \"End\": \"2025-09-08T11:08:06+05:00\"\n            }\n        ]\n    },\n    \"ZodiacDetailed\": {\n        \"Count\": 2,\n        \"Zodiac\": [\n            {\n                \"Name\": \"Aquarius\",\n                \"NameLocalized\": \"Водолей\",\n                \"Emoji\": \"♒\",\n                \"Begin\": \"2025-09-04T23:07:06+05:00\",\n                \"End\": \"2025-09-07T11:07:06+05:00\"\n            },\n            {\n                \"Name\": \"Pisces\",\n                \"NameLocalized\": \"Рыбы\",\n                \"Emoji\": \"♓\",\n                \"Begin\": \"2025-09-07T11:07:06+05:00\",\n                \"End\": \"2025-09-09T23:07:06+05:00\"\n            }\n        ]\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Moon Phase Table",
+			"item": [
+				{
+					"name": "Get current moon phases table",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/moonTableCurrent?utc=5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"moonTableCurrent"
+							],
+							"query": [
+								{
+									"key": "utc",
+									"value": "5",
+									"description": "Timezone. Example: \"UTC+5\", \"5\", \"-10:30\""
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v1/moonTableCurrent?utc=5",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"moonTableCurrent"
+									],
+									"query": [
+										{
+											"key": "utc",
+											"value": "5",
+											"description": "Timezone. Example: \"UTC+5\", \"5\", \"-10:30\""
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.24.0 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 08 Sep 2025 08:02:02 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2133"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=900"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"NewMoon\": \"2024-12-31T03:27:49+05:00\",\n        \"FirstQuarter\": \"2025-01-07T11:15:21+05:00\",\n        \"FullMoon\": \"2025-01-14T03:27:44+05:00\",\n        \"LastQuarter\": \"2025-01-22T08:25:30+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-01-29T17:37:18+05:00\",\n        \"FirstQuarter\": \"2025-02-06T04:58:10+05:00\",\n        \"FullMoon\": \"2025-02-12T18:54:26+05:00\",\n        \"LastQuarter\": \"2025-02-21T15:11:33+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-02-28T05:46:43+05:00\",\n        \"FirstQuarter\": \"2025-03-06T22:09:47+05:00\",\n        \"FullMoon\": \"2025-03-14T11:55:56+05:00\",\n        \"LastQuarter\": \"2025-03-22T18:04:01+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-03-29T16:00:07+05:00\",\n        \"FirstQuarter\": \"2025-04-05T17:34:56+05:00\",\n        \"FullMoon\": \"2025-04-13T05:23:56+05:00\",\n        \"LastQuarter\": \"2025-04-21T17:53:28+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-04-28T00:33:22+05:00\",\n        \"FirstQuarter\": \"2025-05-04T14:45:23+05:00\",\n        \"FullMoon\": \"2025-05-12T21:58:06+05:00\",\n        \"LastQuarter\": \"2025-05-20T13:43:06+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-05-27T08:04:25+05:00\",\n        \"FirstQuarter\": \"2025-06-03T14:00:25+05:00\",\n        \"FullMoon\": \"2025-06-11T12:46:06+05:00\",\n        \"LastQuarter\": \"2025-06-19T06:20:05+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-06-25T15:33:30+05:00\",\n        \"FirstQuarter\": \"2025-07-02T15:12:37+05:00\",\n        \"FullMoon\": \"2025-07-11T01:38:54+05:00\",\n        \"LastQuarter\": \"2025-07-17T21:00:28+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-07-25T00:12:27+05:00\",\n        \"FirstQuarter\": \"2025-08-01T17:59:17+05:00\",\n        \"FullMoon\": \"2025-08-09T12:57:07+05:00\",\n        \"LastQuarter\": \"2025-08-16T11:07:25+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-08-23T11:07:06+05:00\",\n        \"FirstQuarter\": \"2025-08-31T11:57:39+05:00\",\n        \"FullMoon\": \"2025-09-07T23:10:41+05:00\",\n        \"LastQuarter\": \"2025-09-15T02:16:19+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-09-22T00:54:36+05:00\",\n        \"FirstQuarter\": \"2025-09-30T15:19:05+05:00\",\n        \"FullMoon\": \"2025-10-07T08:48:57+05:00\",\n        \"LastQuarter\": \"2025-10-13T19:44:16+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-10-21T17:25:58+05:00\",\n        \"FirstQuarter\": \"2025-10-29T17:25:46+05:00\",\n        \"FullMoon\": \"2025-11-05T18:20:26+05:00\",\n        \"LastQuarter\": \"2025-11-12T16:34:16+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-11-20T11:48:16+05:00\",\n        \"FirstQuarter\": \"2025-11-28T17:22:10+05:00\",\n        \"FullMoon\": \"2025-12-05T04:15:18+05:00\",\n        \"LastQuarter\": \"2025-12-11T17:20:42+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-12-20T06:44:25+05:00\",\n        \"FirstQuarter\": \"2025-12-27T14:53:55+05:00\",\n        \"FullMoon\": \"2026-01-03T15:04:15+05:00\",\n        \"LastQuarter\": \"2026-01-10T21:44:20+05:00\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get moon phases table by year",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/moonTableYear?utc=5&year=2025",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"moonTableYear"
+							],
+							"query": [
+								{
+									"key": "utc",
+									"value": "5",
+									"description": "Timezone. Example: \"UTC+5\", \"5\", \"-10:30\""
+								},
+								{
+									"key": "year",
+									"value": "2025",
+									"description": "Year for request: YYYY"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v1/moonTableCurrent?utc=5",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"moonTableCurrent"
+									],
+									"query": [
+										{
+											"key": "utc",
+											"value": "5",
+											"description": "Timezone. Example: \"UTC+5\", \"5\", \"-10:30\""
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.24.0 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 08 Sep 2025 08:02:02 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2133"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=900"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"NewMoon\": \"2024-12-31T03:27:49+05:00\",\n        \"FirstQuarter\": \"2025-01-07T11:15:21+05:00\",\n        \"FullMoon\": \"2025-01-14T03:27:44+05:00\",\n        \"LastQuarter\": \"2025-01-22T08:25:30+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-01-29T17:37:18+05:00\",\n        \"FirstQuarter\": \"2025-02-06T04:58:10+05:00\",\n        \"FullMoon\": \"2025-02-12T18:54:26+05:00\",\n        \"LastQuarter\": \"2025-02-21T15:11:33+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-02-28T05:46:43+05:00\",\n        \"FirstQuarter\": \"2025-03-06T22:09:47+05:00\",\n        \"FullMoon\": \"2025-03-14T11:55:56+05:00\",\n        \"LastQuarter\": \"2025-03-22T18:04:01+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-03-29T16:00:07+05:00\",\n        \"FirstQuarter\": \"2025-04-05T17:34:56+05:00\",\n        \"FullMoon\": \"2025-04-13T05:23:56+05:00\",\n        \"LastQuarter\": \"2025-04-21T17:53:28+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-04-28T00:33:22+05:00\",\n        \"FirstQuarter\": \"2025-05-04T14:45:23+05:00\",\n        \"FullMoon\": \"2025-05-12T21:58:06+05:00\",\n        \"LastQuarter\": \"2025-05-20T13:43:06+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-05-27T08:04:25+05:00\",\n        \"FirstQuarter\": \"2025-06-03T14:00:25+05:00\",\n        \"FullMoon\": \"2025-06-11T12:46:06+05:00\",\n        \"LastQuarter\": \"2025-06-19T06:20:05+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-06-25T15:33:30+05:00\",\n        \"FirstQuarter\": \"2025-07-02T15:12:37+05:00\",\n        \"FullMoon\": \"2025-07-11T01:38:54+05:00\",\n        \"LastQuarter\": \"2025-07-17T21:00:28+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-07-25T00:12:27+05:00\",\n        \"FirstQuarter\": \"2025-08-01T17:59:17+05:00\",\n        \"FullMoon\": \"2025-08-09T12:57:07+05:00\",\n        \"LastQuarter\": \"2025-08-16T11:07:25+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-08-23T11:07:06+05:00\",\n        \"FirstQuarter\": \"2025-08-31T11:57:39+05:00\",\n        \"FullMoon\": \"2025-09-07T23:10:41+05:00\",\n        \"LastQuarter\": \"2025-09-15T02:16:19+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-09-22T00:54:36+05:00\",\n        \"FirstQuarter\": \"2025-09-30T15:19:05+05:00\",\n        \"FullMoon\": \"2025-10-07T08:48:57+05:00\",\n        \"LastQuarter\": \"2025-10-13T19:44:16+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-10-21T17:25:58+05:00\",\n        \"FirstQuarter\": \"2025-10-29T17:25:46+05:00\",\n        \"FullMoon\": \"2025-11-05T18:20:26+05:00\",\n        \"LastQuarter\": \"2025-11-12T16:34:16+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-11-20T11:48:16+05:00\",\n        \"FirstQuarter\": \"2025-11-28T17:22:10+05:00\",\n        \"FullMoon\": \"2025-12-05T04:15:18+05:00\",\n        \"LastQuarter\": \"2025-12-11T17:20:42+05:00\"\n    },\n    {\n        \"NewMoon\": \"2025-12-20T06:44:25+05:00\",\n        \"FirstQuarter\": \"2025-12-27T14:53:55+05:00\",\n        \"FullMoon\": \"2026-01-03T15:04:15+05:00\",\n        \"LastQuarter\": \"2026-01-10T21:44:20+05:00\"\n    }\n]"
+						}
+					]
+				}
+			]
+		}
+	]
+}
