@@ -28,15 +28,17 @@ func GetCurrentMoonIllumination(tGiven time.Time, loc *time.Location) float64 {
 	return getIlluminatedFractionOfMoon(ToJulianDate(tGiven))
 }
 
-func GetMoonPhase(before, current, after float64, lang string) (string, string, string) {
-	phaseName, phangeNameLocalized, phaseEmoji := "", "", ""
+func GetMoonPhase(before, current, after float64, lang string) (string, string, string, string) {
+	phaseName, phangeNameLocalized, phaseEmoji, sign := "", "", "", ""
 	switch {
 	case current > 0.05 && current < 0.45 && current < after:
 		phangeNameLocalized = getMoonPhasesLocalized(lang, 0)
 		phaseName, phaseEmoji = getMoonPhases(0)
+		sign = "+"
 	case current >= 0.45 && current <= 0.55 && current < after:
 		phangeNameLocalized = getMoonPhasesLocalized(lang, 1)
 		phaseName, phaseEmoji = getMoonPhases(1)
+		sign = "+"
 	case current > 0.55 && current < 0.95 && current > before:
 		phangeNameLocalized = getMoonPhasesLocalized(lang, 2)
 		phaseName, phaseEmoji = getMoonPhases(2)
@@ -44,19 +46,31 @@ func GetMoonPhase(before, current, after float64, lang string) (string, string, 
 		phangeNameLocalized = getMoonPhasesLocalized(lang, 3)
 		phaseName, phaseEmoji = getMoonPhases(3)
 	case current < 0.95 && current > 0.55 && current < before:
+		sign = "-"
 		phangeNameLocalized = getMoonPhasesLocalized(lang, 4)
 		phaseName, phaseEmoji = getMoonPhases(4)
 	case current <= 0.55 && current >= 0.45 && current < before:
+		sign = "-"
 		phangeNameLocalized = getMoonPhasesLocalized(lang, 5)
 		phaseName, phaseEmoji = getMoonPhases(5)
 	case current < 0.45 && current > 0.05 && current < before:
+		sign = "-"
 		phangeNameLocalized = getMoonPhasesLocalized(lang, 6)
 		phaseName, phaseEmoji = getMoonPhases(6)
 	case current <= 0.05:
 		phangeNameLocalized = getMoonPhasesLocalized(lang, 7)
 		phaseName, phaseEmoji = getMoonPhases(7)
+	case current >= 0.95 && current >= before:
+		sign = "+"
+	case current >= 0.95 && current < before:
+		sign = "-"
+	case current < 0.05 && current >= before:
+		sign = "+"
+	case current < 0.05 && current < before:
+		sign = "-"
 	}
-	return phaseName, phangeNameLocalized, phaseEmoji
+
+	return phaseName, phangeNameLocalized, phaseEmoji, sign
 }
 
 func getMoonPhases(position int) (string, string) {
