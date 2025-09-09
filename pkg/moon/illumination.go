@@ -42,6 +42,7 @@ func GetMoonPhase(before, current, after float64, lang string) (string, string, 
 	case current > 0.55 && current < 0.95 && current > before:
 		phangeNameLocalized = getMoonPhasesLocalized(lang, 2)
 		phaseName, phaseEmoji = getMoonPhases(2)
+		sign = "+"
 	case current >= 0.95:
 		phangeNameLocalized = getMoonPhasesLocalized(lang, 3)
 		phaseName, phaseEmoji = getMoonPhases(3)

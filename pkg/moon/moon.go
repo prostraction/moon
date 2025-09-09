@@ -84,6 +84,26 @@ func CurrentMoonPhase(tGiven time.Time, loc *time.Location, lang string) (float6
 	moonPhaseBegin.Name, moonPhaseBegin.NameLocalized, moonPhaseBegin.Emoji, moonPhaseBegin.Sign = GetMoonPhase(dayBeginMoonIlluminationBefore, dayBeginMoonIllumination, dayBeginMoonIlluminationAfter, lang)
 	moonPhaseEnd.Name, moonPhaseEnd.NameLocalized, moonPhaseEnd.Emoji, moonPhaseEnd.Sign = GetMoonPhase(dayEndMoonIlluminationBefore, dayEndMoonIllumination, dayEndMoonIlluminationAfter, lang)
 
+	if moonPhaseCurrent.Sign == "" || moonPhaseBegin.Sign == "" || moonPhaseEnd.Sign == "" {
+		if dayBeginMoonIlluminationBefore <= currentMoonIlluminationBefore && currentMoonIlluminationBefore <= dayEndMoonIlluminationBefore {
+			moonPhaseCurrent.Sign = "+"
+			moonPhaseBegin.Sign = "+"
+			moonPhaseEnd.Sign = "+"
+		} else if dayBeginMoonIlluminationBefore > currentMoonIlluminationBefore && currentMoonIlluminationBefore > dayEndMoonIlluminationBefore {
+			moonPhaseCurrent.Sign = "-"
+			moonPhaseBegin.Sign = "-"
+			moonPhaseEnd.Sign = "-"
+		} else if dayBeginMoonIlluminationBefore > currentMoonIlluminationBefore {
+			moonPhaseCurrent.Sign = "+"
+			moonPhaseBegin.Sign = "+"
+			moonPhaseEnd.Sign = "-"
+		} else if dayBeginMoonIlluminationBefore < currentMoonIlluminationBefore {
+			moonPhaseCurrent.Sign = "-"
+			moonPhaseBegin.Sign = "-"
+			moonPhaseEnd.Sign = "+"
+		}
+	}
+
 	return currentMoonIllumination, dayBeginMoonIllumination, dayEndMoonIllumination, moonPhaseCurrent, moonPhaseBegin, moonPhaseEnd
 }
 
