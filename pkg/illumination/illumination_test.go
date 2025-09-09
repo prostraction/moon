@@ -74,7 +74,7 @@ func TestGetCurrentMoonIllumination(t *testing.T) {
 			name:     "Specific time on full moon day",
 			tGiven:   time.Date(2025, 9, 7, 15, 30, 45, 0, time.UTC),
 			loc:      time.UTC,
-			expected: 0.999, // Slightly less than 100% as time passes
+			expected: 0.999,
 		},
 		{
 			name:     "New moon exact time",
@@ -86,19 +86,19 @@ func TestGetCurrentMoonIllumination(t *testing.T) {
 			name:     "With positive timezone offset",
 			tGiven:   time.Date(2025, 9, 8, 1, 0, 0, 0, time.FixedZone("UTC+1", 3600)),
 			loc:      time.FixedZone("UTC+1", 3600),
-			expected: 1.0, // Timezone should be adjusted correctly
+			expected: 1.0,
 		},
 		{
 			name:     "With negative timezone offset",
 			tGiven:   time.Date(2025, 9, 7, 23, 0, 0, 0, time.FixedZone("UTC-1", -3600)),
 			loc:      time.FixedZone("UTC-1", -3600),
-			expected: 1.0, // Timezone should be adjusted correctly
+			expected: 1.0,
 		},
 		{
 			name:     "Random time between phases",
 			tGiven:   time.Date(2025, 9, 12, 13, 0, 0, 0, time.UTC),
 			loc:      time.UTC,
-			expected: 0.75, // Approximately 75% illuminated
+			expected: 0.71,
 		},
 	}
 

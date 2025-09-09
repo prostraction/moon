@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -84,8 +85,13 @@ func SetTimezoneLocFromString(utc string) (*time.Location, error) {
 		return time.UTC, nil
 	}
 
+	re := regexp.MustCompile(`[^a-zA-Z0-9:+-\-]`)
+	utc = re.ReplaceAllString(utc, "")
+
 	// Remove "UTC" prefix if present and convert to lowercase for case-insensitive matching
-	normalized := strings.ToLower(strings.TrimPrefix(utc, "UTC"))
+	normalized := strings.ToLower(utc)
+	normalized = strings.TrimPrefix(normalized, "utc")
+	normalized = strings.TrimPrefix(normalized, "gmt")
 	normalized = strings.TrimSpace(normalized)
 
 	// Handle cases like "UTC", "+0", "-0", "0"
@@ -180,6 +186,8 @@ func GetTimeFromLocation(loc *time.Location) (hours int, minutes int, err error)
 		return 0, 0, errors.New("loc is nil")
 	}
 	utc := loc.String()
+	re := regexp.MustCompile(`[^a-zA-Z0-9:+-\-]`)
+	utc = re.ReplaceAllString(utc, "")
 
 	// Handle empty string
 	if utc == "" {
@@ -187,7 +195,9 @@ func GetTimeFromLocation(loc *time.Location) (hours int, minutes int, err error)
 	}
 
 	// Remove "UTC" prefix if present and convert to lowercase for case-insensitive matching
-	normalized := strings.ToLower(strings.TrimPrefix(utc, "UTC"))
+	normalized := strings.ToLower(utc)
+	normalized = strings.TrimPrefix(normalized, "utc")
+	normalized = strings.TrimPrefix(normalized, "gmt")
 	normalized = strings.TrimSpace(normalized)
 
 	// Handle cases like "+5", "-3", etc.
@@ -232,7 +242,7 @@ func GetTimeFromLocation(loc *time.Location) (hours int, minutes int, err error)
 		if err != nil {
 			return 0, 0, fmt.Errorf("invalid hours: %s", normalized)
 		}
-		return sign * hours, sign * minutes, nil
+		return sign * hours, minutes, nil
 	}
 
 	// Handle cases like "0530" (4 digits)
@@ -250,7 +260,7 @@ func GetTimeFromLocation(loc *time.Location) (hours int, minutes int, err error)
 			return 0, 0, fmt.Errorf("invalid minutes: %s", minutesStr)
 		}
 
-		return sign * hours, sign * minutes, nil
+		return sign * hours, minutes, nil
 	}
 
 	// Handle cases like "530" (3 digits - hours + minutes)
@@ -268,10 +278,10 @@ func GetTimeFromLocation(loc *time.Location) (hours int, minutes int, err error)
 			return 0, 0, fmt.Errorf("invalid minutes: %s", minutesStr)
 		}
 
-		return sign * hours, sign * minutes, nil
+		return sign * hours, minutes, nil
 	}
 
-	return 0, 0, fmt.Errorf("invalid timezone format: %s", utc)
+	return 0, 0, fmt.Errorf("invalid timezone format")
 }
 
 // JYMD - Convert Julian time to year, months, and days

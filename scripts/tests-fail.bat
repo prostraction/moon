@@ -1,0 +1,1 @@
+go test ./... -v | findstr /V "PASS ok RUN ?"
