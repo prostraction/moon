@@ -1,6 +1,6 @@
 package main
 
-import "moon/pkg/server"
+import "moon/internal/server"
 
 func main() {
 	s := server.Server{}

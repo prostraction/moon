@@ -1,10 +1,12 @@
-package moon
+package zodiac
 
 import (
+	jt "moon/pkg/julian-time"
+	moon "moon/pkg/moon"
 	"time"
 )
 
-func (c *Cache) CurrentZodiacs(tGiven time.Time, loc *time.Location, lang string) (*Zodiacs, Zodiac, Zodiac, Zodiac) {
+func CurrentZodiacs(tGiven time.Time, loc *time.Location, lang string, moonTable []*moon.MoonTableElement) (*Zodiacs, Zodiac, Zodiac, Zodiac) {
 	zods := new(Zodiacs)
 
 	zodiacBegin := Zodiac{}
@@ -14,21 +16,20 @@ func (c *Cache) CurrentZodiacs(tGiven time.Time, loc *time.Location, lang string
 	dayBeginTime := time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day(), 0, 0, 0, 0, loc)
 	dayEndTime := time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day()+1, 0, 0, 0, 0, loc)
 
-	moonTable := c.CreateMoonTable(tGiven)
-	beginMoonDays := GetMoonDays(dayBeginTime, moonTable)
-	currentMoonDays := GetMoonDays(tGiven, moonTable)
-	endMoonDays := GetMoonDays(dayEndTime, moonTable)
+	beginMoonDays := moon.GetMoonDays(dayBeginTime, moonTable)
+	currentMoonDays := moon.GetMoonDays(tGiven, moonTable)
+	endMoonDays := moon.GetMoonDays(dayEndTime, moonTable)
 
-	zodiacPositionBegin := int((beginMoonDays.Minutes()/Fminute*360.)/30./30.) % 12
-	zodiacPositionCurrent := int((currentMoonDays.Minutes()/Fminute*360.)/30./30.) % 12
-	zodiacPositionEnd := int((endMoonDays.Minutes()/Fminute*360.)/30./30.) % 12
+	zodiacPositionBegin := int((beginMoonDays.Minutes()/jt.Fminute*360.)/30./30.) % 12
+	zodiacPositionCurrent := int((currentMoonDays.Minutes()/jt.Fminute*360.)/30./30.) % 12
+	zodiacPositionEnd := int((endMoonDays.Minutes()/jt.Fminute*360.)/30./30.) % 12
 
 	if zodiacPositionBegin == zodiacPositionEnd {
 		zods.Count = 1
-		zodBegin := zodiacPositionBegin * Fminute / 360 * 30. * 30.
-		zodEnd := (zodiacPositionEnd + 1) * Fminute / 360 * 30. * 30.
-		tBegin := c.BeginMoonDayToEarthDay(tGiven, time.Duration(zodBegin)*time.Minute)
-		tEnd := c.BeginMoonDayToEarthDay(tGiven, time.Duration(zodEnd)*time.Minute)
+		zodBegin := zodiacPositionBegin * jt.Fminute / 360 * 30. * 30.
+		zodEnd := (zodiacPositionEnd + 1) * jt.Fminute / 360 * 30. * 30.
+		tBegin := moon.BeginMoonDayToEarthDay(tGiven, time.Duration(zodBegin)*time.Minute, moonTable)
+		tEnd := moon.BeginMoonDayToEarthDay(tGiven, time.Duration(zodEnd)*time.Minute, moonTable)
 		zods.Zodiac = make([]ZodiacDetailed, 1)
 		zods.Zodiac[0].Begin = tBegin
 		zods.Zodiac[0].End = tEnd
@@ -36,26 +37,26 @@ func (c *Cache) CurrentZodiacs(tGiven time.Time, loc *time.Location, lang string
 		zods.Zodiac[0].NameLocalized = getZodiacRespLocalized(zodiacPositionBegin, lang)
 	} else {
 		zods.Count = 2
-		zodBegin1 := (zodiacPositionBegin) * Fminute / 360 * 30. * 30.
-		zodEnd1 := (zodiacPositionBegin + 1) * Fminute / 360 * 30. * 30.
+		zodBegin1 := (zodiacPositionBegin) * jt.Fminute / 360 * 30. * 30.
+		zodEnd1 := (zodiacPositionBegin + 1) * jt.Fminute / 360 * 30. * 30.
 
-		tBegin1 := c.BeginMoonDayToEarthDay(tGiven, time.Duration(zodBegin1)*time.Minute)
-		tEnd1 := c.BeginMoonDayToEarthDay(tGiven, time.Duration(zodEnd1)*time.Minute)
+		tBegin1 := moon.BeginMoonDayToEarthDay(tGiven, time.Duration(zodBegin1)*time.Minute, moonTable)
+		tEnd1 := moon.BeginMoonDayToEarthDay(tGiven, time.Duration(zodEnd1)*time.Minute, moonTable)
 		zods.Zodiac = make([]ZodiacDetailed, 2)
 		zods.Zodiac[0].Begin = tBegin1
 		zods.Zodiac[0].End = tEnd1
 		zods.Zodiac[0].Name, zods.Zodiac[0].Emoji = getZodiacResp(zodiacPositionBegin)
 		zods.Zodiac[0].NameLocalized = getZodiacRespLocalized(zodiacPositionBegin, lang)
 
-		if int(endMoonDays.Minutes()/Fminute) == 0 {
+		if int(endMoonDays.Minutes()/jt.Fminute) == 0 {
 			endMoonDays += (beginMoonDays + 24*time.Hour)
-			zodiacPositionEnd = int((endMoonDays.Minutes()/Fminute*360.)/30./30.) % 12
+			zodiacPositionEnd = int((endMoonDays.Minutes()/jt.Fminute*360.)/30./30.) % 12
 		}
 
-		zodBegin2 := (zodiacPositionEnd) * Fminute / 360 * 30. * 30.
-		zodEnd2 := (zodiacPositionEnd + 1) * Fminute / 360 * 30. * 30.
-		tBegin2 := c.BeginMoonDayToEarthDay(tGiven, time.Duration(zodBegin2)*time.Minute)
-		tEnd2 := c.BeginMoonDayToEarthDay(tGiven, time.Duration(zodEnd2)*time.Minute)
+		zodBegin2 := (zodiacPositionEnd) * jt.Fminute / 360 * 30. * 30.
+		zodEnd2 := (zodiacPositionEnd + 1) * jt.Fminute / 360 * 30. * 30.
+		tBegin2 := moon.BeginMoonDayToEarthDay(tGiven, time.Duration(zodBegin2)*time.Minute, moonTable)
+		tEnd2 := moon.BeginMoonDayToEarthDay(tGiven, time.Duration(zodEnd2)*time.Minute, moonTable)
 		zods.Zodiac[1].Begin = tBegin2
 		zods.Zodiac[1].End = tEnd2
 		zods.Zodiac[1].Name, zods.Zodiac[1].Emoji = getZodiacResp(zodiacPositionEnd)

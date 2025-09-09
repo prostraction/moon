@@ -1,15 +1,52 @@
-package moon
+package julian_time
 
 import (
 	"errors"
 	"fmt"
 	"math"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
+
+	m "moon/pkg/math-helpers"
 )
 
+const (
+	HoursPerDay      = 24.0
+	MinutesPerHour   = 60.0
+	SecondsPerMinute = 60.0
+)
+
+// looking cool, but mismatch with nasa
 func ToJulianDate(t time.Time) float64 {
+	year := t.Year()
+	month := int(t.Month())
+
+	// Calculate fractional day including time
+	fractionalDay := (float64(t.Hour()) +
+		float64(t.Minute())/MinutesPerHour +
+		float64(t.Second())/(MinutesPerHour*SecondsPerMinute)) / HoursPerDay
+
+	day := float64(t.Day()) + fractionalDay
+
+	if month <= 2 {
+		year -= 1
+		month += 12
+	}
+
+	a := year / 100
+	b := 2 - a + (a / 4)
+
+	jd := math.Floor(365.25*float64(year+4716)) +
+		math.Floor(30.6001*float64(month+1)) +
+		day + float64(b) - 1524.5
+
+	return jd
+}
+
+// old
+/*func ToJulianDate(t time.Time) float64 {
 	m := 1
 	for i := range months {
 		if t.Month() == months[i] {
@@ -32,11 +69,11 @@ func ToJulianDate(t time.Time) float64 {
 	JD += val
 
 	return JD - 0.5
-}
+}*/
 
 func FromJulianDate(j float64, loc *time.Location) time.Time {
-	datey, datem, dated := jyear(j)
-	timeh, timem, times := jhms(j)
+	datey, datem, dated := Jyear(j)
+	timeh, timem, times := Jhms(j)
 
 	t := time.Date(datey, GetMonth(datem), dated, timeh, timem, times, 0, time.UTC)
 	t = t.In(loc)
@@ -48,8 +85,13 @@ func SetTimezoneLocFromString(utc string) (*time.Location, error) {
 		return time.UTC, nil
 	}
 
+	re := regexp.MustCompile(`[^a-zA-Z0-9:+-\-]`)
+	utc = re.ReplaceAllString(utc, "")
+
 	// Remove "UTC" prefix if present and convert to lowercase for case-insensitive matching
-	normalized := strings.ToLower(strings.TrimPrefix(utc, "UTC"))
+	normalized := strings.ToLower(utc)
+	normalized = strings.TrimPrefix(normalized, "utc")
+	normalized = strings.TrimPrefix(normalized, "gmt")
 	normalized = strings.TrimSpace(normalized)
 
 	// Handle cases like "UTC", "+0", "-0", "0"
@@ -131,9 +173,9 @@ func SetTimezoneLocFromString(utc string) (*time.Location, error) {
 	totalSeconds := sign * (hours*3600 + minutes*60)
 
 	// Create location name
-	locationName := fmt.Sprintf("UTC%s%d:%02d", getSignPrefix(sign), hours, minutes)
+	locationName := fmt.Sprintf("UTC%s%d:%02d", m.GetSignPrefix(sign), hours, minutes)
 	if minutes == 0 {
-		locationName = fmt.Sprintf("UTC%s%d", getSignPrefix(sign), hours)
+		locationName = fmt.Sprintf("UTC%s%d", m.GetSignPrefix(sign), hours)
 	}
 
 	return time.FixedZone(locationName, totalSeconds), nil
@@ -144,6 +186,8 @@ func GetTimeFromLocation(loc *time.Location) (hours int, minutes int, err error)
 		return 0, 0, errors.New("loc is nil")
 	}
 	utc := loc.String()
+	re := regexp.MustCompile(`[^a-zA-Z0-9:+-\-]`)
+	utc = re.ReplaceAllString(utc, "")
 
 	// Handle empty string
 	if utc == "" {
@@ -151,7 +195,9 @@ func GetTimeFromLocation(loc *time.Location) (hours int, minutes int, err error)
 	}
 
 	// Remove "UTC" prefix if present and convert to lowercase for case-insensitive matching
-	normalized := strings.ToLower(strings.TrimPrefix(utc, "UTC"))
+	normalized := strings.ToLower(utc)
+	normalized = strings.TrimPrefix(normalized, "utc")
+	normalized = strings.TrimPrefix(normalized, "gmt")
 	normalized = strings.TrimSpace(normalized)
 
 	// Handle cases like "+5", "-3", etc.
@@ -196,7 +242,7 @@ func GetTimeFromLocation(loc *time.Location) (hours int, minutes int, err error)
 		if err != nil {
 			return 0, 0, fmt.Errorf("invalid hours: %s", normalized)
 		}
-		return sign * hours, sign * minutes, nil
+		return sign * hours, minutes, nil
 	}
 
 	// Handle cases like "0530" (4 digits)
@@ -214,7 +260,7 @@ func GetTimeFromLocation(loc *time.Location) (hours int, minutes int, err error)
 			return 0, 0, fmt.Errorf("invalid minutes: %s", minutesStr)
 		}
 
-		return sign * hours, sign * minutes, nil
+		return sign * hours, minutes, nil
 	}
 
 	// Handle cases like "530" (3 digits - hours + minutes)
@@ -232,14 +278,14 @@ func GetTimeFromLocation(loc *time.Location) (hours int, minutes int, err error)
 			return 0, 0, fmt.Errorf("invalid minutes: %s", minutesStr)
 		}
 
-		return sign * hours, sign * minutes, nil
+		return sign * hours, minutes, nil
 	}
 
-	return 0, 0, fmt.Errorf("invalid timezone format: %s", utc)
+	return 0, 0, fmt.Errorf("invalid timezone format")
 }
 
 // JYMD - Convert Julian time to year, months, and days
-func jyear(td float64) (int, int, int) {
+func Jyear(td float64) (int, int, int) {
 	td += 0.5 // Astronomical to civil
 	z := math.Floor(td)
 	f := td - z
@@ -277,7 +323,7 @@ func jyear(td float64) (int, int, int) {
 }
 
 // JHMS - Convert Julian time to hour, minutes, and seconds
-func jhms(j float64) (int, int, int) {
+func Jhms(j float64) (int, int, int) {
 	j += 0.5 // Astronomical to civil
 	ij := (j - math.Floor(j)) * 86400.0
 	hours := math.Floor(ij / 3600)
