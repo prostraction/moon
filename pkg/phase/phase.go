@@ -18,6 +18,24 @@ func CurrentMoonPhase(tGiven time.Time, loc *time.Location, lang string) (float6
 	moonPhaseBegin := GetMoonPhase(dayBeginMoonIlluminationBefore, dayBeginMoonIllumination, dayBeginMoonIlluminationAfter, lang)
 	moonPhaseEnd := GetMoonPhase(dayEndMoonIlluminationBefore, dayEndMoonIllumination, dayEndMoonIlluminationAfter, lang)
 
+	if dayBeginMoonIllumination <= currentMoonIllumination && currentMoonIllumination <= dayEndMoonIllumination {
+		moonPhaseCurrent.IsWaxing = true
+		moonPhaseBegin.IsWaxing = true
+		moonPhaseEnd.IsWaxing = true
+	} else if dayBeginMoonIllumination > currentMoonIllumination && currentMoonIllumination > dayEndMoonIllumination {
+		moonPhaseCurrent.IsWaxing = false
+		moonPhaseBegin.IsWaxing = false
+		moonPhaseEnd.IsWaxing = false
+	} else if dayBeginMoonIllumination > currentMoonIllumination {
+		moonPhaseCurrent.IsWaxing = false
+		moonPhaseBegin.IsWaxing = false
+		moonPhaseEnd.IsWaxing = true
+	} else if dayBeginMoonIllumination < currentMoonIllumination {
+		moonPhaseCurrent.IsWaxing = true
+		moonPhaseBegin.IsWaxing = true
+		moonPhaseEnd.IsWaxing = false
+	}
+
 	return currentMoonIllumination, dayBeginMoonIllumination, dayEndMoonIllumination, moonPhaseCurrent, moonPhaseBegin, moonPhaseEnd
 }
 
