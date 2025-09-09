@@ -80,27 +80,27 @@ func CurrentMoonPhase(tGiven time.Time, loc *time.Location, lang string) (float6
 	moonPhaseBegin := PhaseResp{}
 	moonPhaseEnd := PhaseResp{}
 
-	moonPhaseCurrent.Name, moonPhaseCurrent.NameLocalized, moonPhaseCurrent.Emoji, moonPhaseCurrent.Sign = GetMoonPhase(currentMoonIlluminationBefore, currentMoonIllumination, currentMoonIlluminationAfter, lang)
-	moonPhaseBegin.Name, moonPhaseBegin.NameLocalized, moonPhaseBegin.Emoji, moonPhaseBegin.Sign = GetMoonPhase(dayBeginMoonIlluminationBefore, dayBeginMoonIllumination, dayBeginMoonIlluminationAfter, lang)
-	moonPhaseEnd.Name, moonPhaseEnd.NameLocalized, moonPhaseEnd.Emoji, moonPhaseEnd.Sign = GetMoonPhase(dayEndMoonIlluminationBefore, dayEndMoonIllumination, dayEndMoonIlluminationAfter, lang)
+	moonPhaseCurrent.Name, moonPhaseCurrent.NameLocalized, moonPhaseCurrent.Emoji, moonPhaseCurrent.IsWaxing = GetMoonPhase(currentMoonIlluminationBefore, currentMoonIllumination, currentMoonIlluminationAfter, lang)
+	moonPhaseBegin.Name, moonPhaseBegin.NameLocalized, moonPhaseBegin.Emoji, moonPhaseBegin.IsWaxing = GetMoonPhase(dayBeginMoonIlluminationBefore, dayBeginMoonIllumination, dayBeginMoonIlluminationAfter, lang)
+	moonPhaseEnd.Name, moonPhaseEnd.NameLocalized, moonPhaseEnd.Emoji, moonPhaseEnd.IsWaxing = GetMoonPhase(dayEndMoonIlluminationBefore, dayEndMoonIllumination, dayEndMoonIlluminationAfter, lang)
 
-	if moonPhaseCurrent.Sign == "" || moonPhaseBegin.Sign == "" || moonPhaseEnd.Sign == "" {
-		if dayBeginMoonIlluminationBefore <= currentMoonIlluminationBefore && currentMoonIlluminationBefore <= dayEndMoonIlluminationBefore {
-			moonPhaseCurrent.Sign = "+"
-			moonPhaseBegin.Sign = "+"
-			moonPhaseEnd.Sign = "+"
-		} else if dayBeginMoonIlluminationBefore > currentMoonIlluminationBefore && currentMoonIlluminationBefore > dayEndMoonIlluminationBefore {
-			moonPhaseCurrent.Sign = "-"
-			moonPhaseBegin.Sign = "-"
-			moonPhaseEnd.Sign = "-"
-		} else if dayBeginMoonIlluminationBefore > currentMoonIlluminationBefore {
-			moonPhaseCurrent.Sign = "+"
-			moonPhaseBegin.Sign = "+"
-			moonPhaseEnd.Sign = "-"
-		} else if dayBeginMoonIlluminationBefore < currentMoonIlluminationBefore {
-			moonPhaseCurrent.Sign = "-"
-			moonPhaseBegin.Sign = "-"
-			moonPhaseEnd.Sign = "+"
+	if (currentMoonIllumination < 0.05 && dayBeginMoonIllumination < 0.05 && dayEndMoonIllumination < 0.05) || (currentMoonIllumination > 0.95 && dayBeginMoonIllumination > 0.95 && dayEndMoonIllumination > 0.95) {
+		if dayBeginMoonIllumination <= currentMoonIllumination && currentMoonIllumination <= dayEndMoonIllumination {
+			moonPhaseCurrent.IsWaxing = true
+			moonPhaseBegin.IsWaxing = true
+			moonPhaseEnd.IsWaxing = true
+		} else if dayBeginMoonIllumination > currentMoonIllumination && currentMoonIllumination > dayEndMoonIllumination {
+			moonPhaseCurrent.IsWaxing = false
+			moonPhaseBegin.IsWaxing = false
+			moonPhaseEnd.IsWaxing = false
+		} else if dayBeginMoonIllumination > currentMoonIllumination {
+			moonPhaseCurrent.IsWaxing = true
+			moonPhaseBegin.IsWaxing = true
+			moonPhaseEnd.IsWaxing = false
+		} else if dayBeginMoonIllumination < currentMoonIllumination {
+			moonPhaseCurrent.IsWaxing = false
+			moonPhaseBegin.IsWaxing = false
+			moonPhaseEnd.IsWaxing = true
 		}
 	}
 
