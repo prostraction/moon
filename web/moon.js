@@ -1,13 +1,6 @@
+export { getMoonData, showMoonDay };
+import CONFIG from './CONFIG.js';
 const resultDiv = document.getElementById('result');
-const todayBtn = document.getElementById('todayBtn');
-const chooseDateBtn = document.getElementById('chooseDateBtn');
-
-const datePickerInline = document.getElementById('datePickerInline');
-const moonDateInput = document.getElementById('moonDateInput');
-
-
-// Ограничение выбора даты
-//moonDateInput.max = new Date().toISOString().split('T')[0];
 
 // --- API ---
 async function getMoonData(date = new Date()) {
@@ -75,24 +68,3 @@ async function showMoonDay(date, isCurrent) {
         `;
     }
 }
-
-
-// --- Кнопки ---
-todayBtn.addEventListener('click', () => showMoonDay(new Date(), true));
-
-chooseDateBtn.addEventListener('click', () => {
-    datePickerInline.classList.toggle('show'); // показываем/скрываем контейнер
-    if (datePickerInline.classList.contains('show')) {
-        moonDateInput.focus();
-    }
-});
-
-
-// Отправка через Enter
-moonDateInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && moonDateInput.value) {
-        const date = new Date(moonDateInput.value);// + 'T12:00:00');
-        showMoonDay(date, false);
-        datePickerInline.classList.remove('show');
-    }
-});
