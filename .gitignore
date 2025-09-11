@@ -27,9 +27,6 @@ go.work.sum
 # env file
 .env
 
-# frontend.config
-config.js
-
 # Editor/IDE
 # .idea/
 # .vscode/

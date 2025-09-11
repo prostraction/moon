@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moon API</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <div class="left-container"></div>
+
+        <div class="center-container">
+                <div class="moon-container">
+                    <div id="moon"></div>
+                </div>
+
+                <div class="result" id="result">
+                    <div class="initial-message">...</div>
+                </div>
+        </div>
+
+        <div class="right-container">
+            <div class="date-input-container">
+                <div class="date-picker-container" id="datePickerContainer">
+                    <div class="date-input-row">
+                        <input type="date" id="moonDateInput" max="">
+                    </div>
+                
+                <div class="calendar" id="calendar">
+                    <div class="calendar-header">
+                        <button class="calendar-nav" id="prevMonth">←</button>
+                        <span class="calendar-month-year" id="currentMonthYear"></span>
+                        <button class="calendar-nav" id="nextMonth">→</button>
+                    </div>
+                    <div class="calendar-weekdays">
+                        <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+                    </div>
+                    <div class="calendar-days" id="calendarDays"></div>
+                </div>
+                
+                <button class="submit-btn" id="submitDateBtn">Show Moon day for chosen date</button>
+            </div></div>
+        </div>
+    </div>
+    <footer>
+    <img src="./icons/github.svg" alt="Moon Api on GitHub" class="responsive-icon">
+    <div class="link-below"><a href="https://github.com/prostraction/moon"></a></div>
+    </footer>
+    <div class="stars"></div>
+</body>
+    <script type="module" src="main.js"></script>
+</html>
