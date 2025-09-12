@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"math"
 	"strconv"
 )
@@ -23,4 +24,34 @@ func strToInt(val string, fallback int, limit int) int {
 		v = limit
 	}
 	return v
+}
+
+func isValidDate(year, month, day int) error {
+	if year < 0 || year > 9999 {
+		return errors.New("'year' should be from 0 to 9999")
+	}
+
+	if month < 1 || month > 12 {
+		return errors.New("'month' should be from 1 to 12")
+	}
+
+	if day < 1 {
+		return errors.New("'day' should be greater then 0")
+	}
+
+	daysInMonth := []int{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+
+	if month == 2 {
+		if (year%4 == 0 && year%100 != 0) || year%400 == 0 {
+			daysInMonth[1] = 29
+		} else {
+			daysInMonth[1] = 28
+		}
+	}
+
+	if day > daysInMonth[month-1] {
+		return errors.New("no 'day' in 'month' this 'year'")
+	}
+
+	return nil
 }

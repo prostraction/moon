@@ -11,7 +11,7 @@ import (
 )
 
 func (s *Server) versionV1(c *fiber.Ctx) error {
-	return c.JSON("1.0.5")
+	return c.JSON("1.0.6")
 }
 
 /*    MOON PHASE    */
@@ -58,9 +58,15 @@ func (s *Server) moonPhaseDatetV1(c *fiber.Ctx) error {
 	month := strToInt(c.Query("month", strconv.Itoa(int(tNow.Month()))), int(tNow.Month()), 12)
 	day := strToInt(c.Query("day", strconv.Itoa(int(tNow.Day()))), int(tNow.Day()), 31)
 
-	hour := strToInt(c.Query("hour", strconv.Itoa(int(tNow.Hour()))), int(tNow.Hour()), 23)
-	minute := strToInt(c.Query("minute", strconv.Itoa(int(tNow.Minute()))), int(tNow.Minute()), 59)
-	second := strToInt(c.Query("second", strconv.Itoa(int(tNow.Second()))), int(tNow.Second()), 59)
+	err := isValidDate(year, month, day)
+	if err != nil {
+		c.Status(400)
+		return c.SendString("Validation error: " + err.Error())
+	}
+
+	hour := strToInt(c.Query("hour", "0"), 0, 23)
+	minute := strToInt(c.Query("minute", "0"), 0, 59)
+	second := strToInt(c.Query("second", "0"), 0, 59)
 
 	precision := strToInt(c.Query("precision", "2"), 2, 10)
 
