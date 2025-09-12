@@ -14,7 +14,6 @@ func GetDailyMoonIllumination(tGiven time.Time, loc *time.Location) float64 {
 	h, m, err := jt.GetTimeFromLocation(loc)
 	h = -h
 	m = -m
-
 	if err == nil {
 		dailyTime = dailyTime.Add(time.Hour*time.Duration(h) + time.Minute*time.Duration(m))
 	}
