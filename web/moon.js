@@ -47,18 +47,20 @@ async function showMoonDay(date, isCurrent) {
 
         // Удаляем приветственный блок, если он есть
         const initialMessage = resultDiv.querySelector('.initial-message');
+        const today = new Date();
+        const formattedDate = today.toLocaleDateString("ru-RU");
         if (initialMessage) initialMessage.remove();
 
         resultDiv.innerHTML = `
-            <div class="moon-day">Лунный день: <span class="highlight">${moonDay}</span></div>
-            <div class="moon-details">
-                <div class="detail-item"><span class="detail-label">Фаза луны:</span> <span class="detail-value">${phase.Emoji} ${phase.NameLocalized}</span></div>
-                <div class="detail-item"><span class="detail-label">Освещённость:</span> <span class="detail-value">${illumination}%</span></div>
-                <div class="detail-item"><span class="detail-label">Знак зодиака:</span> 
-                <span class="detail-value">
-                    <img src="icons/${zodiac.Name.toLowerCase()}.svg" alt="${zodiac.Name}" class="zodiac-icon"> 
-                    ${zodiac.NameLocalized}
-                </span>
+            <div class="moon-day">
+                <span class="detail-value">${phase.Emoji} Moon day: ${moonDay}
+            </div>
+
+            <div class="moon-details">  <br>
+                <div class="detail-item"><span class="detail-label">Date:</span><span class="detail-value">${formattedDate}</span></div>
+                <div class="detail-item"><span class="detail-label">Moon phaze: </span> <span class="detail-value">${phase.Name}</span></div>
+                <div class="detail-item"><span class="detail-label">Illumination:</span> <span class="detail-value">${illumination}%</span></div>
+                <div class="detail-item"><span class="detail-label">Zodiac sign:</span> <span class="detail-value">${zodiac.Name}</span></div>
             </div>
         `;
     } catch (err) {

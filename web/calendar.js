@@ -1,14 +1,9 @@
 import { showMoonDay } from './moon.js';
 
 // Получаем элементы
-const chooseDateBtn = document.getElementById('chooseDateBtn'); // если есть
 const datePickerContainer = document.getElementById('datePickerContainer');
 const moonDateInput = document.getElementById('moonDateInput');
 
-// Убираем старую кнопку выбора даты (если она есть в DOM)
-if (chooseDateBtn) {
-    chooseDateBtn.style.display = 'none';
-}
 
 // Показываем контейнер сразу
 datePickerContainer.style.display = 'block';
@@ -78,7 +73,7 @@ function renderCalendar() {
     const month = currentDate.getMonth();
     
     // Обновляем заголовок
-    currentMonthYear.textContent = `${currentDate.toLocaleString('ru', { month: 'long' })} ${year}`;
+    currentMonthYear.textContent = `${currentDate.toLocaleString('en', { month: 'long' })} ${year}`;
     
     // Получаем первый день месяца и количество дней
     const firstDay = new Date(year, month, 1);
