@@ -2,6 +2,7 @@ package server
 
 import (
 	"moon/pkg/moon"
+	pos "moon/pkg/position"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -9,6 +10,7 @@ import (
 
 type Server struct {
 	moonCache *moon.Cache
+	position  *pos.Position
 }
 
 func (s *Server) NewRouter() *fiber.App {
@@ -38,6 +40,7 @@ func (s *Server) NewRouter() *fiber.App {
 	app.Get("/v1/version", s.versionV1)
 
 	s.moonCache = new(moon.Cache)
+	s.position = pos.New()
 
 	return app
 }

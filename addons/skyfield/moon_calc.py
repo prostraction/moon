@@ -7,14 +7,28 @@ load = Loader('./skyfield-data')
 eph = load('de421.bsp')
 ts = load.timescale()
 
+def get_azimuth(time, observer, target):
+    """Вычисляет азимут объекта в градусах и направлении (N, NE, E, SE, S, SW, W, NW)"""
+    astrometric = observer.at(time).observe(target)
+    apparent = astrometric.apparent()
+    alt, az, distance = apparent.altaz()
+    
+    azimuth_degrees = az.degrees
+    directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
+    direction_index = int((azimuth_degrees + 22.5) % 360 / 45)
+    direction = directions[direction_index]
+    
+    return round(azimuth_degrees, 1), direction
+
 def get_daily_moon_data(lat, lon, timezone, year, month, day):
     location = wgs84.latlon(lat, lon)
     moon = eph['moon']
     earth = eph['earth']
+    observer = earth + location
     
     day_date = datetime(year, month, day)
     
-    def get_meridian_time(day_date, tz_offset):
+    def get_meridian_time_and_direction(day_date, tz_offset):
         # searching for meridian (full 24 hours)
         t0 = ts.utc(day_date.year, day_date.month, day_date.day, 0 - tz_offset)
         t1 = ts.utc(day_date.year, day_date.month, day_date.day + 1, 0 - tz_offset)
@@ -26,8 +40,9 @@ def get_daily_moon_data(lat, lon, timezone, year, month, day):
         for time, event in zip(times, events):
             if event == 1:  # upper meridian
                 local_time = time.utc_datetime() + timedelta(hours=tz_offset)
-                return local_time
-        return None
+                # always (180°) for meridian
+                return local_time, 180.0, 'S'
+        return None, None, None
 
     t0 = ts.utc(day_date.year, day_date.month, day_date.day, 0 - timezone)
     t1 = ts.utc(day_date.year, day_date.month, day_date.day, 24 - timezone)
@@ -35,20 +50,26 @@ def get_daily_moon_data(lat, lon, timezone, year, month, day):
     f_rise_set = almanac.risings_and_settings(eph, moon, location)
     times_rise_set, events_rise_set = almanac.find_discrete(t0, t1, f_rise_set)
     
-    rise_time, set_time = None, None
+    rise_time, rise_azimuth, rise_direction = None, None, None
+    set_time, set_azimuth, set_direction = None, None, None
     
     for time, event in zip(times_rise_set, events_rise_set):
         local_time = time.utc_datetime() + timedelta(hours=timezone)
+        azimuth_degrees, direction = get_azimuth(time, observer, moon)
+        
         if event:  # rise
             rise_time = local_time
+            rise_azimuth = azimuth_degrees
+            rise_direction = direction
         else:      # set
             set_time = local_time
+            set_azimuth = azimuth_degrees
+            set_direction = direction
     
-    meridian_time = get_meridian_time(day_date, timezone)
+    meridian_time, meridian_azimuth, meridian_direction = get_meridian_time_and_direction(day_date, timezone)
     
     noon_t = ts.utc(day_date.year, day_date.month, day_date.day, 12)
     distance_km = earth.at(noon_t).observe(moon).apparent().distance().km
-    #illumination = almanac.fraction_illuminated(eph, 'moon', noon_t) * 100
     
     # timestamp for golang
     moonrise_ts = int(rise_time.timestamp()) if rise_time else None
@@ -57,13 +78,28 @@ def get_daily_moon_data(lat, lon, timezone, year, month, day):
     
     return {
         'date': day_date.strftime('%Y-%m-%d'),
-        'moonrise': moonrise_ts,
-        'moonset': moonset_ts,
-        'meridian': meridian_ts,
+        'moonrise': {
+            'timestamp': moonrise_ts,
+            'time': rise_time.strftime('%H:%M:%S') if rise_time else None,
+            'azimuth_degrees': rise_azimuth,
+            'direction': rise_direction,
+        } if rise_time is not None else None,
+        'moonset': {
+            'timestamp': moonset_ts,
+            'time': set_time.strftime('%H:%M:%S') if set_time else None,
+            'azimuth_degrees': set_azimuth,
+            'direction': set_direction,
+        } if set_time is not None else None,
+        'meridian': {
+            'timestamp': meridian_ts,
+            'time': meridian_time.strftime('%H:%M:%S') if meridian_time else None,
+            'azimuth_degrees': meridian_azimuth,
+            'direction': meridian_direction,
+        } if meridian_time is not None else None,
+        'distance_km': round(distance_km, 1),
         'isMoonRise': rise_time is not None,
         'isMoonSet': set_time is not None,
         'isMeridian': meridian_time is not None,
-        'distance_km': round(distance_km, 1),
     }
 
 def calculate_moon_data(lat, lon, timezone, year, month, day=None):

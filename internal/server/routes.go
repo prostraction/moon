@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 )
 
 func (s *Server) versionV1(c *fiber.Ctx) error {
@@ -88,6 +89,8 @@ func (s *Server) moonPhaseV1(c *fiber.Ctx, tGiven time.Time, precision int) erro
 	resp.BeginDay = new(MoonStat)
 	resp.info = new(FullInfo)
 
+	var err error
+
 	var beginDuration, currentDuration, endDuration time.Duration
 	beginDuration, currentDuration, endDuration = s.moonCache.CurrentMoonDays(tGiven, loc)
 
@@ -107,6 +110,11 @@ func (s *Server) moonPhaseV1(c *fiber.Ctx, tGiven time.Time, precision int) erro
 
 	resp.ZodiacDetailed, resp.BeginDay.Zodiac, resp.CurrentState.Zodiac, resp.EndDay.Zodiac = zodiac.CurrentZodiacs(tGiven, loc, lang, s.moonCache.CreateMoonTable(tGiven))
 	resp.MoonDaysDetailed = s.moonCache.MoonDetailed(tGiven, loc, lang)
+
+	resp.Position, err = s.position.GetRisesDay(tGiven.Year(), int(tGiven.Month()), tGiven.Day(), tGiven.Location())
+	if err != nil {
+		log.Error(err.Error())
+	}
 
 	return c.JSON(resp)
 }

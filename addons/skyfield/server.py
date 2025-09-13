@@ -17,7 +17,7 @@ class MoonRequestHandler(BaseHTTPRequestHandler):
         
         lat = float(query_params.get('lat', [51.08])[0])  # Astana
         lon = float(query_params.get('lon', [71.26])[0])  # Astana
-        timezone = int(query_params.get('timezone', [5])[0]) # Astana
+        timezone = int(query_params.get('utc', [5])[0]) # Astana
         year = int(query_params.get('year', [now.year])[0])
         month = int(query_params.get('month', [now.month])[0])
         
