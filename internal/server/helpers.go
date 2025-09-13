@@ -28,11 +28,11 @@ func strToInt(val string, fallback int, limit int) int {
 
 func isValidDate(year, month, day int) error {
 	if year < 0 || year > 9999 {
-		return errors.New("'year' should be from 0 to 9999")
+		return errors.New("'year' should be in range [0,9999]")
 	}
 
 	if month < 1 || month > 12 {
-		return errors.New("'month' should be from 1 to 12")
+		return errors.New("'month' should be in range [1,12]")
 	}
 
 	if day < 1 {

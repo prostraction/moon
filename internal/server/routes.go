@@ -64,9 +64,9 @@ func (s *Server) moonPhaseDatetV1(c *fiber.Ctx) error {
 		return c.SendString("Validation error: " + err.Error())
 	}
 
-	hour := strToInt(c.Query("hour", "0"), 0, 23)
-	minute := strToInt(c.Query("minute", "0"), 0, 59)
-	second := strToInt(c.Query("second", "0"), 0, 59)
+	hour := strToInt(c.Query("hour", strconv.Itoa(int(tNow.Hour()))), int(tNow.Hour()), 23)
+	minute := strToInt(c.Query("minute", strconv.Itoa(int(tNow.Minute()))), int(tNow.Minute()), 59)
+	second := strToInt(c.Query("second", strconv.Itoa(int(tNow.Second()))), int(tNow.Second()), 59)
 
 	precision := strToInt(c.Query("precision", "2"), 2, 10)
 
