@@ -11,7 +11,7 @@ import (
 )
 
 func (s *Server) versionV1(c *fiber.Ctx) error {
-	return c.JSON("1.0.6")
+	return c.JSON("1.0.7")
 }
 
 /*    MOON PHASE    */
