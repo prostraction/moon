@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"time"
 )
-
+/*
 type Position struct {
 	client  *http.Client
 	baseURL string
@@ -29,7 +29,7 @@ func (p *Position) WithHTTPClient(client *http.Client) *Position {
 func (p *Position) WithBaseURL(baseURL string) *Position {
 	p.baseURL = baseURL
 	return p
-}
+}*/
 
 // DayResponse
 type DayResponse struct {
@@ -71,7 +71,7 @@ type DayData struct {
 	DistanceKm float64 `json:"distance_km"`
 }
 
-func (p *Position) GetRisesMonthly(year, month int, loc *time.Location, location ...float64) (*MonthResponse, error) {
+func GetRisesMonthly(year, month int, loc *time.Location, location ...float64) (*MonthResponse, error) {
 	lat, lon := p.parseLocation(location)
 
 	h := 0
@@ -114,7 +114,7 @@ func (p *Position) GetRisesMonthly(year, month int, loc *time.Location, location
 	return &monthResponse, nil
 }
 
-func (p *Position) GetRisesDay(year, month, day int, loc *time.Location, location ...float64) (*DayResponse, error) {
+func GetRisesDay(year, month, day int, loc *time.Location, location ...float64) (*DayResponse, error) {
 	lat, lon := p.parseLocation(location)
 
 	h := 0
