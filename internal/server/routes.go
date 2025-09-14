@@ -13,7 +13,7 @@ import (
 )
 
 func (s *Server) versionV1(c *fiber.Ctx) error {
-	return c.JSON("1.1.0rc2")
+	return c.JSON("1.1.0rc3")
 }
 
 /*    MOON PHASE    */
@@ -124,10 +124,10 @@ func (s *Server) moonPhaseV1(c *fiber.Ctx, tGiven time.Time, precision int, loca
 	resp.EndDay.Illumination = toFixed(resp.info.IlluminationEndDay*100, precision)
 
 	resp.ZodiacDetailed, resp.BeginDay.Zodiac, resp.CurrentState.Zodiac, resp.EndDay.Zodiac = zodiac.CurrentZodiacs(tGiven, loc, lang, s.moonCache.CreateMoonTable(tGiven))
-	resp.MoonDaysDetailed = s.moonCache.MoonDetailed(tGiven, loc, lang)
 
 	if locationCords.IsValid {
 		resp.MoonRiseAndSet, err = pos.GetRisesDay(tGiven.Year(), int(tGiven.Month()), tGiven.Day(), tGiven.Location(), locationCords.Longitude, locationCords.Latitude)
+		resp.MoonDaysDetailed = s.moonCache.MoonDetailed(tGiven, loc, lang, locationCords.Longitude, locationCords.Latitude)
 	} else {
 		resp.MoonRiseAndSet, err = pos.GetRisesDay(tGiven.Year(), int(tGiven.Month()), tGiven.Day(), tGiven.Location())
 	}

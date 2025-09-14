@@ -16,8 +16,10 @@ type Cache struct {
 }
 
 type MoonDay struct {
-	Begin time.Time
-	End   time.Time
+	Begin         time.Time
+	IsBeginExists bool
+	End           time.Time
+	IsEndExists   bool
 }
 
 type MoonDaysDetailed struct {

@@ -1,7 +1,7 @@
 package moon
 
 import (
-	jt "moon/pkg/julian-time"
+	pos "moon/pkg/position"
 	"time"
 )
 
@@ -21,51 +21,47 @@ func (c *Cache) CurrentMoonDays(tGiven time.Time, loc *time.Location) (time.Dura
 	return beginMoonDays, currentMoonDays, endMoonDays
 }
 
-func (c *Cache) MoonDetailed(tGiven time.Time, loc *time.Location, lang string) *MoonDaysDetailed {
+func (c *Cache) MoonDetailed(tGiven time.Time, loc *time.Location, lang string, longitude float64, latitude float64) *MoonDaysDetailed {
 	if loc == nil {
 		loc = time.UTC
 	}
 
-	dayBeginTime := time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day(), 0, 0, 0, 0, loc)
-	dayEndTime := time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day()+1, 0, 0, 0, 0, loc)
-
-	moonTable := c.CreateMoonTable(tGiven)
-	beginMoonDays := GetMoonDays(dayBeginTime, moonTable).Minutes() / jt.Fminute
-	endMoonDays := GetMoonDays(dayEndTime, moonTable).Minutes() / jt.Fminute
+	dayYesterday := time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day()-1, 0, 0, 0, 0, loc)
+	dayToday := time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day(), 0, 0, 0, 0, loc)
+	dayTomorrow := time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day()+1, 0, 0, 0, 0, loc)
 
 	moonDaysDetailed := new(MoonDaysDetailed)
-	tFirstDayBegin := BeginMoonDayToEarthDay(tGiven, time.Duration(int(time.Minute)+int(time.Hour)*24*int(beginMoonDays)), moonTable)
-	tFirstDayEnd := BeginMoonDayToEarthDay(tGiven, time.Duration(int(time.Minute)+int(time.Hour)*24*int(beginMoonDays+1)), moonTable)
+	moonDaysDetailed.Day = make([]MoonDay, 2)
+	moonDaysDetailed.Count = 2
 
-	if int(endMoonDays) == 0 {
-		endMoonDays += (beginMoonDays + 1)
+	moonRiseYesterday, err1 := pos.GetRisesDay(dayYesterday.Year(), int(dayYesterday.Month()), dayYesterday.Day(), loc, longitude, latitude)
+	moonRiseToday, err2 := pos.GetRisesDay(dayToday.Year(), int(dayToday.Month()), dayToday.Day(), loc, longitude, latitude)
+	moonRiseTomorrow, err3 := pos.GetRisesDay(dayTomorrow.Year(), int(dayTomorrow.Month()), dayTomorrow.Day(), loc, longitude, latitude)
+
+	if err1 == nil && err2 == nil {
+		if moonRiseYesterday.IsMoonRise {
+			moonDaysDetailed.Day[0].Begin = moonRiseYesterday.Moonrise.Time
+			moonDaysDetailed.Day[0].IsBeginExists = true
+		}
+		if moonRiseToday.IsMoonRise {
+			moonDaysDetailed.Day[0].End = moonRiseToday.Moonrise.Time
+			moonDaysDetailed.Day[0].IsEndExists = true
+		}
+	}
+	if err2 == nil && err3 == nil {
+		if moonRiseToday.IsMoonRise {
+			moonDaysDetailed.Day[1].Begin = moonRiseToday.Moonrise.Time
+			moonDaysDetailed.Day[1].IsBeginExists = true
+		}
+		if moonRiseTomorrow.IsMoonRise {
+			moonDaysDetailed.Day[1].End = moonRiseTomorrow.Moonrise.Time
+			moonDaysDetailed.Day[1].IsEndExists = true
+		}
 	}
 
-	tSecondDayBegin := BeginMoonDayToEarthDay(tGiven, time.Duration(int(time.Minute)+int(time.Hour)*24*int(endMoonDays)), moonTable)
-	tSecondDayEnd := BeginMoonDayToEarthDay(tGiven, time.Duration(int(time.Minute)+int(time.Hour)*24*int(endMoonDays+1)), moonTable)
-
-	// regular case or 29 day -> 0 day
-	if int(endMoonDays)-int(beginMoonDays) <= 1 || (int(beginMoonDays) != 0 && int(endMoonDays) == 0) {
-		moonDaysDetailed.Day = make([]MoonDay, 2)
-		moonDaysDetailed.Count = 2
-
-		moonDaysDetailed.Day[1].Begin = tSecondDayBegin
-		moonDaysDetailed.Day[1].End = tSecondDayEnd
-	} else {
-		// 3 days
-		moonDaysDetailed.Day = make([]MoonDay, 3)
-		moonDaysDetailed.Count = 3
-
-		moonDaysDetailed.Day[2].Begin = tSecondDayBegin
-		moonDaysDetailed.Day[2].End = tSecondDayEnd
-
-		moonDaysDetailed.Day[1].Begin = tFirstDayEnd
-		moonDaysDetailed.Day[1].End = tSecondDayBegin
-
+	if !(moonDaysDetailed.Day[0].IsBeginExists && moonDaysDetailed.Day[0].IsEndExists) {
+		moonDaysDetailed.Count = 1
 	}
-
-	moonDaysDetailed.Day[0].Begin = tFirstDayBegin
-	moonDaysDetailed.Day[0].End = tFirstDayEnd
 
 	return moonDaysDetailed
 }

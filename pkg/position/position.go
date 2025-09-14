@@ -80,7 +80,7 @@ func GetRisesMonthly(year, month int, loc *time.Location, location ...float64) (
 	params.Add("month", fmt.Sprintf("%d", month))
 
 	url := baseURL + "?" + params.Encode()
-	client := &http.Client{Timeout: 30 * time.Second}
+	client := &http.Client{Timeout: 69 * time.Second}
 	resp, err := client.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("failed to make request: %w", err)
@@ -127,7 +127,7 @@ func GetRisesDay(year, month, day int, loc *time.Location, location ...float64) 
 	params.Add("day", fmt.Sprintf("%d", day))
 
 	url := baseURL + "?" + params.Encode()
-	client := &http.Client{Timeout: 30 * time.Second}
+	client := &http.Client{Timeout: 69 * time.Second}
 	resp, err := client.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("failed to make request: %w", err)

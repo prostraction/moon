@@ -49,8 +49,8 @@ def get_daily_moon_data(lat, lon, timezone, year, month, day):
     t0 = ts.utc(day_date.year, day_date.month, day_date.day, 0 - timezone)
     t1 = ts.utc(day_date.year, day_date.month, day_date.day, 24 - timezone)
     
-    # horizon_degrees=0 for more pricise calculatuion when altitude = 0°
-    f_rise_set = almanac.risings_and_settings(eph, moon, location, horizon_degrees=0)
+    # horizon_degrees=0 make less pricise calculatuion, but it calculated to altitude = 0°
+    f_rise_set = almanac.risings_and_settings(eph, moon, location)#, horizon_degrees=0)
     times_rise_set, events_rise_set = almanac.find_discrete(t0, t1, f_rise_set)
     
     rise_time, rise_azimuth, rise_altitude, rise_direction = None, None, None, None
