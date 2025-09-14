@@ -32,3 +32,5 @@ go.work.sum
 # .vscode/
 
 .vscode
+
+resources/vsop87

@@ -2,6 +2,8 @@ package server
 
 import (
 	"moon/pkg/moon"
+	"moon/pkg/phase"
+	"moon/pkg/zodiac"
 	"time"
 )
 
@@ -12,8 +14,8 @@ type MoonTable struct {
 type MoonStat struct {
 	MoonDays     float64
 	Illumination float64
-	Phase        moon.PhaseResp
-	Zodiac       moon.Zodiac
+	Phase        phase.PhaseResp
+	Zodiac       zodiac.Zodiac
 }
 
 type FullInfo struct {
@@ -37,7 +39,7 @@ type MoonPhaseResponse struct {
 	EndDay       *MoonStat
 
 	MoonDaysDetailed *moon.MoonDaysDetailed
-	ZodiacDetailed   *moon.Zodiacs
+	ZodiacDetailed   *zodiac.Zodiacs
 
 	info *FullInfo
 }

@@ -1,6 +1,7 @@
 package moon
 
 import (
+	jt "moon/pkg/julian-time"
 	"time"
 )
 
@@ -20,8 +21,6 @@ func (c *Cache) CurrentMoonDays(tGiven time.Time, loc *time.Location) (time.Dura
 	return beginMoonDays, currentMoonDays, endMoonDays
 }
 
-type illumFunc func(tGiven time.Time, loc *time.Location) float64
-
 func (c *Cache) MoonDetailed(tGiven time.Time, loc *time.Location, lang string) *MoonDaysDetailed {
 	if loc == nil {
 		loc = time.UTC
@@ -31,19 +30,19 @@ func (c *Cache) MoonDetailed(tGiven time.Time, loc *time.Location, lang string) 
 	dayEndTime := time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day()+1, 0, 0, 0, 0, loc)
 
 	moonTable := c.CreateMoonTable(tGiven)
-	beginMoonDays := GetMoonDays(dayBeginTime, moonTable).Minutes() / Fminute
-	endMoonDays := GetMoonDays(dayEndTime, moonTable).Minutes() / Fminute
+	beginMoonDays := GetMoonDays(dayBeginTime, moonTable).Minutes() / jt.Fminute
+	endMoonDays := GetMoonDays(dayEndTime, moonTable).Minutes() / jt.Fminute
 
 	moonDaysDetailed := new(MoonDaysDetailed)
-	tFirstDayBegin := c.BeginMoonDayToEarthDay(tGiven, time.Duration(int(time.Minute)+int(time.Hour)*24*int(beginMoonDays)))
-	tFirstDayEnd := c.BeginMoonDayToEarthDay(tGiven, time.Duration(int(time.Minute)+int(time.Hour)*24*int(beginMoonDays+1)))
+	tFirstDayBegin := BeginMoonDayToEarthDay(tGiven, time.Duration(int(time.Minute)+int(time.Hour)*24*int(beginMoonDays)), moonTable)
+	tFirstDayEnd := BeginMoonDayToEarthDay(tGiven, time.Duration(int(time.Minute)+int(time.Hour)*24*int(beginMoonDays+1)), moonTable)
 
 	if int(endMoonDays) == 0 {
 		endMoonDays += (beginMoonDays + 1)
 	}
 
-	tSecondDayBegin := c.BeginMoonDayToEarthDay(tGiven, time.Duration(int(time.Minute)+int(time.Hour)*24*int(endMoonDays)))
-	tSecondDayEnd := c.BeginMoonDayToEarthDay(tGiven, time.Duration(int(time.Minute)+int(time.Hour)*24*int(endMoonDays+1)))
+	tSecondDayBegin := BeginMoonDayToEarthDay(tGiven, time.Duration(int(time.Minute)+int(time.Hour)*24*int(endMoonDays)), moonTable)
+	tSecondDayEnd := BeginMoonDayToEarthDay(tGiven, time.Duration(int(time.Minute)+int(time.Hour)*24*int(endMoonDays+1)), moonTable)
 
 	// regular case or 29 day -> 0 day
 	if int(endMoonDays)-int(beginMoonDays) <= 1 || (int(beginMoonDays) != 0 && int(endMoonDays) == 0) {
@@ -71,64 +70,6 @@ func (c *Cache) MoonDetailed(tGiven time.Time, loc *time.Location, lang string) 
 	return moonDaysDetailed
 }
 
-func CurrentMoonPhase(tGiven time.Time, loc *time.Location, lang string) (float64, float64, float64, PhaseResp, PhaseResp, PhaseResp) {
-	currentMoonIllumination, currentMoonIlluminationBefore, currentMoonIlluminationAfter := currentMoonPhaseCalc(tGiven, loc, GetCurrentMoonIllumination)
-	dayBeginMoonIllumination, dayBeginMoonIlluminationBefore, dayBeginMoonIlluminationAfter := currentMoonPhaseCalc(tGiven, loc, GetDailyMoonIllumination)
-	dayEndMoonIllumination, dayEndMoonIlluminationBefore, dayEndMoonIlluminationAfter := currentMoonPhaseCalc(tGiven.AddDate(0, 0, 1), loc, GetDailyMoonIllumination)
-
-	moonPhaseCurrent := PhaseResp{}
-	moonPhaseBegin := PhaseResp{}
-	moonPhaseEnd := PhaseResp{}
-
-	moonPhaseCurrent.Name, moonPhaseCurrent.NameLocalized, moonPhaseCurrent.Emoji, moonPhaseCurrent.Sign = GetMoonPhase(currentMoonIlluminationBefore, currentMoonIllumination, currentMoonIlluminationAfter, lang)
-	moonPhaseBegin.Name, moonPhaseBegin.NameLocalized, moonPhaseBegin.Emoji, moonPhaseBegin.Sign = GetMoonPhase(dayBeginMoonIlluminationBefore, dayBeginMoonIllumination, dayBeginMoonIlluminationAfter, lang)
-	moonPhaseEnd.Name, moonPhaseEnd.NameLocalized, moonPhaseEnd.Emoji, moonPhaseEnd.Sign = GetMoonPhase(dayEndMoonIlluminationBefore, dayEndMoonIllumination, dayEndMoonIlluminationAfter, lang)
-
-	if moonPhaseCurrent.Sign == "" || moonPhaseBegin.Sign == "" || moonPhaseEnd.Sign == "" {
-		if dayBeginMoonIlluminationBefore <= currentMoonIlluminationBefore && currentMoonIlluminationBefore <= dayEndMoonIlluminationBefore {
-			moonPhaseCurrent.Sign = "+"
-			moonPhaseBegin.Sign = "+"
-			moonPhaseEnd.Sign = "+"
-		} else if dayBeginMoonIlluminationBefore > currentMoonIlluminationBefore && currentMoonIlluminationBefore > dayEndMoonIlluminationBefore {
-			moonPhaseCurrent.Sign = "-"
-			moonPhaseBegin.Sign = "-"
-			moonPhaseEnd.Sign = "-"
-		} else if dayBeginMoonIlluminationBefore > currentMoonIlluminationBefore {
-			moonPhaseCurrent.Sign = "+"
-			moonPhaseBegin.Sign = "+"
-			moonPhaseEnd.Sign = "-"
-		} else if dayBeginMoonIlluminationBefore < currentMoonIlluminationBefore {
-			moonPhaseCurrent.Sign = "-"
-			moonPhaseBegin.Sign = "-"
-			moonPhaseEnd.Sign = "+"
-		}
-	}
-
-	return currentMoonIllumination, dayBeginMoonIllumination, dayEndMoonIllumination, moonPhaseCurrent, moonPhaseBegin, moonPhaseEnd
-}
-
-func currentMoonPhaseCalc(tGiven time.Time, loc *time.Location, calcF illumFunc) (float64, float64, float64) {
-	moonIllumination := calcF(tGiven, loc)
-	moonIlluminationBefore := calcF(tGiven.AddDate(0, 0, -1), loc)
-	moonIlluminationAfter := calcF(tGiven.AddDate(0, 0, 1), loc)
-
-	// in rare UTC-12 case they are equal
-	if moonIllumination == moonIlluminationBefore {
-		moonIlluminationBefore = calcF(tGiven.AddDate(0, 0, -2), loc)
-	}
-	// just in case
-	if moonIllumination == moonIlluminationAfter {
-		moonIlluminationAfter = calcF(tGiven.AddDate(0, 0, 2), loc)
-	}
-
-	return moonIllumination, moonIlluminationBefore, moonIlluminationAfter
-}
-
 func (c *Cache) GenerateMoonTable(tGiven time.Time) []*MoonTableElement {
-	/*moonTable := CreateMoonTable(tGiven)
-	moonDays := GetMoonDays(tGiven, moonTable)
-	moonIllumination := GetDailyMoonIllumination(tGiven, nil)
-
-	zodiacPosition := int((moonDays.Minutes()/Fminute*360)/30) / 30 % 12*/
-	return c.CreateMoonTable(tGiven) //, moonDays, moonIllumination, getZodiacSign(zodiacPosition)
+	return c.CreateMoonTable(tGiven)
 }

@@ -1,0 +1,57 @@
+package server
+
+import (
+	"errors"
+	"math"
+	"strconv"
+)
+
+func round(num float64) int {
+	return int(num + math.Copysign(0.5, num))
+}
+
+func toFixed(num float64, precision int) float64 {
+	output := math.Pow(10, float64(precision))
+	return float64(round(num*output)) / output
+}
+
+func strToInt(val string, fallback int, limit int) int {
+	v, err := strconv.Atoi(val)
+	if err != nil {
+		v = fallback
+	}
+	if limit != 0 && v > limit {
+		v = limit
+	}
+	return v
+}
+
+func isValidDate(year, month, day int) error {
+	if year < 0 || year > 9999 {
+		return errors.New("'year' should be in range [0,9999]")
+	}
+
+	if month < 1 || month > 12 {
+		return errors.New("'month' should be in range [1,12]")
+	}
+
+	if day < 1 {
+		return errors.New("'day' should be greater then 0")
+	}
+
+	daysInMonth := []int{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+
+	if month == 2 {
+		if (year%4 == 0 && year%100 != 0) || year%400 == 0 {
+			daysInMonth[1] = 29
+		} else {
+			daysInMonth[1] = 28
+		}
+	}
+
+	if day > daysInMonth[month-1] {
+		return errors.New("no 'day' in 'month' this 'year'")
+	}
+
+	return nil
+}
