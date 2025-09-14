@@ -26,8 +26,9 @@ func (s *Server) NewRouter() *fiber.App {
 	}))
 
 	// web vanilla JS because it's cool
-	app.Static("/icons", "frontend/icons/")
-	app.Static("/", "frontend")
+	app.Static("/styles", "web/styles/")
+	app.Static("/assets", "web/assets/")
+	app.Static("/", "web")
 
 	// moon table for year:
 	// new moon, first quarter, full moon, last quarter
