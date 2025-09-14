@@ -26,6 +26,24 @@ func strToInt(val string, fallback int, limit int) int {
 	return v
 }
 
+func parseCoords(latStr, lonStr string) Coordinates {
+	locationCords := Coordinates{}
+	if latStr == "no-value" || lonStr == "no-value" {
+		locationCords.IsValid = false
+	} else {
+		lat, err1 := strconv.ParseFloat(latStr, 64)
+		lon, err2 := strconv.ParseFloat(lonStr, 64)
+		if err1 != nil || err2 != nil {
+			locationCords.IsValid = false
+		} else {
+			locationCords.IsValid = true
+			locationCords.Latitude = lat
+			locationCords.Longitude = lon
+		}
+	}
+	return locationCords
+}
+
 func isValidDate(year, month, day int) error {
 	if year < 0 || year > 9999 {
 		return errors.New("'year' should be in range [0,9999]")

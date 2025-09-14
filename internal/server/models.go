@@ -42,7 +42,13 @@ type MoonPhaseResponse struct {
 	MoonDaysDetailed *moon.MoonDaysDetailed
 	ZodiacDetailed   *zodiac.Zodiacs
 
-	Position *pos.DayResponse
+	MoonRiseAndSet *pos.DayData
 
 	info *FullInfo
+}
+
+type Coordinates struct {
+	Latitude  float64
+	Longitude float64
+	IsValid   bool
 }

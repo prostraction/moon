@@ -35,7 +35,7 @@ class MoonRequestHandler(BaseHTTPRequestHandler):
         
         response_data = get_moon_data_response(lat, lon, timezone, year, month, day)
         
-        self.send_response(200 if response_data['status'] == 'success' else 500)
+        self.send_response(200 if response_data['Status'] == 'success' else 500)
         self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET')
@@ -50,8 +50,8 @@ class MoonRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         
         error_response = {
-            'status': 'error',
-            'message': message
+            'Status': 'error',
+            'Message': message
         }
         self.wfile.write(json.dumps(error_response).encode('utf-8'))
     
