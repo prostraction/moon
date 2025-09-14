@@ -4,49 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moon API</title>
-    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/mobile.css">
 </head>
 <body>
     <div class="app-container">
-
-        <div class="center-container">
-                <div class="moon-container">
-                    <div id="moon"></div>
-                </div>
-
-                <div class="result" id="result">
-                    <div class="initial-message">...</div>
-                </div>
+            <div class="moon-container">
+                <div id="moon"></div>
+            </div>
+            <div class="result" id="result">
+                <div class="initial-message"></div>
         </div>
-
-        <div class="right-container">
-            <div class="date-input-container">
                 <div class="date-picker-container" id="datePickerContainer">
                     <div class="date-input-row">
                         <input type="date" id="moonDateInput" max="">
-                    </div>
-                
+                    </div>            
                 <div class="calendar" id="calendar">
                     <div class="calendar-header">
                         <button class="calendar-nav" id="prevMonth">←</button>
-                        <span class="calendar-month-year" id="currentMonthYear"></span>
+                        <div class="calendar-month-year" id="currentMonthYear"></div>
                         <button class="calendar-nav" id="nextMonth">→</button>
-                    </div>
-                    <div class="calendar-weekdays">
-                        <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
                     </div>
                     <div class="calendar-days" id="calendarDays"></div>
                 </div>
-                
-                <button class="submit-btn" id="submitDateBtn">Show Moon day for chosen date</button>
-            </div></div>
-        </div>
+                <button class="submit-btn" id="submitDateBtn">Submit</button>
+            </div>
     </div>
-    <footer><div class="null-box"></div>
-    <img src="./icons/github.svg" alt="Moon Api on GitHub" class="responsive-icon">
-    <div class="link-below"><a href="https://github.com/prostraction/moon"></a></div>
-    </footer>
-    <div class="stars"></div>
+
+<footer>
+    <a href="https://github.com/prostraction/moon" target="_blank">
+        <img src="./assets/github.svg" alt="Moon Api on GitHub" class="responsive-icon"></a>
+</footer>
+    
+<div class="stars"></div>
+<script type="module" src="main.js"></script>
 </body>
-    <script type="module" src="main.js"></script>
 </html>

@@ -1,4 +1,3 @@
-export { getMoonData, showMoonDay };
 import CONFIG from './CONFIG.js';
 const resultDiv = document.getElementById('result');
 
@@ -28,8 +27,8 @@ async function getMoonData(date = new Date()) {
 }
 
 // --- Отображение ---
-async function showMoonDay(date, isCurrent) {
-    resultDiv.innerHTML = '<div class="loading-text">Подключаемся к лунному API...</div>';
+export async function showMoonDay(date, isCurrent) {
+    resultDiv.innerHTML = '<div class="loading-text">Loading...</div>';
 
     try {
         const data = await getMoonData(date);
@@ -45,22 +44,18 @@ async function showMoonDay(date, isCurrent) {
             zodiac = data.CurrentState.Zodiac;
         }
 
-        // Удаляем приветственный блок, если он есть
-        const initialMessage = resultDiv.querySelector('.initial-message');
-        const today = new Date();
-        const formattedDate = today.toLocaleDateString("ru-RU");
-        if (initialMessage) initialMessage.remove();
+        const formattedDate = date.toLocaleDateString("ru-RU");
 
         resultDiv.innerHTML = `
             <div class="moon-day">
-                <span class="detail-value">${phase.Emoji} Moon day: ${moonDay}
+                <span class="detail-value">${phase.Emoji} Moon day: ${moonDay}</span>
             </div>
 
-            <div class="moon-details">  <br>
+            <div class="moon-details">
                 <div class="detail-item"><span class="detail-label">Date:</span><span class="detail-value">${formattedDate}</span></div>
-                <div class="detail-item"><span class="detail-label">Moon phaze: </span> <span class="detail-value">${phase.Name}</span></div>
-                <div class="detail-item"><span class="detail-label">Illumination:</span> <span class="detail-value">${illumination}%</span></div>
-                <div class="detail-item"><span class="detail-label">Zodiac sign:</span> <span class="detail-value">${zodiac.Name}</span></div>
+                <div class="detail-item"><span class="detail-label">Moon Phase</span><span class="detail-value">${phase.Name}</span></div>
+                <div class="detail-item"><span class="detail-label">Illumination:</span><span class="detail-value">${illumination}%</span></div>
+                <div class="detail-item"><span class="detail-label">Zodiac sign:</span><span class="detail-value">${zodiac.Name}</span></div>
             </div>
         `;
     } catch (err) {
@@ -70,3 +65,5 @@ async function showMoonDay(date, isCurrent) {
         `;
     }
 }
+
+export { getMoonData };
