@@ -36,4 +36,5 @@ config.js
 
 .vscode
 
+skyfield-data
 resources/vsop87

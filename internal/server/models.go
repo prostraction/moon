@@ -3,6 +3,7 @@ package server
 import (
 	"moon/pkg/moon"
 	"moon/pkg/phase"
+	pos "moon/pkg/position"
 	"moon/pkg/zodiac"
 	"time"
 )
@@ -41,5 +42,13 @@ type MoonPhaseResponse struct {
 	MoonDaysDetailed *moon.MoonDaysDetailed
 	ZodiacDetailed   *zodiac.Zodiacs
 
+	MoonRiseAndSet *pos.DayData
+
 	info *FullInfo
+}
+
+type Coordinates struct {
+	Latitude  float64
+	Longitude float64
+	IsValid   bool
 }

@@ -3,15 +3,17 @@ package server
 import (
 	jt "moon/pkg/julian-time"
 	phase "moon/pkg/phase"
+	pos "moon/pkg/position"
 	zodiac "moon/pkg/zodiac"
 	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 )
 
 func (s *Server) versionV1(c *fiber.Ctx) error {
-	return c.JSON("1.0.7")
+	return c.JSON("1.1.0rc3")
 }
 
 /*    MOON PHASE    */
@@ -23,7 +25,12 @@ func (s *Server) moonPhaseCurrentV1(c *fiber.Ctx) error {
 	}*/
 	tGiven := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), time.Now().Hour(), time.Now().Minute(), time.Now().Second(), 0, loc)
 	precision := strToInt(c.Query("precision", "2"), 2, 10)
-	return s.moonPhaseV1(c, tGiven, precision)
+
+	latStr := c.Query("latitude", "no-value")
+	lonStr := c.Query("longitude", "no-value")
+	locationCords := parseCoords(latStr, lonStr)
+
+	return s.moonPhaseV1(c, tGiven, precision, locationCords)
 }
 
 func (s *Server) moonPhaseTimestampV1(c *fiber.Ctx) error {
@@ -42,7 +49,12 @@ func (s *Server) moonPhaseTimestampV1(c *fiber.Ctx) error {
 	tGiven := time.Date(tm.Year(), tm.Month(), tm.Day(), tm.Hour(), tm.Minute(), tm.Second(), 0, loc)
 
 	precision := strToInt(c.Query("precision", "2"), 2, 10)
-	return s.moonPhaseV1(c, tGiven, precision)
+
+	latStr := c.Query("latitude", "no-value")
+	lonStr := c.Query("longitude", "no-value")
+	locationCords := parseCoords(latStr, lonStr)
+
+	return s.moonPhaseV1(c, tGiven, precision, locationCords)
 }
 
 func (s *Server) moonPhaseDatetV1(c *fiber.Ctx) error {
@@ -70,11 +82,15 @@ func (s *Server) moonPhaseDatetV1(c *fiber.Ctx) error {
 
 	precision := strToInt(c.Query("precision", "2"), 2, 10)
 
+	latStr := c.Query("latitude", "no-value")
+	lonStr := c.Query("longitude", "no-value")
+	locationCords := parseCoords(latStr, lonStr)
+
 	tGiven := time.Date(year, jt.GetMonth(month), day, hour, minute, second, 0, loc)
-	return s.moonPhaseV1(c, tGiven, precision)
+	return s.moonPhaseV1(c, tGiven, precision, locationCords)
 }
 
-func (s *Server) moonPhaseV1(c *fiber.Ctx, tGiven time.Time, precision int) error {
+func (s *Server) moonPhaseV1(c *fiber.Ctx, tGiven time.Time, precision int, locationCords Coordinates) error {
 	lang := c.Query("lang", "en")
 	utc := c.Query("utc", "UTC:+0")
 	loc, _ := jt.SetTimezoneLocFromString(utc)
@@ -87,6 +103,8 @@ func (s *Server) moonPhaseV1(c *fiber.Ctx, tGiven time.Time, precision int) erro
 	resp.CurrentState = new(MoonStat)
 	resp.BeginDay = new(MoonStat)
 	resp.info = new(FullInfo)
+
+	var err error
 
 	var beginDuration, currentDuration, endDuration time.Duration
 	beginDuration, currentDuration, endDuration = s.moonCache.CurrentMoonDays(tGiven, loc)
@@ -106,7 +124,17 @@ func (s *Server) moonPhaseV1(c *fiber.Ctx, tGiven time.Time, precision int) erro
 	resp.EndDay.Illumination = toFixed(resp.info.IlluminationEndDay*100, precision)
 
 	resp.ZodiacDetailed, resp.BeginDay.Zodiac, resp.CurrentState.Zodiac, resp.EndDay.Zodiac = zodiac.CurrentZodiacs(tGiven, loc, lang, s.moonCache.CreateMoonTable(tGiven))
-	resp.MoonDaysDetailed = s.moonCache.MoonDetailed(tGiven, loc, lang)
+
+	if locationCords.IsValid {
+		resp.MoonRiseAndSet, err = pos.GetRisesDay(tGiven.Year(), int(tGiven.Month()), tGiven.Day(), tGiven.Location(), locationCords.Longitude, locationCords.Latitude)
+		resp.MoonDaysDetailed = s.moonCache.MoonDetailed(tGiven, loc, lang, locationCords.Longitude, locationCords.Latitude)
+	} else {
+		resp.MoonRiseAndSet, err = pos.GetRisesDay(tGiven.Year(), int(tGiven.Month()), tGiven.Day(), tGiven.Location())
+	}
+
+	if err != nil && err.Error() != "no location prodived" {
+		log.Error(err.Error())
+	}
 
 	return c.JSON(resp)
 }
