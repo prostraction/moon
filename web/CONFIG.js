@@ -1,5 +1,5 @@
 const CONFIG = {
-    API_URL: 'https://moon-api.ru/v1/moonPhaseDate',
+    API_URL: 'https://moonapi.ru/v1/moonPhaseDate',
     DEFAULT_LANGUAGE: 'ru',
 };
 
