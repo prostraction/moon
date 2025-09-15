@@ -1,4 +1,4 @@
-name: Deploy test (Web)
+name: Deploy prod2 (Web)
 
 on:
   workflow_dispatch:
@@ -30,19 +30,15 @@ jobs:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: ${{ secrets.SSH_PORT }}
+        port: ${{ secrets.SSH_PORT || 22 }}
         script: |
           cd /opt/moon/
-          echo "Current directory: $(pwd)"
-          echo "Current branch: $(git branch --show-current || echo 'not a git repo')"
-          echo "Git status:"
-          git status --short 2>/dev/null || echo "Not a git repository or error"
-          echo "Switching to main branch..."
-          git switch main 2>/dev/null || git checkout -b main
+          echo "Resetting any local changes..."
           git fetch --all
-          git pull origin main
+          git reset --hard origin/main
           echo "Switching to target branch: ${{ steps.get_branch.outputs.branch }}"
-          git switch ${{ steps.get_branch.outputs.branch }} 2>/dev/null || git checkout -b ${{ steps.get_branch.outputs.branch }}
+          git switch ${{ steps.get_branch.outputs.branch }}
+          git reset --hard origin/${{ steps.get_branch.outputs.branch }}
           echo "Current branch: $(git branch --show-current)"
           echo "Latest commit: $(git log --oneline -1)"
           echo "Success."
