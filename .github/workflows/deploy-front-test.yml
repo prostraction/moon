@@ -1,24 +1,31 @@
-name: Manual Deploy via SSH
+name: Deploy test (Web)
 
 on:
   workflow_dispatch:
+    inputs:
+      deploy_branch:
+        description: 'Branch to deploy from'
+        required: true
+        default: 'main'
+        type: string
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: prod2
     
     steps:
-    - name: Checkout code
+    - name: Checkout specific branch
       uses: actions/checkout@v4
       with:
+        ref: ${{ github.event.inputs.deploy_branch }}
         fetch-depth: 0
     
-    - name: Determine current branch
-      id: branch
+    - name: Show branch info
       run: |
-        BRANCH_NAME=${GITHUB_REF#refs/heads/}
-        echo "Current branch: $BRANCH_NAME"
-        echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
+        echo "Deploying from branch: ${{ github.event.inputs.deploy_branch }}"
+        echo "GitHub REF: $GITHUB_REF"
+        echo "GitHub SHA: $GITHUB_SHA"
     
     - name: SSH Deploy
       uses: appleboy/ssh-action@v1.0.3
@@ -26,25 +33,19 @@ jobs:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: ${{ secrets.SSH_PORT || 22 }}
+        port: ${{ secrets.SSH_PORT }}
         script: |
-          echo "Starting deployment process..."
-          echo "Target branch: ${{ steps.branch.outputs.branch }}"
-          
           cd /opt/moon/
           echo "Current directory: $(pwd)"
-          
+          echo "Current branch: $(git branch --show-current || echo 'not a git repo')"
+          echo "Git status:"
+          git status --short 2>/dev/null || echo "Not a git repository or error"
           echo "Switching to main branch..."
-          git switch main
-          
-          echo "Fetching latest changes..."
-          git fetch
-          
-          echo "Pulling main branch..."
+          git switch main 2>/dev/null || git checkout -b main
+          git fetch --all
           git pull origin main
-          
-          echo "Switching to target branch: ${{ steps.branch.outputs.branch }}"
-          git switch ${{ steps.branch.outputs.branch }}
-          
-          echo "Deployment completed successfully!"
+          echo "Switching to target branch: ${{ github.event.inputs.deploy_branch }}"
+          git switch ${{ github.event.inputs.deploy_branch }} 2>/dev/null || git checkout -b ${{ github.event.inputs.deploy_branch }}
           echo "Current branch: $(git branch --show-current)"
+          echo "Latest commit: $(git log --oneline -1)"
+          echo "Success."
