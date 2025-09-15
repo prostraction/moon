@@ -13,7 +13,7 @@ import (
 )
 
 func (s *Server) versionV1(c *fiber.Ctx) error {
-	return c.JSON("1.1.0rc3")
+	return c.JSON("1.1.0rc4")
 }
 
 /*    MOON PHASE    */
@@ -127,7 +127,26 @@ func (s *Server) moonPhaseV1(c *fiber.Ctx, tGiven time.Time, precision int, loca
 
 	if locationCords.IsValid {
 		resp.MoonRiseAndSet, err = pos.GetRisesDay(tGiven.Year(), int(tGiven.Month()), tGiven.Day(), tGiven.Location(), locationCords.Longitude, locationCords.Latitude)
+		if err != nil {
+			log.Error(err)
+		}
 		resp.MoonDaysDetailed = s.moonCache.MoonDetailed(tGiven, loc, lang, locationCords.Longitude, locationCords.Latitude)
+
+		newT := time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day(), 0, 0, 0, 0, tGiven.Location())
+		resp.BeginDay.Position, err = pos.GetMoonPosition(newT, newT.Location(), locationCords.Longitude, locationCords.Latitude)
+		if err != nil {
+			log.Error(err)
+		}
+
+		resp.CurrentState.Position, err = pos.GetMoonPosition(tGiven, tGiven.Location(), locationCords.Longitude, locationCords.Latitude)
+		if err != nil {
+			log.Error(err)
+		}
+
+		resp.EndDay.Position, err = pos.GetMoonPosition(newT.AddDate(0, 0, 1), newT.AddDate(0, 0, 1).Location(), locationCords.Longitude, locationCords.Latitude)
+		if err != nil {
+			log.Error(err)
+		}
 	} else {
 		resp.MoonRiseAndSet, err = pos.GetRisesDay(tGiven.Year(), int(tGiven.Month()), tGiven.Day(), tGiven.Location())
 	}

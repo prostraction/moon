@@ -17,6 +17,7 @@ type MoonStat struct {
 	Illumination float64
 	Phase        phase.PhaseResp
 	Zodiac       zodiac.Zodiac
+	Position     *pos.PositionResponse `json:"Position,omitempty"`
 }
 
 type FullInfo struct {
@@ -39,10 +40,10 @@ type MoonPhaseResponse struct {
 	CurrentState *MoonStat
 	EndDay       *MoonStat
 
-	MoonDaysDetailed *moon.MoonDaysDetailed
+	MoonDaysDetailed *moon.MoonDaysDetailed `json:"MoonDaysDetailed,omitempty"`
 	ZodiacDetailed   *zodiac.Zodiacs
 
-	MoonRiseAndSet *pos.DayData
+	MoonRiseAndSet *pos.DayData `json:"MoonRiseAndSet,omitempty"`
 
 	info *FullInfo
 }
