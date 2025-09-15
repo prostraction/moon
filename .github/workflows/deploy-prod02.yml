@@ -41,5 +41,3 @@ jobs:
           git reset --hard origin/${{ steps.get_branch.outputs.branch }}
           echo "Current branch: $(git branch --show-current)"
           echo "Latest commit: $(git log --oneline -1)"
-          go build -o moon-api cmd/main.go && systemctl restart moon-api.service
-          systemctl restart skyfield-server.service
