@@ -228,8 +228,8 @@ func GetMoonPosition(tGiven time.Time, loc *time.Location, location ...float64) 
 
 func parseLocation(location []float64) (lat, lon float64, err error) {
 	if len(location) == 2 {
-		lat = location[0]
-		lon = location[1]
+		lat = location[1]
+		lon = location[0]
 	} else {
 		return 0, 0, errors.New("no location prodived")
 	}
