@@ -1,0 +1,50 @@
+name: Manual Deploy via SSH
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Determine current branch
+      id: branch
+      run: |
+        BRANCH_NAME=${GITHUB_REF#refs/heads/}
+        echo "Current branch: $BRANCH_NAME"
+        echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
+    
+    - name: SSH Deploy
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT || 22 }}
+        script: |
+          echo "Starting deployment process..."
+          echo "Target branch: ${{ steps.branch.outputs.branch }}"
+          
+          cd /opt/moon/
+          echo "Current directory: $(pwd)"
+          
+          echo "Switching to main branch..."
+          git switch main
+          
+          echo "Fetching latest changes..."
+          git fetch
+          
+          echo "Pulling main branch..."
+          git pull origin main
+          
+          echo "Switching to target branch: ${{ steps.branch.outputs.branch }}"
+          git switch ${{ steps.branch.outputs.branch }}
+          
+          echo "Deployment completed successfully!"
+          echo "Current branch: $(git branch --show-current)"
