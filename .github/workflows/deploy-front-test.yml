@@ -2,12 +2,6 @@ name: Deploy test (Web)
 
 on:
   workflow_dispatch:
-    inputs:
-      deploy_branch:
-        description: 'Branch to deploy from'
-        required: true
-        default: 'main'
-        type: string
 
 jobs:
   deploy:
@@ -15,15 +9,18 @@ jobs:
     environment: prod2
     
     steps:
-    - name: Checkout specific branch
+    - name: Checkout current branch
       uses: actions/checkout@v4
       with:
-        ref: ${{ github.event.inputs.deploy_branch }}
         fetch-depth: 0
+    
+    - name: Get current branch name
+      id: get_branch
+      run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
     
     - name: Show branch info
       run: |
-        echo "Deploying from branch: ${{ github.event.inputs.deploy_branch }}"
+        echo "Deploying from branch: ${{ steps.get_branch.outputs.branch }}"
         echo "GitHub REF: $GITHUB_REF"
         echo "GitHub SHA: $GITHUB_SHA"
     
@@ -44,8 +41,8 @@ jobs:
           git switch main 2>/dev/null || git checkout -b main
           git fetch --all
           git pull origin main
-          echo "Switching to target branch: ${{ github.event.inputs.deploy_branch }}"
-          git switch ${{ github.event.inputs.deploy_branch }} 2>/dev/null || git checkout -b ${{ github.event.inputs.deploy_branch }}
+          echo "Switching to target branch: ${{ steps.get_branch.outputs.branch }}"
+          git switch ${{ steps.get_branch.outputs.branch }} 2>/dev/null || git checkout -b ${{ steps.get_branch.outputs.branch }}
           echo "Current branch: $(git branch --show-current)"
           echo "Latest commit: $(git log --oneline -1)"
           echo "Success."
