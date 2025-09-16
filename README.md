@@ -23,7 +23,7 @@ Params:
 #### Response:
 
 <details>
-  <summary>Response body</summary>
+  <summary><strong>Response body</strong></summary>
   
   | Response Variable | Type | Description | Example Value |
 | :--- | :--- | :--- | :--- |
