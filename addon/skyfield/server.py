@@ -16,18 +16,24 @@ class MoonRequestHandler(BaseHTTPRequestHandler):
 
         now = datetime.now()
         
-        lat = float(query_params.get('lat', [51.08])[0])  # Astana
-        lon = float(query_params.get('lon', [71.26])[0])  # Astana
+        lat = float(query_params.get('lat', [0])[0])  # Astana
+        lon = float(query_params.get('lon', [0])[0])  # Astana
         
         timezone_hours = int(query_params.get('utc_hours', [5])[0])  # Astana
         timezone_minutes = int(query_params.get('utc_minutes', [0])[0])
         
+        precision = int(query_params.get('precision', [2])[0])
+        if not (precision <= 20):
+            precision = 20    
+        if not (precision >= 0):
+            precision = 2   
+        
         if path == '/position':
-            self.handle_position_request(lat, lon, timezone_hours, timezone_minutes, query_params, now)
+            self.handle_position_request(lat, lon, timezone_hours, timezone_minutes, precision, query_params, now)
         elif path == '/daily' or path == '/monthly':
-            self.handle_moon_data_request(lat, lon, timezone_hours, timezone_minutes, query_params, now, path)
+            self.handle_moon_data_request(lat, lon, timezone_hours, timezone_minutes, precision, query_params, now, path)
     
-    def handle_position_request(self, lat, lon, timezone_hours, timezone_minutes, query_params, now):
+    def handle_position_request(self, lat, lon, timezone_hours, timezone_minutes, precision, query_params, now):
         try:
             year = int(query_params.get('year', [now.year])[0])
             month = int(query_params.get('month', [now.month])[0])
@@ -35,29 +41,29 @@ class MoonRequestHandler(BaseHTTPRequestHandler):
             hour = int(query_params.get('hour', [12])[0])
             minute = int(query_params.get('minute', [0])[0])
             second = int(query_params.get('second', [0])[0])
-            
+
             if not (1 <= month <= 12):
-                self.send_error_response(400, "Month must be between 1 and 12")
+                self.send_error_response(400, "month must be between 1 and 12")
                 return
             
             if not (1 <= day <= 31):
-                self.send_error_response(400, "Day must be between 1 and 31")
+                self.send_error_response(400, "day must be between 1 and 31")
                 return
             
             if not (0 <= hour <= 23):
-                self.send_error_response(400, "Hour must be between 0 and 23")
+                self.send_error_response(400, "hour must be between 0 and 23")
                 return
             
             if not (0 <= minute <= 59):
-                self.send_error_response(400, "Minute must be between 0 and 59")
+                self.send_error_response(400, "minute must be between 0 and 59")
                 return
             
             if not (0 <= second <= 59):
-                self.send_error_response(400, "Second must be between 0 and 59")
+                self.send_error_response(400, "second must be between 0 and 59")
                 return
             
             response_data = get_moon_position_at_time(
-                lat, lon, timezone_hours, timezone_minutes, 
+                lat, lon, timezone_hours, timezone_minutes, precision,
                 year, month, day, hour, minute, second
             )
             
@@ -68,7 +74,7 @@ class MoonRequestHandler(BaseHTTPRequestHandler):
         except Exception as e:
             self.send_error_response(500, f"Internal server error: {str(e)}")
     
-    def handle_moon_data_request(self, lat, lon, timezone_hours, timezone_minutes, query_params, now, path):
+    def handle_moon_data_request(self, lat, lon, timezone_hours, timezone_minutes, precision, query_params, now, path):
         try:
             year = int(query_params.get('year', [now.year])[0])
             month = int(query_params.get('month', [now.month])[0])
@@ -76,17 +82,16 @@ class MoonRequestHandler(BaseHTTPRequestHandler):
             if path == '/daily':
                 day = int(query_params.get('day', [now.day])[0])
                 if not (1 <= day <= 31):
-                    self.send_error_response(400, "Day must be between 1 and 31")
+                    self.send_error_response(400, "day must be between 1 and 31")
                     return
             else:
                 day = None
             
             if not (1 <= month <= 12):
-                self.send_error_response(400, "Month must be between 1 and 12")
+                self.send_error_response(400, "month must be between 1 and 12")
                 return
             
-            response_data = get_moon_data_response(lat, lon, timezone_hours, timezone_minutes, year, month, day)
-            
+            response_data = get_moon_data_response(lat, lon, timezone_hours, timezone_minutes, precision, year, month, day)
             self.send_json_response(response_data)
             
         except ValueError as e:
@@ -126,7 +131,7 @@ class MoonRequestHandler(BaseHTTPRequestHandler):
 
 def run_server(port=9997):
     server_address = ('', port)
-    httpd = HTTPServer(server_address, MoonRequestHandler)
+    httpd = QuietHTTPServer(server_address, MoonRequestHandler)
     print(f'Starting moon data server on port {port}...')
     print('Available endpoints:')
     print('  GET /position - Moon position at specific time')

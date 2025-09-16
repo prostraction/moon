@@ -15,14 +15,18 @@ func toFixed(num float64, precision int) float64 {
 	return float64(round(num*output)) / output
 }
 
-func strToInt(val string, fallback int, limit int) int {
+func strToInt(val string, fallback int, min int, max int) int {
 	v, err := strconv.Atoi(val)
 	if err != nil {
 		v = fallback
 	}
-	if limit != 0 && v > limit {
-		v = limit
+	if v > max {
+		v = max
 	}
+	if v < min {
+		v = min
+	}
+
 	return v
 }
 

@@ -25,9 +25,9 @@ def get_azimuth_and_altitude(time, observer, target):
     direction_index = int((AzimuthDegrees + 11.25) % 360 / 22.5)
     direction = directions[direction_index]
     
-    return round(AzimuthDegrees, 1), round(AltitudeDegrees, 1), direction
+    return AzimuthDegrees, AltitudeDegrees, direction
 
-def get_moon_position_at_time(lat, lon, timezone_hours, timezone_minutes, year, month, day, hour, minute, second):
+def get_moon_position_at_time(lat, lon, timezone_hours, timezone_minutes, precision, year, month, day, hour, minute, second):
     total_timezone_offset = timezone_hours + timezone_minutes / 60.0
     local_dt = datetime(year, month, day, hour, minute, second)
     utc_dt = local_dt - timedelta(hours=total_timezone_offset)
@@ -46,10 +46,10 @@ def get_moon_position_at_time(lat, lon, timezone_hours, timezone_minutes, year, 
     return {
         'Status': 'success',
         'Timestamp': int(local_dt.timestamp()),
-        'AzimuthDegrees': round(azimuth, 6),
-        'AltitudeDegrees': round(altitude, 6),
+        'AzimuthDegrees': round(azimuth, precision),
+        'AltitudeDegrees': round(altitude, precision),
         'Direction': direction,
-        'DistanceKm': round(distance_km, 1),
+        'DistanceKm': round(distance_km, precision),
         'DateTime': {
             'Year': year,
             'Month': month,
@@ -65,7 +65,7 @@ def get_moon_position_at_time(lat, lon, timezone_hours, timezone_minutes, year, 
         }
     }
 
-def get_daily_moon_data(lat, lon, timezone_hours, timezone_minutes, year, month, day):
+def get_daily_moon_data(lat, lon, timezone_hours, timezone_minutes, precision, year, month, day):
     location = wgs84.latlon(lat, lon)
     moon = eph['moon']
     earth = eph['earth']
@@ -125,35 +125,35 @@ def get_daily_moon_data(lat, lon, timezone_hours, timezone_minutes, year, month,
     moonrise_ts = int(rise_time.timestamp()) if rise_time else None
     moonset_ts = int(set_time.timestamp()) if set_time else None
     meridian_ts = int(meridian_time.timestamp()) if meridian_time else None
-    
+
     return {
         'Moonrise': {
             'Timestamp': moonrise_ts,
-            'AzimuthDegrees': rise_azimuth,
-            'AltitudeDegrees': rise_altitude,
+            'AzimuthDegrees': round(rise_azimuth, precision),
+            'AltitudeDegrees': round(rise_altitude, precision),
             'Direction': rise_direction,
         } if rise_time is not None else None,
         'Moonset': {
             'Timestamp': moonset_ts,
-            'AzimuthDegrees': set_azimuth,
-            'AltitudeDegrees': set_altitude,
+            'AzimuthDegrees': round(set_azimuth, precision),
+            'AltitudeDegrees': round(set_altitude, precision),
             'Direction': set_direction,
         } if set_time is not None else None,
         'Meridian': {
             'Timestamp': meridian_ts,
-            'AzimuthDegrees': meridian_azimuth,
-            'AltitudeDegrees': meridian_altitude,
+            'AzimuthDegrees': round(meridian_azimuth, precision),
+            'AltitudeDegrees': round(meridian_altitude, precision),
             'Direction': meridian_direction,
         } if meridian_time is not None else None,
-        'DistanceKm': round(DistanceKm, 1),
+        'DistanceKm': round(DistanceKm, precision),
         'IsMoonRise': rise_time is not None,
         'IsMoonSet': set_time is not None,
         'IsMeridian': meridian_time is not None,
     }
 
-def calculate_moon_data(lat, lon, timezone_hours, timezone_minutes, year, month, day=None):
+def calculate_moon_data(lat, lon, timezone_hours, timezone_minutes, precision, year, month, day=None):
     if day is not None:
-        return get_daily_moon_data(lat, lon, timezone_hours, timezone_minutes, year, month, day)
+        return get_daily_moon_data(lat, lon, timezone_hours, timezone_minutes, precision, year, month, day)
     else:     
         if month == 12:
             next_month = datetime(year + 1, 1, 1)
@@ -164,12 +164,12 @@ def calculate_moon_data(lat, lon, timezone_hours, timezone_minutes, year, month,
         moon_data = []
 
         for day_num in range(1, last_day + 1):
-            daily_data = get_daily_moon_data(lat, lon, timezone_hours, timezone_minutes, year, month, day_num)
+            daily_data = get_daily_moon_data(lat, lon, timezone_hours, timezone_minutes, precision, year, month, day_num)
             moon_data.append(daily_data)
         return moon_data
 
-def get_moon_data_response(lat, lon, timezone_hours, timezone_minutes, year, month, day=None):
-    data = calculate_moon_data(lat, lon, timezone_hours, timezone_minutes, year, month, day)
+def get_moon_data_response(lat, lon, timezone_hours, timezone_minutes, precision, year, month, day=None):
+    data = calculate_moon_data(lat, lon, timezone_hours, timezone_minutes, precision, year, month, day)
     total_hours = timezone_hours + timezone_minutes / 60.0
     if total_hours >= 0:
         UtcOffset = f"UTC+{abs(timezone_hours):02d}:{timezone_minutes:02d}"
@@ -183,7 +183,7 @@ def get_moon_data_response(lat, lon, timezone_hours, timezone_minutes, year, mon
             'Longitude': lon,
             'TimezoneHours': timezone_hours,
             'TimezoneMinutes': timezone_minutes,
-            'TotalTimezoneHours': round(total_hours, 2),
+            'TotalTimezoneHours': round(total_hours, precision),
             'UtcOffset': UtcOffset,
             'Year': year,
             'Month': month
@@ -197,5 +197,4 @@ def get_moon_data_response(lat, lon, timezone_hours, timezone_minutes, year, mon
     else:
         response['Range'] = 'Full_month'
         response['DaysCount'] = len(data)
-    
     return response

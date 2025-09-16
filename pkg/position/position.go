@@ -64,7 +64,7 @@ type DayData struct {
 	IsMeridian bool       `json:"IsMeridian"`
 }
 
-func GetRisesMonthly(year, month int, loc *time.Location, location ...float64) (*MonthResponse, error) {
+func GetRisesMonthly(year, month int, loc *time.Location, precision int, location ...float64) (*MonthResponse, error) {
 	lat, lon, err := parseLocation(location)
 	if err != nil {
 		return nil, err
@@ -84,6 +84,7 @@ func GetRisesMonthly(year, month int, loc *time.Location, location ...float64) (
 	params.Add("utc", fmt.Sprintf("%d", h))
 	params.Add("year", fmt.Sprintf("%d", year))
 	params.Add("month", fmt.Sprintf("%d", month))
+	params.Add("precision", fmt.Sprintf("%d", precision))
 
 	url := baseURL + "?" + params.Encode()
 	client := &http.Client{Timeout: 69 * time.Second}
@@ -110,7 +111,7 @@ func GetRisesMonthly(year, month int, loc *time.Location, location ...float64) (
 	return &monthResponse, nil
 }
 
-func GetRisesDay(year, month, day int, loc *time.Location, location ...float64) (*DayData, error) {
+func GetRisesDay(year, month, day int, loc *time.Location, precision int, location ...float64) (*DayData, error) {
 	lat, lon, err := parseLocation(location)
 	if err != nil {
 		return nil, err
@@ -133,6 +134,7 @@ func GetRisesDay(year, month, day int, loc *time.Location, location ...float64) 
 	params.Add("year", fmt.Sprintf("%d", year))
 	params.Add("month", fmt.Sprintf("%d", month))
 	params.Add("day", fmt.Sprintf("%d", day))
+	params.Add("precision", fmt.Sprintf("%d", precision))
 
 	url := baseURL + "daily" + "?" + params.Encode()
 	client := &http.Client{Timeout: 69 * time.Second}
@@ -171,7 +173,7 @@ func GetRisesDay(year, month, day int, loc *time.Location, location ...float64) 
 	return dayResponse.Data, nil
 }
 
-func GetMoonPosition(tGiven time.Time, loc *time.Location, location ...float64) (*PositionResponse, error) {
+func GetMoonPosition(tGiven time.Time, loc *time.Location, precision int, location ...float64) (*PositionResponse, error) {
 	lat, lon, err := parseLocation(location)
 	if err != nil {
 		return nil, err
@@ -198,6 +200,7 @@ func GetMoonPosition(tGiven time.Time, loc *time.Location, location ...float64) 
 	params.Add("hour", fmt.Sprintf("%d", tGiven.Hour()))
 	params.Add("minute", fmt.Sprintf("%d", tGiven.Minute()))
 	params.Add("second", fmt.Sprintf("%d", tGiven.Second()))
+	params.Add("precision", fmt.Sprintf("%d", precision))
 
 	url := baseURL + "position" + "?" + params.Encode()
 	client := &http.Client{Timeout: 69 * time.Second}

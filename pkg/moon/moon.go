@@ -34,9 +34,9 @@ func (c *Cache) MoonDetailed(tGiven time.Time, loc *time.Location, lang string, 
 	moonDaysDetailed.Day = make([]MoonDay, 2)
 	moonDaysDetailed.Count = 2
 
-	moonRiseYesterday, err1 := pos.GetRisesDay(dayYesterday.Year(), int(dayYesterday.Month()), dayYesterday.Day(), loc, longitude, latitude)
-	moonRiseToday, err2 := pos.GetRisesDay(dayToday.Year(), int(dayToday.Month()), dayToday.Day(), loc, longitude, latitude)
-	moonRiseTomorrow, err3 := pos.GetRisesDay(dayTomorrow.Year(), int(dayTomorrow.Month()), dayTomorrow.Day(), loc, longitude, latitude)
+	moonRiseYesterday, err1 := pos.GetRisesDay(dayYesterday.Year(), int(dayYesterday.Month()), dayYesterday.Day(), loc, 2, longitude, latitude)
+	moonRiseToday, err2 := pos.GetRisesDay(dayToday.Year(), int(dayToday.Month()), dayToday.Day(), loc, 2, longitude, latitude)
+	moonRiseTomorrow, err3 := pos.GetRisesDay(dayTomorrow.Year(), int(dayTomorrow.Month()), dayTomorrow.Day(), loc, 2, longitude, latitude)
 
 	if err1 == nil && err2 == nil {
 		if moonRiseYesterday.IsMoonRise {
