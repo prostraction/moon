@@ -40,7 +40,7 @@ func (s *Server) moonPhaseTimestampV1(c *fiber.Ctx) error {
 		log.Println(err)
 	}*/
 
-	tStr := c.Query("t", strconv.FormatInt(time.Now().Unix(), 10))
+	tStr := c.Query("timestamp", strconv.FormatInt(time.Now().Unix(), 10))
 	t, err := strconv.ParseInt(tStr, 10, 64)
 	if err != nil {
 		t = time.Now().Unix()

@@ -13,7 +13,7 @@ import (
 
 // PositionResponse
 type PositionResponse struct {
-	MoonEvent
+	MoonPosition
 	DistanceKm float64 `json:"DistanceKm"`
 }
 
@@ -46,7 +46,7 @@ type Parameters struct {
 }
 
 // resp for 1 day
-type MoonEvent struct {
+type MoonPosition struct {
 	Timestamp       int64     `json:"Timestamp"`
 	TimeISO         time.Time `json:"TimeISO,omitempty"`
 	AzimuthDegrees  float64   `json:"AzimuthDegrees"`
@@ -55,13 +55,13 @@ type MoonEvent struct {
 }
 
 type DayData struct {
-	Moonrise   *MoonEvent `json:"Moonrise,omitempty"`
-	Moonset    *MoonEvent `json:"Moonset,omitempty"`
-	Meridian   *MoonEvent `json:"Meridian,omitempty"`
-	DistanceKm float64    `json:"DistanceKm"`
-	IsMoonRise bool       `json:"IsMoonRise"`
-	IsMoonSet  bool       `json:"IsMoonSet"`
-	IsMeridian bool       `json:"IsMeridian"`
+	Moonrise   *MoonPosition `json:"Moonrise,omitempty"`
+	Moonset    *MoonPosition `json:"Moonset,omitempty"`
+	Meridian   *MoonPosition `json:"Meridian,omitempty"`
+	DistanceKm float64       `json:"DistanceKm"`
+	IsMoonRise bool          `json:"IsMoonRise"`
+	IsMoonSet  bool          `json:"IsMoonSet"`
+	IsMeridian bool          `json:"IsMeridian"`
 }
 
 func GetRisesMonthly(year, month int, loc *time.Location, precision int, location ...float64) (*MonthResponse, error) {
@@ -224,7 +224,7 @@ func GetMoonPosition(tGiven time.Time, loc *time.Location, precision int, locati
 		return nil, fmt.Errorf("failed to unmarshal response: %w", err)
 	}
 	if pos != nil {
-		timestampToGoTime(&pos.MoonEvent, loc)
+		timestampToGoTime(&pos.MoonPosition, loc)
 	}
 
 	return pos, nil
@@ -241,7 +241,7 @@ func parseLocation(location []float64) (lat, lon float64, err error) {
 	return lat, lon, nil
 }
 
-func timestampToGoTime(ev *MoonEvent, loc *time.Location) {
+func timestampToGoTime(ev *MoonPosition, loc *time.Location) {
 	utcTime := time.Unix(ev.Timestamp, 0).UTC()
 	ev.TimeISO = utcTime
 	if loc != nil {
