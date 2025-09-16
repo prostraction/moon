@@ -13,7 +13,7 @@ import (
 )
 
 func (s *Server) versionV1(c *fiber.Ctx) error {
-	return c.JSON("1.1.0rc3")
+	return c.JSON("1.1.0rc4")
 }
 
 /*    MOON PHASE    */
@@ -24,7 +24,7 @@ func (s *Server) moonPhaseCurrentV1(c *fiber.Ctx) error {
 		log.Println(err)
 	}*/
 	tGiven := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), time.Now().Hour(), time.Now().Minute(), time.Now().Second(), 0, loc)
-	precision := strToInt(c.Query("precision", "2"), 2, 10)
+	precision := strToInt(c.Query("precision", "2"), 2, 0, 20)
 
 	latStr := c.Query("latitude", "no-value")
 	lonStr := c.Query("longitude", "no-value")
@@ -40,7 +40,7 @@ func (s *Server) moonPhaseTimestampV1(c *fiber.Ctx) error {
 		log.Println(err)
 	}*/
 
-	tStr := c.Query("t", strconv.FormatInt(time.Now().Unix(), 10))
+	tStr := c.Query("timestamp", strconv.FormatInt(time.Now().Unix(), 10))
 	t, err := strconv.ParseInt(tStr, 10, 64)
 	if err != nil {
 		t = time.Now().Unix()
@@ -48,7 +48,7 @@ func (s *Server) moonPhaseTimestampV1(c *fiber.Ctx) error {
 	tm := time.Unix(t, 0)
 	tGiven := time.Date(tm.Year(), tm.Month(), tm.Day(), tm.Hour(), tm.Minute(), tm.Second(), 0, loc)
 
-	precision := strToInt(c.Query("precision", "2"), 2, 10)
+	precision := strToInt(c.Query("precision", "2"), 2, 0, 20)
 
 	latStr := c.Query("latitude", "no-value")
 	lonStr := c.Query("longitude", "no-value")
@@ -66,9 +66,9 @@ func (s *Server) moonPhaseDatetV1(c *fiber.Ctx) error {
 
 	tNow := time.Now()
 
-	year := strToInt(c.Query("year", strconv.Itoa(tNow.Year())), tNow.Year(), 0)
-	month := strToInt(c.Query("month", strconv.Itoa(int(tNow.Month()))), int(tNow.Month()), 12)
-	day := strToInt(c.Query("day", strconv.Itoa(int(tNow.Day()))), int(tNow.Day()), 31)
+	year := strToInt(c.Query("year", strconv.Itoa(tNow.Year())), tNow.Year(), 1, 9999)
+	month := strToInt(c.Query("month", strconv.Itoa(int(tNow.Month()))), int(tNow.Month()), 1, 12)
+	day := strToInt(c.Query("day", strconv.Itoa(int(tNow.Day()))), int(tNow.Day()), 1, 31)
 
 	err := isValidDate(year, month, day)
 	if err != nil {
@@ -76,11 +76,11 @@ func (s *Server) moonPhaseDatetV1(c *fiber.Ctx) error {
 		return c.SendString("Validation error: " + err.Error())
 	}
 
-	hour := strToInt(c.Query("hour", strconv.Itoa(int(tNow.Hour()))), int(tNow.Hour()), 23)
-	minute := strToInt(c.Query("minute", strconv.Itoa(int(tNow.Minute()))), int(tNow.Minute()), 59)
-	second := strToInt(c.Query("second", strconv.Itoa(int(tNow.Second()))), int(tNow.Second()), 59)
+	hour := strToInt(c.Query("hour", strconv.Itoa(int(tNow.Hour()))), int(tNow.Hour()), 0, 23)
+	minute := strToInt(c.Query("minute", strconv.Itoa(int(tNow.Minute()))), int(tNow.Minute()), 0, 59)
+	second := strToInt(c.Query("second", strconv.Itoa(int(tNow.Second()))), int(tNow.Second()), 0, 59)
 
-	precision := strToInt(c.Query("precision", "2"), 2, 10)
+	precision := strToInt(c.Query("precision", "2"), 2, 0, 20)
 
 	latStr := c.Query("latitude", "no-value")
 	lonStr := c.Query("longitude", "no-value")
@@ -126,10 +126,29 @@ func (s *Server) moonPhaseV1(c *fiber.Ctx, tGiven time.Time, precision int, loca
 	resp.ZodiacDetailed, resp.BeginDay.Zodiac, resp.CurrentState.Zodiac, resp.EndDay.Zodiac = zodiac.CurrentZodiacs(tGiven, loc, lang, s.moonCache.CreateMoonTable(tGiven))
 
 	if locationCords.IsValid {
-		resp.MoonRiseAndSet, err = pos.GetRisesDay(tGiven.Year(), int(tGiven.Month()), tGiven.Day(), tGiven.Location(), locationCords.Longitude, locationCords.Latitude)
+		resp.MoonRiseAndSet, err = pos.GetRisesDay(tGiven.Year(), int(tGiven.Month()), tGiven.Day(), tGiven.Location(), precision, locationCords.Longitude, locationCords.Latitude)
+		if err != nil {
+			log.Error(err)
+		}
 		resp.MoonDaysDetailed = s.moonCache.MoonDetailed(tGiven, loc, lang, locationCords.Longitude, locationCords.Latitude)
+
+		newT := time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day(), 0, 0, 0, 0, tGiven.Location())
+		resp.BeginDay.Position, err = pos.GetMoonPosition(newT, newT.Location(), precision, locationCords.Longitude, locationCords.Latitude)
+		if err != nil {
+			log.Error(err)
+		}
+
+		resp.CurrentState.Position, err = pos.GetMoonPosition(tGiven, tGiven.Location(), precision, locationCords.Longitude, locationCords.Latitude)
+		if err != nil {
+			log.Error(err)
+		}
+
+		resp.EndDay.Position, err = pos.GetMoonPosition(newT.AddDate(0, 0, 1), newT.AddDate(0, 0, 1).Location(), precision, locationCords.Longitude, locationCords.Latitude)
+		if err != nil {
+			log.Error(err)
+		}
 	} else {
-		resp.MoonRiseAndSet, err = pos.GetRisesDay(tGiven.Year(), int(tGiven.Month()), tGiven.Day(), tGiven.Location())
+		resp.MoonRiseAndSet, err = pos.GetRisesDay(tGiven.Year(), int(tGiven.Month()), tGiven.Day(), tGiven.Location(), precision)
 	}
 
 	if err != nil && err.Error() != "no location prodived" {
@@ -160,7 +179,7 @@ func (s *Server) moonTableYearV1(c *fiber.Ctx) error {
 	}*/
 
 	tNow := time.Now()
-	year := strToInt(c.Query("year", strconv.Itoa(tNow.Year())), tNow.Year(), 0)
+	year := strToInt(c.Query("year", strconv.Itoa(tNow.Year())), tNow.Year(), 1, 9999)
 
 	tGiven := time.Date(year, time.January, 1, 0, 0, 0, 0, loc)
 	return s.moonTableV1(c, tGiven)
