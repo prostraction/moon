@@ -22,58 +22,186 @@ Params:
 
 #### Response:
 
+<details>
+  <summary>Response body</summary>
+  
+  | Response Variable | Type | Description | Example Value |
+| :--- | :--- | :--- | :--- |
+|`BeginDay` | `Object` | Data for the beginning of the requested day (00:00) | - |
+|`CurrentState` | `Object` | Data at exact time of API request (same structure as BeginDay) | - |
+|`EndDay` | `Object` | Data for end of requested day (00:00 next day) (same structure as BeginDay) | - |
+|`MoonDaysDetailed` | `Object` | Detailed lunar day information | - |
+|`ZodiacDetailed` | `Object` | Detailed zodiac transit information | - |
+|`MoonRiseAndSet` | `Object` | Moon rise/set/meridian events | - |
+  
+</details>
+
+<details>
+  <summary>BeginDay object</summary>
+
+  | Response Variable | Type | Description | Example Value |
+| :--- | :--- | :--- | :--- |
+|`BeginDay.MoonDays` | `Float` | Lunar day number at day start | `23.54` |
+|`BeginDay.Illumination` | `Float` | Percentage of Moon's disk illuminated | `38.27` |
+|`BeginDay.Phase` | `Object` | Lunar phase details | - |
+|`BeginDay.Phase.Name` | `String` | Phase name in English | `"Waning Crescent"` |
+|`BeginDay.Phase.NameLocalized` | `String` | Localized phase name | `"Убывающий серп"` |
+|`BeginDay.Phase.Emoji` | `String` | Phase emoji | `"🌘"` |
+|`BeginDay.Phase.IsWaxing` | `Boolean` | True if illumination is increasing | `false` |
+|`BeginDay.Zodiac` | `Object` | Zodiac sign details | - |
+|`BeginDay.Zodiac.Name` | `String` | Zodiac name in English | `"Gemini"` |
+|`BeginDay.Zodiac.NameLocalized` | `String` | Localized zodiac name | `"Близнецы"` |
+|`BeginDay.Zodiac.Emoji` | `String` | Zodiac emoji | `"♊"` |
+|`BeginDay.Position` | `Object` | Astronomical position data | - |
+|`BeginDay.Position.Timestamp` | `Integer` | Unix timestamp of calculation | `1757962800` |
+|`BeginDay.Position.TimeISO` | `String` | ISO 8601 timestamp | `"2025-09-16T00:00:00+05:00"` |
+|`BeginDay.Position.AzimuthDegrees` | `Float` | Compass direction (0°=North) | `57.1` |
+|`BeginDay.Position.AltitudeDegrees` | `Float` | Angle above horizon (negative = below) | `8.8` |
+|`BeginDay.Position.Direction` | `String` | Cardinal direction abbreviation | `"ENE"` |
+|`BeginDay.Position.DistanceKm` | `Float` | Earth-Moon distance in km | `376559.9` |
+
+</details>
+
+<details>
+  <summary>CurrentState object</summary>
+
+  | Response Variable | Type | Description | Example Value |
+| :--- | :--- | :--- | :--- |
+|`CurrentState.MoonDays` | `Float` | Lunar day number at day start | `23.54` |
+|`CurrentState.Illumination` | `Float` | Percentage of Moon's disk illuminated | `38.27` |
+|`CurrentState.Phase` | `Object` | Lunar phase details | - |
+|`CurrentState.Phase.Name` | `String` | Phase name in English | `"Waning Crescent"` |
+|`CurrentState.Phase.NameLocalized` | `String` | Localized phase name | `"Убывающий серп"` |
+|`CurrentState.Phase.Emoji` | `String` | Phase emoji | `"🌘"` |
+|`CurrentState.Phase.IsWaxing` | `Boolean` | True if illumination is increasing | `false` |
+|`CurrentState.Zodiac` | `Object` | Zodiac sign details | - |
+|`CurrentState.Zodiac.Name` | `String` | Zodiac name in English | `"Gemini"` |
+|`CurrentState.Zodiac.NameLocalized` | `String` | Localized zodiac name | `"Близнецы"` |
+|`CurrentState.Zodiac.Emoji` | `String` | Zodiac emoji | `"♊"` |
+|`CurrentState.Position` | `Object` | Astronomical position data | - |
+|`CurrentState.Position.Timestamp` | `Integer` | Unix timestamp of calculation | `1757962800` |
+|`CurrentState.Position.TimeISO` | `String` | ISO 8601 timestamp | `"2025-09-16T00:00:00+05:00"` |
+|`CurrentState.Position.AzimuthDegrees` | `Float` | Compass direction (0°=North) | `57.1` |
+|`CurrentState.Position.AltitudeDegrees` | `Float` | Angle above horizon (negative = below) | `8.8` |
+|`CurrentState.Position.Direction` | `String` | Cardinal direction abbreviation | `"ENE"` |
+|`CurrentState.Position.DistanceKm` | `Float` | Earth-Moon distance in km | `376559.9` |
+
+</details>
+
+<details>
+  <summary>EndDay object</summary>
+
+  | Response Variable | Type | Description | Example Value |
+| :--- | :--- | :--- | :--- |
+|`EndDay.MoonDays` | `Float` | Lunar day number at day start | `23.54` |
+|`EndDay.Illumination` | `Float` | Percentage of Moon's disk illuminated | `38.27` |
+|`EndDay.Phase` | `Object` | Lunar phase details | - |
+|`EndDay.Phase.Name` | `String` | Phase name in English | `"Waning Crescent"` |
+|`EndDay.Phase.NameLocalized` | `String` | Localized phase name | `"Убывающий серп"` |
+|`EndDay.Phase.Emoji` | `String` | Phase emoji | `"🌘"` |
+|`EndDay.Phase.IsWaxing` | `Boolean` | True if illumination is increasing | `false` |
+|`EndDay.Zodiac` | `Object` | Zodiac sign details | - |
+|`EndDay.Zodiac.Name` | `String` | Zodiac name in English | `"Gemini"` |
+|`EndDay.Zodiac.NameLocalized` | `String` | Localized zodiac name | `"Близнецы"` |
+|`EndDay.Zodiac.Emoji` | `String` | Zodiac emoji | `"♊"` |
+|`EndDay.Position` | `Object` | Astronomical position data | - |
+|`EndDay.Position.Timestamp` | `Integer` | Unix timestamp of calculation | `1757962800` |
+|`EndDay.Position.TimeISO` | `String` | ISO 8601 timestamp | `"2025-09-16T00:00:00+05:00"` |
+|`EndDay.Position.AzimuthDegrees` | `Float` | Compass direction (0°=North) | `57.1` |
+|`EndDay.Position.AltitudeDegrees` | `Float` | Angle above horizon (negative = below) | `8.8` |
+|`EndDay.Position.Direction` | `String` | Cardinal direction abbreviation | `"ENE"` |
+|`EndDay.Position.DistanceKm` | `Float` | Earth-Moon distance in km | `376559.9` |
+
+</details>
+
+<details>
+  <summary>MoonRiseAndSet object</summary>
+
+  | Response Variable | Type | Description | Example Value |
+| :--- | :--- | :--- | :--- |
+|`MoonDaysDetailed.Count` | `Integer` | Number of lunar days this calendar day | `2` |
+|`MoonDaysDetailed.Day` | `Array<Object>` | Array of lunar day periods | - |
+|`MoonDaysDetailed.Day[].Begin` | `String` | Start time of lunar day (ISO 8601) | `"2025-09-15T22:37:45+05:00"` |
+|`MoonDaysDetailed.Day[].IsBeginExists` | `Boolean` | True if start time is past/present | `true` |
+|`MoonDaysDetailed.Day[].End` | `String` | End time of lunar day (ISO 8601) | `"2025-09-16T23:56:10+05:00"` |
+|`MoonDaysDetailed.Day[].IsEndExists` | `Boolean` | True if end time is past | `true`, `false` |
+
+</details>
+
+<details>
+  <summary>ZodiacDetailed object</summary>
+
+  | Response Variable | Type | Description | Example Value |
+| :--- | :--- | :--- | :--- |
+|`ZodiacDetailed.Count` | `Integer` | Number of zodiac signs this day | `1` |
+|`ZodiacDetailed.Zodiac` | `Array<Object>` | Array of zodiac transit periods | - |
+|`ZodiacDetailed.Zodiac[].Name` | `String` | Zodiac sign name | `"Gemini"` |
+|`ZodiacDetailed.Zodiac[].NameLocalized` | `String` | Localized zodiac name | `"Близнецы"` |
+|`ZodiacDetailed.Zodiac[].Emoji` | `String` | Zodiac emoji | `"♊"` |
+|`ZodiacDetailed.Zodiac[].Begin` | `String` | Entry time into sign (ISO 8601) | `"2025-09-14T23:07:06+05:00"` |
+|`ZodiacDetailed.Zodiac[].End` | `String` | Exit time from sign (ISO 8601) | `"2025-09-17T11:07:06+05:00"` |
+
+</details>
+
+<details>
+  <summary>MoonRiseAndSet object</summary>
 
 | Response Variable | Type | Description | Example Value |
 | :--- | :--- | :--- | :--- |
-|`BeginDay` | `Object` | Data for the beginning of the requested day (00:00) | - |
-|⠀⠀`BeginDay.MoonDays` | `Float` | Lunar day number at day start | `23.54` |
-|⠀⠀`BeginDay.Illumination` | `Float` | Percentage of Moon's disk illuminated | `38.27` |
-|⠀⠀`BeginDay.Phase` | `Object` | Lunar phase details | - |
-|⠀⠀⠀⠀⠀`BeginDay.Phase.Name` | `String` | Phase name in English | `"Waning Crescent"` |
-|⠀⠀⠀⠀⠀`BeginDay.Phase.NameLocalized` | `String` | Localized phase name | `"Убывающий серп"` |
-|⠀⠀⠀⠀⠀`BeginDay.Phase.Emoji` | `String` | Phase emoji | `"🌘"` |
-|⠀⠀⠀⠀⠀`BeginDay.Phase.IsWaxing` | `Boolean` | True if illumination is increasing | `false` |
-|⠀⠀`BeginDay.Zodiac` | `Object` | Zodiac sign details | - |
-|⠀⠀⠀⠀⠀`BeginDay.Zodiac.Name` | `String` | Zodiac name in English | `"Gemini"` |
-|⠀⠀⠀⠀⠀`BeginDay.Zodiac.NameLocalized` | `String` | Localized zodiac name | `"Близнецы"` |
-|⠀⠀⠀⠀⠀`BeginDay.Zodiac.Emoji` | `String` | Zodiac emoji | `"♊"` |
-|⠀⠀`BeginDay.Position` | `Object` | Astronomical position data | - |
-|⠀⠀⠀⠀`BeginDay.Position.Timestamp` | `Integer` | Unix timestamp of calculation | `1757962800` |
-|⠀⠀⠀⠀`BeginDay.Position.TimeISO` | `String` | ISO 8601 timestamp | `"2025-09-16T00:00:00+05:00"` |
-|⠀⠀⠀⠀`BeginDay.Position.AzimuthDegrees` | `Float` | Compass direction (0°=North) | `57.1` |
-|⠀⠀⠀⠀`BeginDay.Position.AltitudeDegrees` | `Float` | Angle above horizon (negative = below) | `8.8` |
-|⠀⠀⠀⠀`BeginDay.Position.Direction` | `String` | Cardinal direction abbreviation | `"ENE"` |
-|⠀⠀⠀⠀`BeginDay.Position.DistanceKm` | `Float` | Earth-Moon distance in km | `376559.9` |
-|`CurrentState` | `Object` | Data at exact time of API request (same structure as BeginDay) | - |
-| `EndDay` | `Object` | Data for end of requested day (00:00 next day) (same structure as BeginDay) | - |
-| `MoonDaysDetailed` | `Object` | Detailed lunar day information | - |
-| ⠀⠀`MoonDaysDetailed.Count` | `Integer` | Number of lunar days this calendar day | `2` |
-| ⠀⠀`MoonDaysDetailed.Day` | `Array<Object>` | Array of lunar day periods | - |
-| ⠀⠀⠀⠀`MoonDaysDetailed.Day[].Begin` | `String` | Start time of lunar day (ISO 8601) | `"2025-09-15T22:37:45+05:00"` |
-| ⠀⠀⠀⠀`MoonDaysDetailed.Day[].IsBeginExists` | `Boolean` | True if start time is past/present | `true` |
-| ⠀⠀⠀⠀`MoonDaysDetailed.Day[].End` | `String` | End time of lunar day (ISO 8601) | `"2025-09-16T23:56:10+05:00"` |
-| ⠀⠀⠀⠀`MoonDaysDetailed.Day[].IsEndExists` | `Boolean` | True if end time is past | `true`, `false` |
-| `ZodiacDetailed` | `Object` | Detailed zodiac transit information | - |
-| ⠀⠀`ZodiacDetailed.Count` | `Integer` | Number of zodiac signs this day | `1` |
-| ⠀⠀`ZodiacDetailed.Zodiac` | `Array<Object>` | Array of zodiac transit periods | - |
-| ⠀⠀⠀⠀`ZodiacDetailed.Zodiac[].Name` | `String` | Zodiac sign name | `"Gemini"` |
-| ⠀⠀⠀⠀`ZodiacDetailed.Zodiac[].NameLocalized` | `String` | Localized zodiac name | `"Близнецы"` |
-| ⠀⠀⠀⠀`ZodiacDetailed.Zodiac[].Emoji` | `String` | Zodiac emoji | `"♊"` |
-| ⠀⠀⠀⠀`ZodiacDetailed.Zodiac[].Begin` | `String` | Entry time into sign (ISO 8601) | `"2025-09-14T23:07:06+05:00"` |
-| ⠀⠀⠀⠀`ZodiacDetailed.Zodiac[].End` | `String` | Exit time from sign (ISO 8601) | `"2025-09-17T11:07:06+05:00"` |
-| `MoonRiseAndSet` | `Object` | Moon rise/set/meridian events | - |
-| ⠀⠀`MoonRiseAndSet.Moonrise` | `Object` | Moonrise event data | - |
-| ⠀⠀⠀⠀`MoonRiseAndSet.Moonrise.Timestamp` | `Integer` | Moonrise Unix timestamp | `1758048970` |
-| ⠀⠀⠀⠀`MoonRiseAndSet.Moonrise.TimeISO` | `String` | Moonrise ISO time | `"2025-09-16T23:56:10+05:00"` |
-| ⠀⠀⠀⠀`MoonRiseAndSet.Moonrise.AzimuthDegrees` | `Float` | Moonrise azimuth | `47.3` |
-| ⠀⠀⠀⠀`MoonRiseAndSet.Moonrise.AltitudeDegrees` | `Float` | Moonrise altitude | `-0.6` |
-| ⠀⠀⠀⠀`MoonRiseAndSet.Moonrise.Direction` | `String` | Moonrise direction | `"NE"` |
-| `MoonRiseAndSet.Moonset` | `Object` | Moonset event data (same structure as Moonrise) | - |
-| `MoonRiseAndSet.Meridian` | `Object` | Meridian event data (same structure as Moonrise) | - |
-| `MoonRiseAndSet.DistanceKm` | `Float` | Approximate Earth-Moon distance | `379004.1` |
-| `MoonRiseAndSet.IsMoonRise` | `Boolean` | True if moonrise occurs today | `true` |
-| `MoonRiseAndSet.IsMoonSet` | `Boolean` | True if moonset occurs today | `true` |
-| `MoonRiseAndSet.IsMeridian` | `Boolean` | True if meridian transit occurs today | `true` |
+|`MoonRiseAndSet.Moonrise` | `Object` | Moonrise event data | - |
+|`MoonRiseAndSet.Moonset` | `Object` | Moonset event data (same structure as Moonrise) | - |
+|`MoonRiseAndSet.Meridian` | `Object` | Meridian event data (same structure as Moonrise) | - |
+|`MoonRiseAndSet.DistanceKm` | `Float` | Approximate Earth-Moon distance | `379004.1` |
+|`MoonRiseAndSet.IsMoonRise` | `Boolean` | True if moonrise occurs today | `true` |
+|`MoonRiseAndSet.IsMoonSet` | `Boolean` | True if moonset occurs today | `true` |
+|`MoonRiseAndSet.IsMeridian` | `Boolean` | True if meridian transit occurs today | `true` |
+
+
+<details>
+  <summary>MoonRiseAndSet.Moonrise object</summary>
+
+| Response Variable | Type | Description | Example Value |
+| :--- | :--- | :--- | :--- |
+|`MoonRiseAndSet.Moonrise.Timestamp` | `Integer` | Moonrise Unix timestamp | `1758048970` |
+|`MoonRiseAndSet.Moonrise.TimeISO` | `String` | Moonrise ISO time | `"2025-09-16T23:56:10+05:00"` |
+|`MoonRiseAndSet.Moonrise.AzimuthDegrees` | `Float` | Moonrise azimuth | `47.3` |
+|`MoonRiseAndSet.Moonrise.AltitudeDegrees` | `Float` | Moonrise altitude | `-0.6` |
+|`MoonRiseAndSet.Moonrise.Direction` | `String` | Moonrise direction | `"NE"` |
+
+</details>
+
+<details>
+  <summary>MoonRiseAndSet.Moonset object</summary>
+
+| Response Variable | Type | Description | Example Value |
+| :--- | :--- | :--- | :--- |
+|`MoonRiseAndSet.Moonset.Timestamp` | `Integer` | Moonset Unix timestamp | `1758048970` |
+|`MoonRiseAndSet.Moonset.TimeISO` | `String` | Moonset ISO time | `"2025-09-16T23:56:10+05:00"` |
+|`MoonRiseAndSet.Moonset.AzimuthDegrees` | `Float` | Moonset azimuth | `47.3` |
+|`MoonRiseAndSet.Moonset.AltitudeDegrees` | `Float` | Moonset altitude | `-0.6` |
+|`MoonRiseAndSet.Moonset.Direction` | `String` | Moonset direction | `"NE"` |
+
+</details>
+
+<details>
+  <summary>MoonRiseAndSet.Meridian object</summary>
+
+| Response Variable | Type | Description | Example Value |
+| :--- | :--- | :--- | :--- |
+|`MoonRiseAndSet.Meridian.Timestamp` | `Integer` | Meridian Unix timestamp | `1758048970` |
+|`MoonRiseAndSet.Meridian.TimeISO` | `String` | Meridian ISO time | `"2025-09-16T23:56:10+05:00"` |
+|`MoonRiseAndSet.Meridian.AzimuthDegrees` | `Float` | Meridian azimuth | `47.3` |
+|`MoonRiseAndSet.Meridian.AltitudeDegrees` | `Float` | Meridian altitude | `-0.6` |
+|`MoonRiseAndSet.Meridian.Direction` | `String` | Meridian direction | `"NE"` |
+
+</details>
+
+</details>
+
+#### Full response example:
+
+<details>
+  <summary>JSON</summary>
 
 ```json
 {
@@ -204,6 +332,8 @@ Params:
   }
 }
 ```
+
+</details>
 
 ### GET /v1/moonPhaseTimestamp
 
