@@ -179,6 +179,7 @@ func GetMoonPosition(tGiven time.Time, loc *time.Location, location ...float64) 
 
 	h, m := 0, 0
 	if loc != nil {
+		tGiven = tGiven.In(loc)
 		jth, jtm, err := jt.GetTimeFromLocation(loc)
 		if err == nil {
 			h = jth
