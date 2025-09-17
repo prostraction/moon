@@ -4,13 +4,18 @@
 
 Port by default: 9998
 
+Main server:
 ```
 git clone https://github.com/prostraction/moon
 cd moon
 go run cmd/main.go
-python addon/skyfield/server.py
 ```
 
+Addon:
+```
+pip install skyfield
+python addon/skyfield/server.py
+```
 
 ## Methods
 
@@ -18,7 +23,7 @@ python addon/skyfield/server.py
 
 The method returns the Moon parameters for the specified day and time. If the day or time is not specified, the current value for the unspecified fields is taken. If longitude and latitude are specified, the response will contain additional structures.
 
-### Arguments
+### Params
 
   | Parameter | Type | Description | Example Value |
 | :--- | :--- | :--- |  :--- | 
@@ -50,7 +55,7 @@ The method returns 6 objects:
   | Response Variable | Type | Description |
 | :--- | :--- | :--- | 
 |`BeginDay` | `Object of struct MoonStat [required]` | Data for the beginning of the requested day (00:00) |
-|`CurrentState` | `Object of struct MoonStat [required]` | Data at specified time of requested day: hour, minute and second from request arguments. |
+|`CurrentState` | `Object of struct MoonStat [required]` | Data at specified time of requested day: hour, minute and second from request Params. |
 |`EndDay` | `Object of struct MoonStat [required]` | Data for end of requested day (00:00 next day) |
 |`MoonDaysDetailed` | `Object of struct MoonDaysDetailed [optional]` | Detailed lunar day information that falls on a given Earth day. Exists only if latitude and longitude are specified. |
 |`ZodiacDetailed` | `Object of struct ZodiacDetailed [required]` | Detailed zodiac transit information | 
@@ -62,10 +67,10 @@ The method returns 6 objects:
 
 #### MoonStat (used as ```BeginDay```, ```CurrentState```, ```EndDay```)
 
-```MoonStat``` objects are used to display at a  time.
+```MoonStat``` objects are used to display at a given time.
 In case of a method response, MoonStat will contain the values:
-- BeginDay: start of the  day, 00:00AM
-- CurrentState:  time
+- BeginDay: start of the day, 00:00AM
+- CurrentState: given time from request
 - EndDay: start of the next day, 00:00AM
 
 <details>
@@ -77,7 +82,7 @@ In case of a method response, MoonStat will contain the values:
 |`MoonStat.Illumination` | `Float [required]` | Percentage of Moon's disk illuminated | `38.27` |
 |`MoonStat.Phase` | `Object of struct Phase [required]` | Lunar phase details | - |
 |`MoonStat.Zodiac` | `Object of struct Zodiac [required]` | Zodiac sign details | - |
-|`MoonStat.Position` | `Object of struct MoonPosition [optional]` | Moon position data. Exists only if latitude and longitude are specified. | - |
+|`MoonStat.MoonPosition` | `Object of struct MoonPosition [optional]` | Moon position data. Exists only if latitude and longitude are specified. | - |
 
 Phase structure:
 
@@ -96,16 +101,16 @@ Zodiac structure:
 |`Zodiac.NameLocalized` | `String [required]` | Localized zodiac name | `"Близнецы"` |
 |`Zodiac.Emoji` | `String [required]` | Zodiac emoji | `"♊"` |
 
-Position structure (Exists only if latitude and longitude are specified):
+MoonPosition structure (Exists only if latitude and longitude are specified):
 
   | Response Variable | Type | Description | Example Value |
 | :--- | :--- | :--- | :--- |
-|`Position.Timestamp` | `Integer [required]` | Unix timestamp of calculation | `1757962800` |
-|`Position.TimeISO` | `String [required]` | ISO 8601 timestamp | `"2025-09-16T00:00:00+05:00"` |
-|`Position.AzimuthDegrees` | `Float [required]` | Compass direction (0°=North) | `57.1` |
-|`Position.AltitudeDegrees` | `Float [required]` | Angle above horizon (negative = below) | `8.8` |
-|`Position.Direction` | `String [required]` | Cardinal direction abbreviation | `"ENE"` |
-|`Position.DistanceKm` | `Float [required]` | Earth-Moon distance in km | `376559.9` |
+|`MoonPosition.Timestamp` | `Integer [required]` | Unix timestamp of calculation | `1757962800` |
+|`MoonPosition.TimeISO` | `String [required]` | ISO 8601 timestamp | `"2025-09-16T00:00:00+05:00"` |
+|`MoonPosition.AzimuthDegrees` | `Float [required]` | Compass direction (0°=North) | `57.1` |
+|`MoonPosition.AltitudeDegrees` | `Float [required]` | Angle above horizon (negative = below) | `8.8` |
+|`MoonPosition.Direction` | `String [required]` | Cardinal direction abbreviation | `"ENE"` |
+|`MoonPosition.DistanceKm` | `Float [required]` | Earth-Moon distance in km | `376559.9` |
 
 </details>
 
@@ -124,10 +129,10 @@ Position structure (Exists only if latitude and longitude are specified):
 | :--- | :--- | :--- | :--- |
 |`MoonDaysDetailed.Count` | `Integer [required]` | Number of lunar days this calendar day | `2` |
 |`MoonDaysDetailed.Day` | `Array<Object> [required]` | Array of lunar day periods | - |
-|`MoonDaysDetailed.Day[].Begin [optional]` | `String` | Start time of lunar day (ISO 8601) | `"2025-09-15T22:37:45+05:00"` |
-|`MoonDaysDetailed.Day[].IsBeginExists [required]` | `Boolean` | True if start time is past/present | `true` |
-|`MoonDaysDetailed.Day[].End [optional]` | `String` | End time of lunar day (ISO 8601) | `"2025-09-16T23:56:10+05:00"` |
-|`MoonDaysDetailed.Day[].IsEndExists [required]` | `Boolean` | True if end time is past | `true`, `false` |
+|`MoonDaysDetailed.Day[].Begin` | `String [optional]` | Start time of lunar day (ISO 8601) | `"2025-09-15T22:37:45+05:00"` |
+|`MoonDaysDetailed.Day[].IsBeginExists` | `Boolean [required]` | True if start time is past/present | `true` |
+|`MoonDaysDetailed.Day[].End` | `String [optional]` | End time of lunar day (ISO 8601) | `"2025-09-16T23:56:10+05:00"` |
+|`MoonDaysDetailed.Day[].IsEndExists` | `Boolean [required]` | True if end time is past | `true`, `false` |
 
 </details>
 
@@ -142,13 +147,13 @@ Position structure (Exists only if latitude and longitude are specified):
 
   | Response Variable | Type | Description | Example Value |
 | :--- | :--- | :--- | :--- |
-|`ZodiacDetailed.Count` | `Integer` | Number of zodiac signs this day | `1` |
-|`ZodiacDetailed.Zodiac` | `Array<Object>` | Array of zodiac transit periods | - |
-|`ZodiacDetailed.Zodiac[].Name` | `String` | Zodiac sign name | `"Gemini"` |
-|`ZodiacDetailed.Zodiac[].NameLocalized` | `String` | Localized zodiac name | `"Близнецы"` |
-|`ZodiacDetailed.Zodiac[].Emoji` | `String` | Zodiac emoji | `"♊"` |
-|`ZodiacDetailed.Zodiac[].Begin` | `String` | Entry time into sign (ISO 8601) | `"2025-09-14T23:07:06+05:00"` |
-|`ZodiacDetailed.Zodiac[].End` | `String` | Exit time from sign (ISO 8601) | `"2025-09-17T11:07:06+05:00"` |
+|`ZodiacDetailed.Count` | `Integer [required]` | Number of zodiac signs this day | `1` |
+|`ZodiacDetailed.Zodiac` | `Array<Object> [required]` | Array of zodiac transit periods | - |
+|`ZodiacDetailed.Zodiac[].Name` | `String [required]` | Zodiac sign name | `"Gemini"` |
+|`ZodiacDetailed.Zodiac[].NameLocalized` | `String [required]` | Localized zodiac name | `"Близнецы"` |
+|`ZodiacDetailed.Zodiac[].Emoji` | `String [required]` | Zodiac emoji | `"♊"` |
+|`ZodiacDetailed.Zodiac[].Begin` | `String [required]` | Entry time into sign (ISO 8601) | `"2025-09-14T23:07:06+05:00"` |
+|`ZodiacDetailed.Zodiac[].End` | `String [required]` | Exit time from sign (ISO 8601) | `"2025-09-17T11:07:06+05:00"` |
 
 </details>
 
@@ -156,7 +161,7 @@ Position structure (Exists only if latitude and longitude are specified):
 
 #### MoonRiseAndSet
 
-```MoonRiseAndSet``` is a structure for determining the moonrise, moonset and meridian on a given day.
+```MoonRiseAndSet``` is a structure for determining the moonrise, moonset and meridian on a given day. Exists only if latitude and longitude are specified.
 
 <details>
   <summary><strong>Table</strong></summary>
@@ -166,7 +171,6 @@ Position structure (Exists only if latitude and longitude are specified):
 |`MoonRiseAndSet.Moonrise` | `Object of struct MoonPosition [optional]` | Moonrise position data. Exists only if IsMoonRise = true | - |
 |`MoonRiseAndSet.Moonset` | `Object of struct MoonPosition [optional]` | Moonset position data. Exists only if IsMoonSet = true | - |
 |`MoonRiseAndSet.Meridian` | `Object of struct MoonPosition [optional]` | Meridian position data, Exists only if IsMeridian = true | - |
-|`MoonRiseAndSet.DistanceKm` | `Float [required]` | Approximate Earth-Moon distance | `379004.1` |
 |`MoonRiseAndSet.IsMoonRise` | `Boolean [required]` | True if moonrise occurs at given day | `true` |
 |`MoonRiseAndSet.IsMoonSet` | `Boolean [required]` | True if moonset occurs at given day | `true` |
 |`MoonRiseAndSet.IsMeridian` | `Boolean [required]` | True if meridian transit occurs at given day | `true` |
@@ -183,6 +187,7 @@ MoonPosition structure:
 |`MoonPosition.AzimuthDegrees` | `Float [required]` | Moonrise azimuth | `47.3` |
 |`MoonPosition.AltitudeDegrees` | `Float [required]` | Moonrise altitude | `-0.6` |
 |`MoonPosition.Direction` | `String [required]` | Moonrise direction | `"ENE"` |
+|`MoonPosition.DistanceKm` | `Float [required]` | Earth-Moon distance in km | `376559.9` |
 
 </details>
 
@@ -214,9 +219,9 @@ Response of:
       "NameLocalized": "Близнецы",
       "Emoji": "♊"
     },
-    "Position": {
-      "Timestamp": 1757876400,
-      "TimeISO": "2025-09-15T00:00:00+05:00",
+    "MoonPosition": {
+      "Timestamp": 1757883600,
+      "TimeISO": "2025-09-15T02:00:00+05:00",
       "AzimuthDegrees": 66.96877,
       "AltitudeDegrees": 17.50543,
       "Direction": "ENE",
@@ -237,9 +242,9 @@ Response of:
       "NameLocalized": "Близнецы",
       "Emoji": "♊"
     },
-    "Position": {
-      "Timestamp": 1757919600,
-      "TimeISO": "2025-09-15T12:00:00+05:00",
+    "MoonPosition": {
+      "Timestamp": 1757926800,
+      "TimeISO": "2025-09-15T14:00:00+05:00",
       "AzimuthDegrees": 279.37345,
       "AltitudeDegrees": 29.04833,
       "Direction": "W",
@@ -260,9 +265,9 @@ Response of:
       "NameLocalized": "Близнецы",
       "Emoji": "♊"
     },
-    "Position": {
-      "Timestamp": 1757962800,
-      "TimeISO": "2025-09-16T00:00:00+05:00",
+    "MoonPosition": {
+      "Timestamp": 1757970000,
+      "TimeISO": "2025-09-16T02:00:00+05:00",
       "AzimuthDegrees": 57.08873,
       "AltitudeDegrees": 8.79646,
       "Direction": "ENE",
@@ -304,23 +309,25 @@ Response of:
       "TimeISO": "2025-09-15T22:37:45+05:00",
       "AzimuthDegrees": 42.31555,
       "AltitudeDegrees": -0.56667,
-      "Direction": "NE"
+      "Direction": "NE",
+      "DistanceKm": 376365.00012
     },
     "Moonset": {
       "Timestamp": 1757933213,
       "TimeISO": "2025-09-15T15:46:53+05:00",
       "AzimuthDegrees": 318.44328,
       "AltitudeDegrees": -0.56667,
-      "Direction": "NW"
+      "Direction": "NW",
+      "DistanceKm": 375398.22022
     },
     "Meridian": {
       "Timestamp": 1757900413,
       "TimeISO": "2025-09-15T06:40:13+05:00",
       "AzimuthDegrees": 180,
       "AltitudeDegrees": 67.1,
-      "Direction": "S"
+      "Direction": "S",
+      "DistanceKm": 374133.37617
     },
-    "DistanceKm": 375569.36571,
     "IsMoonRise": true,
     "IsMoonSet": true,
     "IsMeridian": true
@@ -336,9 +343,9 @@ Response of:
 
 The method returns the Moon parameters for the current day and time. If the day or time is not specified, the current value for the unspecified fields is taken. If longitude and latitude are specified, the response will contain additional structures.
 
-This is a synonym for the moonPhaseDate method without day and time arguments.
+This is a synonym for the moonPhaseDate method without day and time Params.
 
-### Arguments
+### Params
 
   | Parameter | Type | Description | Example Value |
 | :--- | :--- | :--- |  :--- | 
@@ -360,7 +367,7 @@ The method returns the Moon parameters for the given timestamp. If it is not spe
 
 This is a synonym for the moonPhaseDate method but with timestamp instead of date.
 
-### Arguments
+### Params
 
   | Parameter | Type | Description | Example Value |
 | :--- | :--- | :--- |  :--- | 
@@ -381,7 +388,7 @@ Response as [GET /v1/moonPhaseDate](https://github.com/prostraction/moon/#v1moon
 
 The method returns the moon phases for the given year. The response contains an array for each month, each element of which contains the time of the new moon, first quarter, full moon, last quarter.
 
-### Arguments
+### Params
 
   | Parameter | Type | Description | Example Value |
 | :--- | :--- | :--- |  :--- | 
@@ -423,7 +430,7 @@ The method returns the moon phases for the given year. The response contains an 
 
 The method returns the moon phases for the current year. The response contains an array for each month, each element of which contains the time of the new moon, first quarter, full moon, last quarter.
 
-### Arguments
+### Params
 
   | Parameter | Type | Description | Example Value |
 | :--- | :--- | :--- |  :--- | 

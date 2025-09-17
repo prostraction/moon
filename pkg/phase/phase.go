@@ -9,11 +9,7 @@ import (
 
 type illumFunc func(tGiven time.Time, loc *time.Location) float64
 
-func CurrentMoonPhase(tGiven time.Time, loc *time.Location, lang string) (float64, float64, float64, PhaseResp, PhaseResp, PhaseResp) {
-	if loc != nil {
-		//tGiven = tGiven.In(loc)
-	}
-
+func CurrentMoonPhase(tGiven time.Time, lang string) (float64, float64, float64, PhaseResp, PhaseResp, PhaseResp) {
 	newT := time.Date(tGiven.Year(), tGiven.Month(), tGiven.Day(), tGiven.Hour(), tGiven.Minute(), tGiven.Second(), 0, time.UTC)
 
 	currentMoonIllumination, currentMoonIlluminationBefore, currentMoonIlluminationAfter := currentMoonPhaseCalc(newT, time.FixedZone("UTC+12", -12*60*60), il.GetCurrentMoonIllumination)

@@ -117,6 +117,7 @@ class MoonRequestHandler(BaseHTTPRequestHandler):
             'Status': 'error',
             'Message': message
         }
+
         self.wfile.write(json.dumps(error_response).encode('utf-8'))
     
     def do_OPTIONS(self):

@@ -126,26 +126,36 @@ def get_daily_moon_data(lat, lon, timezone_hours, timezone_minutes, precision, y
     moonset_ts = int(set_time.timestamp()) if set_time else None
     meridian_ts = int(meridian_time.timestamp()) if meridian_time else None
 
+    moonrise_t = ts.utc(rise_time) if rise_time else None
+    moonset_t  = ts.utc(set_time) if set_time else None
+    meridian_t = ts.utc(meridian_time) if meridian_time else None
+
+    distance_at_moonrise = earth.at(moonrise_t).observe(moon).apparent().distance().km if rise_time else None
+    distance_at_moonset = earth.at(moonset_t).observe(moon).apparent().distance().km if set_time else None
+    distance_at_meridian = earth.at(meridian_t).observe(moon).apparent().distance().km if meridian_time else None
+
     return {
         'Moonrise': {
             'Timestamp': moonrise_ts,
             'AzimuthDegrees': round(rise_azimuth, precision),
             'AltitudeDegrees': round(rise_altitude, precision),
             'Direction': rise_direction,
+            'DistanceKm': round(distance_at_moonrise, precision),
         } if rise_time is not None else None,
         'Moonset': {
             'Timestamp': moonset_ts,
             'AzimuthDegrees': round(set_azimuth, precision),
             'AltitudeDegrees': round(set_altitude, precision),
             'Direction': set_direction,
+            'DistanceKm': round(distance_at_moonset, precision),
         } if set_time is not None else None,
         'Meridian': {
             'Timestamp': meridian_ts,
             'AzimuthDegrees': round(meridian_azimuth, precision),
             'AltitudeDegrees': round(meridian_altitude, precision),
             'Direction': meridian_direction,
+            'DistanceKm': round(distance_at_meridian, precision),
         } if meridian_time is not None else None,
-        'DistanceKm': round(DistanceKm, precision),
         'IsMoonRise': rise_time is not None,
         'IsMoonSet': set_time is not None,
         'IsMeridian': meridian_time is not None,
