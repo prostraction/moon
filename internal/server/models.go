@@ -17,7 +17,7 @@ type MoonStat struct {
 	Illumination float64
 	Phase        phase.PhaseResp
 	Zodiac       zodiac.Zodiac
-	Position     *pos.PositionResponse `json:"Position,omitempty"`
+	Position     *pos.MoonPosition `json:"MoonPosition,omitempty"`
 }
 
 type FullInfo struct {

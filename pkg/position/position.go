@@ -11,12 +11,6 @@ import (
 	"time"
 )
 
-// PositionResponse
-type PositionResponse struct {
-	MoonPosition
-	DistanceKm float64 `json:"DistanceKm"`
-}
-
 // DayResponse
 type DayResponse struct {
 	Status     string     `json:"Status"`
@@ -52,13 +46,13 @@ type MoonPosition struct {
 	AzimuthDegrees  float64   `json:"AzimuthDegrees"`
 	AltitudeDegrees float64   `json:"AltitudeDegrees"`
 	Direction       string    `json:"Direction"`
+	DistanceKm      float64   `json:"DistanceKm"`
 }
 
 type DayData struct {
 	Moonrise   *MoonPosition `json:"Moonrise,omitempty"`
 	Moonset    *MoonPosition `json:"Moonset,omitempty"`
 	Meridian   *MoonPosition `json:"Meridian,omitempty"`
-	DistanceKm float64       `json:"DistanceKm"`
 	IsMoonRise bool          `json:"IsMoonRise"`
 	IsMoonSet  bool          `json:"IsMoonSet"`
 	IsMeridian bool          `json:"IsMeridian"`
@@ -173,7 +167,7 @@ func GetRisesDay(year, month, day int, loc *time.Location, precision int, locati
 	return dayResponse.Data, nil
 }
 
-func GetMoonPosition(tGiven time.Time, loc *time.Location, precision int, location ...float64) (*PositionResponse, error) {
+func GetMoonPosition(tGiven time.Time, loc *time.Location, precision int, location ...float64) (*MoonPosition, error) {
 	lat, lon, err := parseLocation(location)
 	if err != nil {
 		return nil, err
@@ -211,7 +205,7 @@ func GetMoonPosition(tGiven time.Time, loc *time.Location, precision int, locati
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("server returned status: %s", resp.Status)
+		return nil, fmt.Errorf("server returned status: %s (%s)", resp.Status, resp.Body)
 	}
 
 	body, err := io.ReadAll(resp.Body)
@@ -219,12 +213,12 @@ func GetMoonPosition(tGiven time.Time, loc *time.Location, precision int, locati
 		return nil, fmt.Errorf("failed to read response: %w", err)
 	}
 
-	var pos *PositionResponse
+	var pos *MoonPosition
 	if err := json.Unmarshal(body, &pos); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal response: %w", err)
 	}
 	if pos != nil {
-		timestampToGoTime(&pos.MoonPosition, loc)
+		timestampToGoTime(pos, loc)
 	}
 
 	return pos, nil

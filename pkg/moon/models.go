@@ -16,9 +16,9 @@ type Cache struct {
 }
 
 type MoonDay struct {
-	Begin         time.Time
+	Begin         *time.Time `json:"Begin,omitempty"`
 	IsBeginExists bool
-	End           time.Time
+	End           *time.Time `json:"End,omitempty"`
 	IsEndExists   bool
 }
 

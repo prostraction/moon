@@ -13,7 +13,7 @@ import (
 )
 
 func (s *Server) versionV1(c *fiber.Ctx) error {
-	return c.JSON("1.1.0rc4")
+	return c.JSON("1.1.0")
 }
 
 /*    MOON PHASE    */
@@ -117,7 +117,7 @@ func (s *Server) moonPhaseV1(c *fiber.Ctx, tGiven time.Time, precision int, loca
 	resp.CurrentState.MoonDays = toFixed(resp.info.MoonDaysCurrent, precision)
 	resp.EndDay.MoonDays = toFixed(resp.info.MoonDaysEnd, precision)
 
-	resp.info.IlluminationCurrent, resp.info.IlluminationBeginDay, resp.info.IlluminationEndDay, resp.CurrentState.Phase, resp.BeginDay.Phase, resp.EndDay.Phase = phase.CurrentMoonPhase(tGiven, loc, lang)
+	resp.info.IlluminationCurrent, resp.info.IlluminationBeginDay, resp.info.IlluminationEndDay, resp.CurrentState.Phase, resp.BeginDay.Phase, resp.EndDay.Phase = phase.CurrentMoonPhase(tGiven, lang)
 
 	resp.BeginDay.Illumination = toFixed(resp.info.IlluminationBeginDay*100, precision)
 	resp.CurrentState.Illumination = toFixed(resp.info.IlluminationCurrent*100, precision)
