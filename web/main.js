@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const hour = new Date().getHours();
     const body = document.body;
 
+    body.style.transition = 'background-color 0.5s ease, color 0.5s ease';
     body.classList.remove('body--day', 'body-morning', 'body--evening', 'body--night');
 
     if (hour >= 6 && hour < 12) {

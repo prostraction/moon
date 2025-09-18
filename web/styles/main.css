@@ -137,10 +137,12 @@ body {
   padding: 1em;
   text-align: center;
 
-  width: clamp(350px, 80%, 400px);
+  width: clamp(350px, 80%, 450px);
   height: fit-content;
+  min-height: 300px;
   z-index: 5;
 }
+
 
 /*                        Заголовок                     */
 
@@ -149,6 +151,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.8em;
+  transition: opacity 0.3s ease;
 }
 
 /*                      Описание                       */
@@ -158,6 +161,7 @@ body {
   grid-template-columns: 1fr;
   gap: 0.6em;
   margin-top: 1em;
+  transition: opacity 0.3s ease;
 }
 
 /*                Детали описания                      */
@@ -319,6 +323,7 @@ body {
 .calendar-day.other-month { opacity: 0.1; pointer-events: none; border: none; background: none;}
 
 /*                                                             */
+
 /*                              Подвал                          
 
 footer {
@@ -357,12 +362,12 @@ footer {
 
 -----------------------------------*/
 
-@media (min-width: 1050px) {
+@media (min-width: 850px) {
   .content {
     grid-template-areas: 
       "moon result"
       "moon calendar ";
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: auto 1fr;
     grid-template-rows: 1fr 1fr;
     align-items: center;
     justify-content: center;
@@ -374,6 +379,7 @@ footer {
     grid-row: span 2;
     justify-self: center;
     align-items: center;
+    margin-left: 2em;
     
   }
 
@@ -392,24 +398,31 @@ footer {
 } 
   
   .result {
-    grid-row: 1 / 2;
+    grid-column: 2;
+    grid-row: 1;
     justify-self: center;
     align-self: center;
 
-    background-image: radial-gradient(ellipse 30vmin 30vmin at left, 
+    background-image: radial-gradient(ellipse 45vmin 50vmin at bottom left, 
     rgba(249, 249, 249, 0.671),
     rgba(255, 255, 235, 0.445), 
     rgba(10, 10, 42, 0.397),
     rgba(10, 10, 42, 0.596));
   }
-  @keyframes glowBackground { 
-    from { background-position: center; background-size: 120% 170%; ; transform: scale(1);} 
-    to { background-position: left; background-size: 100% 120%; }} 
   
   .calendar {
     justify-self: center;
-    grid-row: 2 / 2;
+    grid-column: 2;
+    grid-row: 2;
     height: fit-content;
     align-self: flex-end;
     max-height: 100%;
+    background-image: radial-gradient(ellipse 45vmin 65vmin at top left, 
+    rgba(249, 249, 249, 0.671),
+    rgba(255, 255, 235, 0.445), 
+    rgba(10, 10, 42, 0.397),
+    rgba(10, 10, 42, 0.596));
+      animation: glowBackground 4s ease-in-out infinite alternate;
+      animation-play-state: running, paused;
   }}
+
