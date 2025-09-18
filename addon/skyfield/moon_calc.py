@@ -1,7 +1,7 @@
 from skyfield import almanac
 from skyfield.api import Loader, wgs84
 from skyfield.almanac import meridian_transits
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 
 load = Loader('./skyfield-data')
 eph = load('de421.bsp')
@@ -29,7 +29,10 @@ def get_azimuth_and_altitude(time, observer, target):
 
 def get_moon_position_at_time(lat, lon, timezone_hours, timezone_minutes, precision, year, month, day, hour, minute, second):
     total_timezone_offset = timezone_hours + timezone_minutes / 60.0
-    local_dt = datetime(year, month, day, hour, minute, second)
+    offset = timedelta(hours=total_timezone_offset)
+    tz = timezone(offset)
+
+    local_dt = datetime(year, month, day, hour, minute, second, tzinfo=tz)
     utc_dt = local_dt - timedelta(hours=total_timezone_offset)
     
     location = wgs84.latlon(lat, lon)
