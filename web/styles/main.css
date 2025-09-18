@@ -150,7 +150,7 @@ body {
   padding: 1em;
   text-align: center;
 
-  width: clamp(300px, 80%, 450px);
+  width: clamp(270px, 80%, 450px);
   max-width: 100%;
   height: fit-content;
   min-height: 300px;
@@ -221,7 +221,7 @@ body {
   justify-content: center; 
   font-family: "Grill Sans", serif;
   padding: 0.5em;
-  width: clamp(300px, 80%, 450px);
+  width: clamp(270px, 80%, 450px);
   height: fit-content;
   z-index: 5;
 }
@@ -292,7 +292,6 @@ body {
   transition: all 0.3s ease;
   font-size: 1.4em;
   opacity: 1;
-  transform: scale(1);
   position: relative;
   z-index: 1;
 }
@@ -318,17 +317,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(130deg, #ffffffad 0%, transparent 60% ) border-box !important;
+  background: linear-gradient(130deg, #ffffffad 0%, transparent 40% ) border-box !important;
   border-radius: 40%;
   cursor: pointer;
   font-size: 1.5em;
-  transform: scale(1.2);}
+}
 
 .calendar-day.today {    
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(130deg, var(--text-primary) 0%, transparent 60% ) border-box;
+  background: linear-gradient(130deg, var(--text-primary) 0%, transparent 40% ) border-box;
   border-radius: 40%;
   cursor: pointer;
   font-size: 1.5em;
