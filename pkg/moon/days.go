@@ -93,6 +93,9 @@ func (c *Cache) CreateMoonTable(timeGiven time.Time) []*MoonTableElement {
 }
 
 func BeginMoonDayToEarthDay(tGiven time.Time, duration time.Duration, moonTable []*MoonTableElement) time.Time {
+	if len(moonTable) == 0 {
+		return time.Time{}
+	}
 	for i := range moonTable {
 		elem := moonTable[i]
 		if elem.t1 != elem.t2 {
@@ -101,7 +104,7 @@ func BeginMoonDayToEarthDay(tGiven time.Time, duration time.Duration, moonTable 
 				t = t.Add(duration)
 				return t
 			}
-			if i < len(moonTable) {
+			if i < len(moonTable)-1 {
 				elem2 := moonTable[i+1]
 				if tGiven.After(elem.LastQuarter) && tGiven.Before(elem2.NewMoon) {
 					t := elem.NewMoon
@@ -111,7 +114,7 @@ func BeginMoonDayToEarthDay(tGiven time.Time, duration time.Duration, moonTable 
 			}
 		}
 	}
-	return time.Time{} // fix
+	return time.Time{}
 }
 
 func GetMoonDays(tGiven time.Time, table []*MoonTableElement) time.Duration {
