@@ -4,39 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moon API</title>
-    <link rel="stylesheet" href="./styles/main.css" media="screen and (min-width: 1180px)">
-    <link rel="stylesheet" href="./styles/mobile.css" media="screen and (max-width: 1180px)">
+</head>
+    <link rel="stylesheet" href="./styles/main.css" media="screen">
+    <link rel="icon" href="./assets/favicon.png" type="image/png">
 </head>
 <body>
-    <div class="app-container">
-            <div class="moon-container">
-                <div id="moon"></div>
-            </div>
-            <div class="result" id="result">
-                <div class="initial-message"></div>
-        </div>
-                <div class="date-picker-container" id="datePickerContainer">
-                    <div class="date-input-row">
-                        <input type="date" id="moonDateInput" max="">
-                    </div>            
-                <div class="calendar" id="calendar">
-                    <div class="calendar-header">
-                        <button class="calendar-nav" id="prevMonth">←</button>
-                        <div class="calendar-month-year" id="currentMonthYear"></div>
-                        <button class="calendar-nav" id="nextMonth">→</button>
-                    </div>
-                    <div class="calendar-days" id="calendarDays"></div>
-                </div>
-                <button class="submit-btn" id="submitDateBtn">Submit</button>
-            </div>
-    </div>
-
-<footer>
-    <a href="https://github.com/prostraction/moon" target="_blank">
-        <img src="./assets/github.svg" alt="Moon Api on GitHub" class="responsive-icon"></a>
-</footer>
-    
 <div class="stars"></div>
+<div class="content">
+    <div class="moon">
+        <div id="moon"></div>
+    </div>
+    <div class="result" id="result">
+        <div class="initial-message"></div>
+    </div>
+    
+    <div class="calendar" id="calendar">
+        <div class="date-input-row"><input type="date" id="moonDateInput" max=""></div>
+        <div class="calendar-header">
+            <button class="calendar-nav" id="prevMonth">←</button>
+            <div class="calendar-month-year" id="currentMonthYear"></div>
+            <button class="calendar-nav" id="nextMonth">→</button>
+        </div>
+        <div class="calendar-days" id="calendarDays"></div>
+    </div>
+</div>
 <script type="module" src="main.js"></script>
 </body>
 </html>

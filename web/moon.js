@@ -28,10 +28,12 @@ async function getMoonData(date = new Date()) {
 
 // --- Отображение ---
 export async function showMoonDay(date, isCurrent) {
-    resultDiv.innerHTML = '<div class="loading-text">Loading...</div>';
+    const currentHeight = resultDiv.offsetHeight;
+    resultDiv.style.minHeight = `${currentHeight}px`;
 
     try {
         const data = await getMoonData(date);
+
         let moonDay = Math.floor(data.EndDay.MoonDays);
         let illumination = data.EndDay.Illumination;
         let phase = data.EndDay.Phase;

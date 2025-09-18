@@ -1,0 +1,53 @@
+:root {
+  --bg-primary: #0A0A2A;
+  --bg-secondary: #223051;
+  --text-primary: #dad9ff;
+  --text-secondary: #ffffff;
+  --border:#dad9ff71;
+  --border-light:#dad9ff3d;
+  --accent: #4A5B9C;
+  --accent-light: #8C94B8;
+  --moon-glow: #fffff7;
+  --result-bg: radial-gradient(ellipse at center, rgba(249, 249, 249, 0.8), rgba(255, 255, 235, 0.43), rgba(218, 217, 255, 0.125), rgba(21, 33, 59, 0.855));
+  --date-input-bg: radial-gradient(135deg, rgba(218, 217, 255, 0.9), rgba(34, 48, 81, 0.7), #00000000);
+  --calendar-bg: linear-gradient(135deg, #4258883e, #0A0A2A);
+}
+
+.body--morning {
+  --bg-primary: #0A0A2A;
+  --bg-secondary: #223051;
+  --text-primary: #dad9ff;
+  --text-secondary: #ffffff;
+  --accent: #4A5B9C;
+  --accent-light: #8C94B8;
+  --moon-glow: #fffff7;
+  --result-bg: radial-gradient(ellipse at center, rgba(249, 249, 249, 0.8), rgba(255, 255, 235, 0.43), rgba(218, 217, 255, 0.125), rgba(21, 33, 59, 0.855));
+  --date-input-bg: radial-gradient(135deg, rgba(218, 217, 255, 0.9), rgba(34, 48, 81, 0.7), #00000000);
+  --calendar-bg: linear-gradient(135deg, #4258883e, #0A0A2A);
+}
+
+.body--day {
+  --bg-primary: #0A0A2A;
+  --bg-secondary: #223051;
+  --text-primary: #dad9ff;
+  --text-secondary: #ffffff;
+  --accent: #4A5B9C;
+  --accent-light: #8C94B8;
+  --moon-glow: #fffff7;
+  --result-bg: radial-gradient(ellipse at center, rgba(249, 249, 249, 0.8), rgba(255, 255, 235, 0.43), rgba(218, 217, 255, 0.125), rgba(21, 33, 59, 0.855));
+  --date-input-bg: radial-gradient(135deg, rgba(218, 217, 255, 0.9), rgba(34, 48, 81, 0.7), #00000000);
+  --calendar-bg: linear-gradient(135deg, #4258883e, #0A0A2A);
+}
+
+.body--evening {
+  --bg-primary: #0A0A2A;
+  --bg-secondary: #223051;
+  --text-primary: #dad9ff;
+  --text-secondary: #ffffff;
+  --accent: #4A5B9C;
+  --accent-light: #8C94B8;
+  --moon-glow: #fffff7;
+  --result-bg: radial-gradient(ellipse at center, rgba(249, 249, 249, 0.8), rgba(255, 255, 235, 0.43), rgba(218, 217, 255, 0.125), rgba(21, 33, 59, 0.855));
+  --date-input-bg: radial-gradient(135deg, rgba(218, 217, 255, 0.9), rgba(34, 48, 81, 0.7), #00000000);
+  --calendar-bg: linear-gradient(135deg, #4258883e, #0A0A2A);
+}

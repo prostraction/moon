@@ -5,7 +5,6 @@ const prevMonth = document.getElementById('prevMonth');
 const nextMonth = document.getElementById('nextMonth');
 const currentMonthYear = document.getElementById('currentMonthYear');
 const calendarDays = document.getElementById('calendarDays');
-const submitDateBtn = document.getElementById('submitDateBtn');
 
 let currentDate = new Date();
 let selectedDate = null;
@@ -24,17 +23,14 @@ export function initCalendar() {
     calendarDays.addEventListener('click', (e) => {
         if (e.target.classList.contains('calendar-day') && !e.target.classList.contains('other-month')) {
             const day = parseInt(e.target.textContent);
-            selectDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));}});
+            selectDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
+            showMoonDay(new Date(currentDate.getFullYear(), currentDate.getMonth(), day), false)}});
     
     moonDateInput.addEventListener('change', (e) => {
         const date = new Date(e.target.value);
         selectDate(date);
         currentDate = new Date(date);
         renderCalendar();});
-    
-    submitDateBtn.addEventListener('click', () => {
-        if (selectedDate) {
-            showMoonDay(selectedDate, false);}});
     
     moonDateInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && moonDateInput.value) {
@@ -81,7 +77,7 @@ function renderCalendar() {
         
         const today = new Date();
         if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-            day.style.border = '2px solid #4A5B9C';}
+            day.classList.add('today');}
         
         calendarDays.appendChild(day);}
     
@@ -97,6 +93,11 @@ function renderCalendar() {
 
 function selectDate(date) {
     selectedDate = date;
-    moonDateInput.value = date.toISOString().split('T')[0];
+
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+
+    moonDateInput.value = `${year}-${month}-${day}`;
     renderCalendar();
 }

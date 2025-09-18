@@ -1,0 +1,33 @@
+
+@keyframes glow { 
+    from { box-shadow: 0 0 5vh #f0f0d0, 0 0 25px #f0f0d080; transform: scale(1); } 
+    to { box-shadow: 0 0 25px #ffffc2, 0 0 45px #f0f0d0; transform: scale(1.05); }} 
+
+
+@keyframes glowBackground { 
+    from { background-position: center; background-size: 120% 170%; ; transform: scale(1);} 
+    to { background-position: top; background-size: 100% 120%; }} 
+
+@keyframes breathGlow {
+    0%, 100% {
+        background-size: 90% 90%;
+        background-position: center;
+        opacity: 0.8;
+    }
+    50% {
+        background-size: 100% 100%;
+        background-position: center;
+        opacity: 1;
+    }
+}
+
+@keyframes smoothBackground {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
