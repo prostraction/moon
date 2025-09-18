@@ -3,6 +3,14 @@ import { showMoonDay } from './moon.js';
 import { initCalendar } from './calendar.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  document.documentElement.style.scrollbarWidth = 'none';
+  document.documentElement.style.msOverflowStyle = 'none';
+
+  // Для WebKit браузеров
+  const style = document.createElement('style');
+  style.innerHTML = '::-webkit-scrollbar { display: none; }';
+  document.head.appendChild(style);
     const starsContainer = document.querySelector('.stars');
     createStars(starsContainer, 150);
     updateTheme

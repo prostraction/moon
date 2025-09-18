@@ -32,6 +32,18 @@ body {
   overflow-x: auto;
   position: relative; 
   z-index: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none; 
+}
+
+.element {
+    overflow: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+.element::-webkit-scrollbar {
+    display: none; /* WebKit браузеры */
 }
 
 .stars {
@@ -138,7 +150,7 @@ body {
   padding: 1em;
   text-align: center;
 
-  width: clamp(270px, 80%, 450px);
+  width: clamp(300px, 80%, 450px);
   max-width: 100%;
   height: fit-content;
   min-height: 300px;
@@ -209,7 +221,7 @@ body {
   justify-content: center; 
   font-family: "Grill Sans", serif;
   padding: 0.5em;
-  width: clamp(270px, 80%, 450px);
+  width: clamp(300px, 80%, 450px);
   height: fit-content;
   z-index: 5;
 }
