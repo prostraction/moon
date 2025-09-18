@@ -1,4 +1,4 @@
-name: Deploy prod02
+name: Deploy prod02 (Web only)
 
 on:
   workflow_dispatch:
@@ -36,8 +36,10 @@ jobs:
           echo "Resetting any local changes..."
           git fetch --all
           git reset --hard origin/main
+          git pull
           echo "Switching to target branch: ${{ steps.get_branch.outputs.branch }}"
           git switch ${{ steps.get_branch.outputs.branch }}
           git reset --hard origin/${{ steps.get_branch.outputs.branch }}
+          git pull
           echo "Current branch: $(git branch --show-current)"
           echo "Latest commit: $(git log --oneline -1)"
