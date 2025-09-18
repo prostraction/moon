@@ -20,7 +20,7 @@ body {
   background: linear-gradient(135deg, var(--bg-secondary), var(--bg-primary));
   color: var(--text-primary);
   transition: background-color 0.5s ease, color 0.5s ease;
-  font-family: 'Georgia', serif;
+  font-family: 'Roboto', serif;
   font-size: 1rem;
   text-align: center;
   display: flex;
@@ -138,7 +138,8 @@ body {
   padding: 1em;
   text-align: center;
 
-  width: clamp(350px, 80%, 450px);
+  width: clamp(270px, 80%, 450px);
+  max-width: 100%;
   height: fit-content;
   min-height: 300px;
   z-index: 5;
@@ -207,8 +208,8 @@ body {
   align-items: flex-start; 
   justify-content: center; 
   font-family: "Grill Sans", serif;
-  padding: 1em;
-  width: clamp(350px, 80%, 450px);
+  padding: 0.5em;
+  width: clamp(270px, 80%, 450px);
   height: fit-content;
   z-index: 5;
 }
@@ -223,7 +224,7 @@ body {
   width: calc(100%);
   text-align: center;
   font-size: 1.5em;
-  font-family: 'Georgia', serif;
+  font-family: 'Roboto', serif;
   height: 2em;
   color: var(--text-primary);
   cursor: pointer;
@@ -257,7 +258,7 @@ body {
   font-size: 2em;}
 
 .calendar-month-year {
-  font-family: 'Georgia', serif;
+  font-family: 'Roboto', serif;
   font-size: 1.5em;
   flex: 1;}
 
@@ -336,7 +337,7 @@ footer {
 }
 
 .footer-text {
-  font-family: 'Georgia', serif;
+  font-family: 'Roboto', serif;
   color: var(--text-primary);
   margin: 0;
   font-size: 1em;
