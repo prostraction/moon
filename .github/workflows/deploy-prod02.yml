@@ -40,6 +40,7 @@ jobs:
           echo "Switching to target branch: ${{ steps.get_branch.outputs.branch }}"
           git switch ${{ steps.get_branch.outputs.branch }}
           git reset --hard origin/${{ steps.get_branch.outputs.branch }}
-          git pull
+          git fetch --all --tags --prune
+          git pull --force
           echo "Current branch: $(git branch --show-current)"
           echo "Latest commit: $(git log --oneline -1)"
