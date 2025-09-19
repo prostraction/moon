@@ -14,29 +14,64 @@ export function initCalendar() {
     
     prevMonth.addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar();});
+        renderCalendar();
+    });
     
     nextMonth.addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar();});
+        renderCalendar();
+    });
     
     calendarDays.addEventListener('click', (e) => {
         if (e.target.classList.contains('calendar-day') && !e.target.classList.contains('other-month')) {
             const day = parseInt(e.target.textContent);
             selectDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
-            showMoonDay(new Date(currentDate.getFullYear(), currentDate.getMonth(), day), false)}});
+            showMoonDay(new Date(currentDate.getFullYear(), currentDate.getMonth(), day), false);
+        }
+    });
     
     moonDateInput.addEventListener('change', (e) => {
+        if (!e.target.value) {
+            // Если поле очищено, устанавливаем сегодняшнюю дату
+            selectDate(new Date());
+            currentDate = new Date();
+            renderCalendar();
+            return;
+        }
+        
         const date = new Date(e.target.value);
-        selectDate(date);
-        currentDate = new Date(date);
-        renderCalendar();});
+        if (!isNaN(date.getTime())) { // Проверяем, что дата валидна
+            selectDate(date);
+            currentDate = new Date(date);
+            renderCalendar();
+        } else {
+            // Если дата невалидна, устанавливаем сегодняшнюю дату
+            selectDate(new Date());
+            currentDate = new Date();
+            renderCalendar();
+        }
+    });
     
     moonDateInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && moonDateInput.value) {
+        if (e.key === 'Enter') {
+            if (!moonDateInput.value) {
+                // Если поле очищено, устанавливаем сегодняшнюю дату
+                selectDate(new Date());
+                showMoonDay(new Date(), false);
+                return;
+            }
+            
             const date = new Date(moonDateInput.value);
-            selectDate(date);
-            showMoonDay(date, false);}});
+            if (!isNaN(date.getTime())) { // Проверяем, что дата валидна
+                selectDate(date);
+                showMoonDay(date, false);
+            } else {
+                // Если дата невалидна, устанавливаем сегодняшнюю дату
+                selectDate(new Date());
+                showMoonDay(new Date(), false);
+            }
+        }
+    });
     
     selectDate(new Date());
 }
@@ -47,7 +82,7 @@ function renderCalendar() {
     const month = currentDate.getMonth();
     
     currentMonthYear.textContent = `${currentDate.toLocaleString('en', { month: 'long' })} ${year}`;
-    
+    currentMonthYear.classList.add('no-wrap');
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
@@ -61,7 +96,8 @@ function renderCalendar() {
         const day = document.createElement('div');
         day.className = 'calendar-day other-month';
         day.textContent = prevMonthLastDay - startDay + i + 1;
-        calendarDays.appendChild(day);}
+        calendarDays.appendChild(day);
+    }
     
     // Дни текущего месяца
     for (let i = 1; i <= daysInMonth; i++) {
@@ -73,13 +109,16 @@ function renderCalendar() {
             selectedDate.getDate() === i && 
             selectedDate.getMonth() === month && 
             selectedDate.getFullYear() === year) {
-            day.classList.add('selected');}
+            day.classList.add('selected');
+        }
         
         const today = new Date();
         if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-            day.classList.add('today');}
+            day.classList.add('today');
+        }
         
-        calendarDays.appendChild(day);}
+        calendarDays.appendChild(day);
+    }
     
     const totalCells = 42; 
     const remainingCells = totalCells - (startDay + daysInMonth);

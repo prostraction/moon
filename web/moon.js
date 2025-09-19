@@ -55,7 +55,7 @@ export async function showMoonDay(date, isCurrent) {
 
             <div class="moon-details">
                 <div class="detail-item"><span class="detail-label">Date:</span><span class="detail-value">${formattedDate}</span></div>
-                <div class="detail-item"><span class="detail-label">Moon Phase</span><span class="detail-value">${phase.Name}</span></div>
+                <div class="detail-item"><span class="detail-label">Moon Phase:</span><span class="detail-value">${phase.Name}</span></div>
                 <div class="detail-item"><span class="detail-label">Illumination:</span><span class="detail-value">${illumination}%</span></div>
                 <div class="detail-item"><span class="detail-label">Zodiac sign:</span><span class="detail-value">${zodiac.Name}</span></div>
             </div>
