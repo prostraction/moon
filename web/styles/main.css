@@ -90,7 +90,7 @@ body {
   z-index: 4;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 1.5em;
+  padding: 1em;
 
   justify-items: center;
   gap: 1em;
@@ -105,7 +105,7 @@ body {
   flex: 0 0 auto;
   box-sizing: border-box;
     position: relative;
-    margin: 1.5em auto;
+    margin: 1em auto;
     width: fit-content;
     z-index: 100;
 } 
@@ -144,16 +144,16 @@ body {
   animation-play-state: running, paused;
 
   border-radius: 1em;
-  box-shadow: 0.5em 1em 1.5em -0.5em var(--bg-primary), -0.5em 1em 1.5em -0.5em var(--bg-primary), 0 1em 1.5em -0.5em var(--bg-primary);
+  box-shadow: 0.25em 0.5em 0.75em -0.25em var(--bg-primary), -0.25em 0.5em 0.75em -0.25em var(--bg-primary), 0 0.5em 0.75em -0.25em var(--bg-primary);
 
   position: relative;
-  padding: 1em;
+  padding: 0.75em;
   text-align: center;
 
   width: clamp(270px, 80%, 450px);
   max-width: 100%;
   height: fit-content;
-  min-height: 300px;
+  min-height: 280px;
   z-index: 5;
 }
 
@@ -214,7 +214,7 @@ body {
   margin: 1em;
   border-radius: 1em;;
   background: none;
-  box-shadow: 0.5em 1em 1.5em -0.5em var(--bg-primary), -0.5em 1em 1.5em -0.5em var(--bg-primary), 0 1em 1.5em -0.5em var(--bg-primary);
+  box-shadow: 0.25em 0.5em 0.75em -0.25em var(--bg-primary), -0.25em 0.5em 0.75em -0.25em var(--bg-primary), 0 0.5em 0.75em -0.25em var(--bg-primary);
   position: relative;
   text-align: center;
   align-items: flex-start; 
@@ -385,6 +385,7 @@ footer {
     justify-content: center;
     gap: 1em;
     overflow: hidden;
+    padding: 1.5em;
   }
   
   .moon {
@@ -414,7 +415,8 @@ footer {
     grid-row: 1;
     justify-self: center;
     align-self: center;
-
+    padding: 1em;
+    box-shadow: 0.5em 1em 1.5em -0.5em var(--bg-primary), -0.5em 1em 1.5em -0.5em var(--bg-primary), 0 1em 1.5em -0.5em var(--bg-primary);
     background-image: radial-gradient(ellipse 45vmin 50vmin at bottom left, 
     rgba(249, 249, 249, 0.671),
     rgba(255, 255, 235, 0.445), 
@@ -429,6 +431,8 @@ footer {
     height: fit-content;
     align-self: flex-end;
     max-height: 100%;
+    padding: 0.5em;
+    box-shadow: 0.5em 1em 1.5em -0.5em var(--bg-primary), -0.5em 1em 1.5em -0.5em var(--bg-primary), 0 1em 1.5em -0.5em var(--bg-primary);
     background-image: radial-gradient(ellipse 45vmin 65vmin at top left, 
     rgba(249, 249, 249, 0.671),
     rgba(255, 255, 235, 0.445), 
@@ -436,5 +440,58 @@ footer {
     rgba(10, 10, 42, 0.596));
       animation: glowBackground 4s ease-in-out infinite alternate;
       animation-play-state: running, paused;
-  }}
+  }
+}
 
+/* Стили для очень маленьких экранов (например, iPhone SE) */
+@media (max-width: 400px) {
+  .content {
+    padding: 0.5em;
+    gap: 0.5em;
+  }
+
+  .result, .calendar {
+    width: clamp(250px, 95%, 450px);
+    padding: 0.5em;
+  }
+
+  .result {
+    box-shadow: 0.15em 0.3em 0.5em -0.15em var(--bg-primary), -0.15em 0.3em 0.5em -0.15em var(--bg-primary), 0 0.3em 0.5em -0.15em var(--bg-primary);
+    min-height: 250px;
+  }
+  
+  .calendar {
+    box-shadow: 0.15em 0.3em 0.5em -0.15em var(--bg-primary), -0.15em 0.3em 0.5em -0.15em var(--bg-primary), 0 0.3em 0.5em -0.15em var(--bg-primary);
+    margin: 0.5em;
+  }
+  
+  .moon {
+    margin: 0.5em auto;
+  }
+  
+  .moon-details .detail-label,
+  .moon-details .detail-value {
+    font-size: 1em;
+  }
+  
+  .calendar-nav {
+    font-size: 1.5em;
+  }
+  
+  .calendar-month-year {
+    font-size: 1.2em;
+  }
+  
+  .calendar-day {
+    font-size: 1.2em;
+    margin: 0.1em;
+  }
+  
+  .moon-day {
+    font-size: 1.5em;
+  }
+  
+  body {
+    padding: 0.5em;
+  }
+}
