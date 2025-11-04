@@ -35,6 +35,8 @@ func (s *Server) NewRouter() *fiber.App {
 	// maybe rename moonTable -> phaseTable
 	app.Get("/v1/moonTableYear", s.moonTableYearV1)
 	app.Get("/v1/moonTableCurrent", s.moonTableCurrentV1)
+	app.Get("/api/v1/moonTableYear", s.moonTableYearV1)
+	app.Get("/api/v1/moonTableCurrent", s.moonTableCurrentV1)
 
 	// maybe rename moonPhase -> phase later
 
@@ -48,6 +50,9 @@ func (s *Server) NewRouter() *fiber.App {
 	app.Get("/v1/moonPhaseCurrent", s.moonPhaseCurrentV1)
 	app.Get("/v1/moonPhaseTimestamp", s.moonPhaseTimestampV1)
 	app.Get("/v1/moonPhaseDate", s.moonPhaseDatetV1)
+	app.Get("/api/v1/moonPhaseCurrent", s.moonPhaseCurrentV1)
+	app.Get("/api/v1/moonPhaseTimestamp", s.moonPhaseTimestampV1)
+	app.Get("/api/v1/moonPhaseDate", s.moonPhaseDatetV1)
 
 	// maybe rename "moon*" -> "*"
 	// per month
@@ -84,6 +89,7 @@ func (s *Server) NewRouter() *fiber.App {
 
 	// just print version
 	app.Get("/v1/version", s.versionV1)
+	app.Get("/api/v1/version", s.versionV1)
 
 	s.moonCache = new(moon.Cache)
 	return app
